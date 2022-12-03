@@ -15,7 +15,7 @@ const connectDB = async () => {
         // disabled as it clearly shows error: <> MongoParseError: options usecreateindex, usefindandmodify are not supported </>
         useUnifiedTopology: true,
         useNewUrlParser: true,
-        dbName:"testMode"
+        dbName: "testMode"
     }).then(() => log.info('DB Connection Success !'))
         .catch((err) => {
             log.error('DB Connection Failed', err);
@@ -26,11 +26,13 @@ const connectDB = async () => {
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    exposedHeaders: ["user_token"]
+}));
 app.use(express.json());
 app.use(helmet());
 
-const log = bunyan.createLogger({name: 'express-backend'});
+const log = bunyan.createLogger({ name: 'express-backend' });
 
 // Routes
 app.use('/api/v1/auth', require('./routes/auth'));
