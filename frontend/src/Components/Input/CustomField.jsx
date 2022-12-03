@@ -6,7 +6,7 @@ export default function CustomField({ ...props }) {
     return (
         <div className='customField'>
             <span htmlFor={props.label} className='label' >{props.label}</span>
-            <input className={`sm:w-[320px] ${props?.warn ? 'warn' : meta.error && meta.touched ?
+            <input className={`sm:w-[320px] ${meta.error && meta.touched ?
                 'error' : !meta.error && meta.touched ? 'success' : 'normal'}`}
                 {...field} {...props} />
             <p className="errMsg">{meta.error && meta.touched ? '*' + meta.error : ''}</p>

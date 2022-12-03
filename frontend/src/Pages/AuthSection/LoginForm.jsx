@@ -3,14 +3,21 @@ import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import CustomField from "../../Components/Input/CustomField";
 import useAuthService from "../../Services/AuthService";
+import { useEffect } from "react";
 
 const LoginForm = () => {
 
     const submitBtn = useRef();
-    const { isLoading } = useAuthService();
+    const { isLoading, login, error, errActive } = useAuthService();
 
-    const handleSubmit = () => {
-        console.log("handling submit");
+    console.log(error, errActive);
+
+    const handleSubmit = async (values, actions) => {
+        console.log("handling submit", actions);
+        submitBtn.current.disabled = true;
+        await login(values);
+        console.warn("Request Complete");
+        return;
     };
 
     const schema = Yup.object().shape({
@@ -18,11 +25,17 @@ const LoginForm = () => {
         password: Yup.string().min(6).max(19).required()
     });
 
+    useEffect(() => {
+        console.log("state Change");
+        submitBtn.current.disabled = !errActive;
+    }, [errActive]);
+
     return (
         <>
-            <Formik
+            <Formik validateOnChange
                 initialValues={{ email: "", password: "" }}
                 validationSchema={schema}
+                validateOnBlur={true}
                 onSubmit={handleSubmit}>
                 {props => (
                     <Form className="form flex flex-col gap-2 items-center justify-center p-2">
@@ -33,6 +46,9 @@ const LoginForm = () => {
                         >
                             {props.isSubmitting ? "Loading" : "Submit"}
                         </button>
+                        <div className="errorFeedback text-rose-600">
+                            {errActive && <span className="err">{error?.message}</span>}
+                        </div>
                         {(isLoading || props.isSubmitting) &&
                             <div className="lds-ellipsis ">
                                 <div />
