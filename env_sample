@@ -1,0 +1,4 @@
+NEWDB=mogodburl
+JWT_KEY=key
+JWT_REFRESH_KEY=key
+PORT=optional
