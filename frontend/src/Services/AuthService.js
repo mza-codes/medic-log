@@ -9,7 +9,9 @@ const initialState = {
     active: false,
     isLoading: false,
     error: {},
-    errActive: false
+    errActive: false,
+    userToken: "",
+    refreshToken: ""
 };
 
 const API = axios.create({
@@ -17,12 +19,12 @@ const API = axios.create({
     cancelToken: new axios.CancelToken((c) => cancel = c)
 });
 
-const secureAPI = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
-    headers: {
-        authorization: `Bearer ${"userToken"}`
-    }
-});
+// const secureAPI = axios.create({
+//     baseURL: process.env.REACT_APP_API_URL,
+//     headers: {
+//         authorization: `Bearer ${sessionTokens?.userToken}`
+//     }
+// });
 
 const fetchData = async (url) => {
     const { data } = await API.get(url);
@@ -39,12 +41,15 @@ const useAuthService = create((set) => ({
             const { data, headers } = await API.post('/auth/login', loginData);
             const { user_token } = headers;
             console.log("logging data", data, "<<<DATA || HEADERS >>>", user_token);
+
             set(state => ({
                 ...state,
                 user: data?.user,
                 active: true,
                 isLoading: false,
-                errActive: false
+                errActive: false,
+                userToken: user_token,
+                refreshToken: data.refreshToken
             }));
             return data;
         } catch (error) {
@@ -53,7 +58,9 @@ const useAuthService = create((set) => ({
                 ...state,
                 error: { ...error?.response?.data ?? error },
                 isLoading: false,
-                errActive: true
+                errActive: true,
+                userToken: "",
+                refreshToken: ""
             }));
             return error;
         };
@@ -61,8 +68,33 @@ const useAuthService = create((set) => ({
     logout: async () => {
 
     },
-    updateSession: async () => {
-
+    updateSession: async (tokens) => {
+        try {
+            const { data, headers } = await API.post('/auth/refresh-token', {
+                ...tokens
+            });
+            const { user_token } = headers;
+            set(state => ({
+                ...state,
+                active: true,
+                isLoading: false,
+                errActive: false,
+                userToken: user_token,
+                refreshToken: data.refreshToken
+            }));
+            return data;
+        } catch (error) {
+            console.warn(error);
+            set((state) => ({
+                ...state,
+                error: { ...error?.response?.data ?? error },
+                isLoading: false,
+                errActive: true,
+                userToken: "",
+                refreshToken: ""
+            }));
+            return error;
+        };
     }
 }));
 
