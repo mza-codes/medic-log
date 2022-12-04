@@ -1,15 +1,17 @@
 import './index.css';
 import Header from './Components/Header';
-import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import Homepage from './Pages/Homepage';
+import useAuthService from './Services/AuthService';
 
 const App = () => {
 
-    const user = true;
+    const { user } = useAuthService();
 
     const ProtectedRoute = ({ children }) => {
         if (user) return children
-        else <Navigate to="/" />;
+        else return children;
+        // <Navigate to="/" />;
     };
 
     return (
