@@ -3,6 +3,7 @@ import Header from './Components/Header';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import Homepage from './Pages/Homepage';
 import useAuthService from './Services/AuthService';
+import Dashboard from './Pages/Dashboard';
 
 const App = () => {
 
@@ -20,7 +21,8 @@ const App = () => {
                 <Header />
 
                 <Routes>
-                    <Route path="/" element={<ProtectedRoute><Homepage /></ProtectedRoute>} />
+                    {/* <Route path="/" element={<ProtectedRoute><Homepage /></ProtectedRoute>} /> */}
+                    <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
 
                 </Routes>
 
