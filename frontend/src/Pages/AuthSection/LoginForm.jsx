@@ -38,9 +38,9 @@ const LoginForm = () => {
                 validateOnBlur={true}
                 onSubmit={handleSubmit}>
                 {props => (
-                    <Form className="form flex flex-col gap-2 items-center justify-center p-2">
-                        <CustomField name="email" type="text" label="Email" />
-                        <CustomField name="password" type="password" label="Password" />
+                    <Form className="form flex flex-col gap-2 items-center justify-center p-2 mb-10">
+                        <CustomField name="email" type="text" placeholder="abc@ttof.com" label="Email" />
+                        <CustomField name="password" type="password" placeholder="Password" label="Password" />
                         <button ref={submitBtn} type="submit" disabled={!props.isValid}
                             className="bg-teal-800 text-white p-2 hover:bg-teal-600 disabled:bg-slate-600 disabled:text-slate-400"
                         >
