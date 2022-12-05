@@ -1,6 +1,6 @@
 {
-  "short_name": "React Tailwind by MZA",
-  "name": "React App Tailwind Template",
+  "short_name": "Medic-Log",
+  "name": "Medic Logger",
   "icons": [],
   "start_url": ".",
   "display": "standalone",
