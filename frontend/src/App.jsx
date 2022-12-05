@@ -1,9 +1,13 @@
 import './index.css';
-import Header from './Components/Header';
-import { HashRouter, Routes, Route } from 'react-router-dom';
-import Homepage from './Pages/Homepage';
+
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import useAuthService from './Services/AuthService';
-import Dashboard from './Pages/Dashboard';
+import { lazy, Suspense } from 'react';
+import Loader from './Components/Loader/Loader';
+import Header from './Components/Header';
+
+const Dashboard = lazy(() => import('./Pages/Dashboard'));
+const AuthPage = lazy(() => import('./Pages/AuthPage'));
 
 const App = () => {
 
@@ -21,8 +25,31 @@ const App = () => {
                 <Header />
 
                 <Routes>
-                    {/* <Route path="/" element={<ProtectedRoute><Homepage /></ProtectedRoute>} /> */}
-                    <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                    <Route path="/login" element={
+                        <ProtectedRoute>
+                            <Suspense fallback={<Loader />}>
+                                <AuthPage login />
+                            </Suspense>
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/" element={<Navigate to="/login" />} />
+
+                    <Route path="/signup" element={
+                        <ProtectedRoute>
+                            <Suspense fallback={<Loader />}>
+                                <AuthPage signup />
+                            </Suspense>
+                        </ProtectedRoute>
+                    } />
+
+                    <Route path="/verify" element={
+                        <ProtectedRoute>
+                            <Suspense fallback={<Loader />}>
+                                <AuthPage verify />
+                            </Suspense>
+                        </ProtectedRoute>
+                    } />
 
                 </Routes>
 
