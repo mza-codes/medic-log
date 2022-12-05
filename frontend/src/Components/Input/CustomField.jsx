@@ -12,7 +12,7 @@ export default function CustomField({ label, type, ...props }) {
                 <input className={`sm:w-[320px] ${meta.error && meta.touched ?
                     'error' : !meta.error && meta.touched ? 'success' : 'normal'}`}
                     {...field} {...props} type={showPassword ? "text" : type} />
-                {label?.toLowerCase() === "password" &&
+                {(label?.toLowerCase() === "password" || label?.toLowerCase() === "confirm password") &&
                     <span onClick={e => setShowPassword(prev => !prev)}
                         className="text-teal-800 absolute right-2 bottom-1 cursor-pointer hover:text-opacity-100 text-opacity-50">
                         <iconify-icon icon="bxs:show" width={33} height={33} />

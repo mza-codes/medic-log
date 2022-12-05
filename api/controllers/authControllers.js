@@ -31,7 +31,7 @@ exports.createAuth = asyncHandler(async (req, res, next) => {
     const { password, ...other } = newUser._doc; // _doc is specified to get the actual JSON data
 
     const token = this.createAccessToken(other);
-    this.createRefreshToken(other);
+    const refreshToken = this.createRefreshToken(other);
 
     res.setHeader('user_token', token);
     return res.status(200).json({ success: true, user: other, refreshToken: refreshToken });

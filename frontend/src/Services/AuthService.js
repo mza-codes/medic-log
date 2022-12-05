@@ -31,7 +31,7 @@ const fetchData = async (url) => {
     return data;
 };
 
-const useAuthService = create((set) => ({
+const useAuthService = create((set, get) => ({
     ...initialState,
 
     login: async (loginData) => {
@@ -95,7 +95,37 @@ const useAuthService = create((set) => ({
             }));
             return error;
         };
-    }
+    },
+    register: async (signupData) => {
+        set(state => ({ ...state, isLoading: true }));
+        try {
+            const { data, headers } = await API.post('/auth/register', signupData);
+            const { user_token } = headers;
+            console.log("logging data", data, "<<<DATA || HEADERS >>>", user_token);
+
+            set(state => ({
+                ...state,
+                user: data?.user,
+                active: true,
+                isLoading: false,
+                errActive: false,
+                userToken: user_token,
+                refreshToken: data.refreshToken
+            }));
+            return data;
+        } catch (error) {
+            console.warn(error);
+            set((state) => ({
+                ...state,
+                error: { ...error?.response?.data ?? error },
+                isLoading: false,
+                errActive: true,
+                userToken: "",
+                refreshToken: ""
+            }));
+            return error;
+        };
+    },
 }));
 
 export default useAuthService;
