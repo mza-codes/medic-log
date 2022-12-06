@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 
-
 const Verify = () => {
+
     return (
         <main className="min-w-[280px] sm:min-w-[340px] min-h-fit bg-white  rounded-xl
-            flex flex-col text-start gap-3 py-4 px-6 mb-48">
+            flex flex-col text-start gap-3 py-4 px-6 mb-[10%]">
             <h3 className="text-2xl font-medium py-2 text-emerald-900">Verification </h3>
 
             <input type="text" placeholder="Enter Verification Code"
@@ -18,4 +18,4 @@ const Verify = () => {
     );
 };
 
-export default Verify
+export default Verify;
