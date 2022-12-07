@@ -23,7 +23,7 @@ exports.otpAuth = asyncHandler(async (req, res, next) => {
     const otpStatus = await Otp.create({ value: encoded, expiredAt: expiry });
     const id = otpStatus._id;
     const token = jwt.sign({ otpId: id }, process.env.JWT_KEY, { expiresIn: "5m" });
-    res.clearCookie(String(id));
+    // res.clearCookie(String(id));
     res.cookie(String(id), token, {
         path: "/",
         expiry: new Date(Date.now() + (1000 * 60) * 5),
@@ -32,16 +32,17 @@ exports.otpAuth = asyncHandler(async (req, res, next) => {
     });
     log.error("Exposing OTP: ",otp);
     // await sendEmail(email, `OTP Verification from ${process.env.Brand}`, content);
-    return res.status(200).json({ success: true, message: `OTP has Successfully sent to ${email}.` });
+    return res.status(200).json({ success: true, message: `OTP has Successfully sent to ${email}` });
 });
 
 exports.otpVerify = asyncHandler(async (req, res, next) => {
     const otp = req.body?.otp;
     if (!otp) return res.status(406).json({ success: false, message: 'Invalid OTP' });
     const cookie = req.headers.cookie;
-    log.error(req.body.otp,"<>::",cookie);
+    log.info(req.headers);
+    log.info(cookie);
     const token = cookie?.split("=")[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Session Expired or Malicious Activity' });
+    if (!token) return res.status(401).json({ success: false, message: 'Session Expired or Malicious Activity, Token Error' });
     
     const data = jwt.verify(token, process.env.JWT_KEY);
     const otpData = await Otp.findOne({ _id: data.otpId });
