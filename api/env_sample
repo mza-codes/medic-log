@@ -3,6 +3,7 @@ JWT_KEY=key
 JWT_REFRESH_KEY=key
 PORT=optional
 NODEMAILER=email
-NODE_PASSWORD=password
-TWILIO_ACCOUNT_SID=account_sid
-TWILIO_AUTH_TOKEN=token
+MAILER_PASSWORD=password
+TWILIO_ACCOUNT_SID=account_sid <optional>
+TWILIO_AUTH_TOKEN=token <optional>
+

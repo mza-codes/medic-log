@@ -5,7 +5,8 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const errorHandler = require('./middlewares/errorHandler');
 const helmet = require('helmet');
-const bunyan = require('bunyan');
+const { log } = require('./utils/logger');
+const { sendEmail } = require('./config/nodemailer');
 
 // Database Connection
 const connectDB = async () => {
@@ -16,10 +17,10 @@ const connectDB = async () => {
         useUnifiedTopology: true,
         useNewUrlParser: true,
         dbName: "testMode"
-    }).then(() => log.info('DB Connection Success !'))
+    }).then(() => log.info('MongoDB Connection Success !'))
         .catch((err) => {
-            log.error('DB Connection Failed', err);
-            process.exit(0);
+            log.error('MongoDB Connection Failed', err);
+            process.exit();
         });
 };
 
@@ -32,17 +33,17 @@ app.use(cors({
 app.use(express.json());
 app.use(helmet());
 
-const log = bunyan.createLogger({ name: 'express-backend' });
-
 // Routes
 app.use('/api/v1/auth', require('./routes/auth'));
+
 // Error Handler
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     connectDB();
-    log.info(`Server Started On PORT: ${PORT}`);
+    sendEmail(null,"The Actual Test","This is just testing with Async Handler");
+    log.info(`Node Server Started On PORT: ${PORT}`);
 });
 
 
