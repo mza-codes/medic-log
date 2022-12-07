@@ -33,9 +33,9 @@ const AuthPage = ({ login, signup, verify }) => {
           {login ? "Don't" : signup && "Already"} have an Account ?
         </Link>}
 
-        {verify &&
+        {/* {verify &&
           <Link to="/" className='text-emerald-500 hover:text-emerald-800' >Have'nt Receieved Verification Code ?</Link>
-        }
+        } */}
       </section>
 
     </main>

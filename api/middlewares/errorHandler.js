@@ -1,7 +1,10 @@
 const ErrorResponse = require('../utils/errorResponse');
+const { log } = require('../utils/logger');
 
 const errorHandler = (err, req, res, next) => {
-    console.log('ERROR OCCURED !!!'); console.log(err);
+    log.error('ERROR OCCURED !!!');
+    log.error(err);
+
     let error = { ...err }
     error.message = err.message
 
@@ -12,17 +15,17 @@ const errorHandler = (err, req, res, next) => {
 
     if (err.code === 11000) {
         const message = 'Duplicate Field Value Entered'
-        err = new ErrorResponse(message, 400)
+        err = new ErrorResponse(message, 400);
     };
 
     if (err.message === "ValidationError") {
         const message = Object.values(err.errors).map(error => error.message).join(', ');
-        err = new ErrorResponse(message, 400)
+        err = new ErrorResponse(message, 400);
     };
 
     // add more Cases! this is just basics!
 
-    res.status(err.statusCode || 500).json({
+    return res.status(err.statusCode || 500).json({
         success: false,
         error: error.message || 'Server Error'
     });

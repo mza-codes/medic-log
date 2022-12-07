@@ -26,7 +26,8 @@ exports.createAuth = asyncHandler(async (req, res, next) => {
         return res.status(406).json({ success: false, message: 'User Already Exists' });
     };
 
-    req.body.password = await bcrypt.hashSync(req.body?.password, 15);
+    req.body.password = await bcrypt.hash(req.body?.password, 15);
+    req.body.verified = false; //make it true using otpAuth
     const newUser = await User.create(req.body);
     const { password, ...other } = newUser._doc; // _doc is specified to get the actual JSON data
 
@@ -44,7 +45,7 @@ exports.auth = asyncHandler(async (req, res, next) => {
         return res.status(404).json({ success: false, message: 'User Does not Exist' });
     };
 
-    const stat = await bcrypt.compareSync(req.body.password, dbUser.password);
+    const stat = await bcrypt.compare(req.body.password, dbUser.password);
     if (stat === true) {
         const { password, ...other } = dbUser._doc; // _doc is specified to get the actual JSON data
 
@@ -70,11 +71,11 @@ exports.logout = asyncHandler(async (req, res, next) => {
 exports.updateAuth = asyncHandler(async (req, res, next) => {
     console.log("REACHED updateAuth");
     console.log("req.id", req.userId);
-    res.status(200).json("Good");
+    return res.status(200).json("Good");
 });
 
 exports.removeAuth = asyncHandler(async (req, res, next) => {
     console.log("REACHED removeAuth route");
     console.log("req.id", req.userId);
-    res.status(200).json('removeAuth delete ro)ute');
+    return res.status(200).json('removeAuth delete route');
 });
