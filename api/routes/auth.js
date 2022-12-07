@@ -1,12 +1,12 @@
 const express = require('express');
 const authControllers = require('../controllers/authControllers');
-const { otpAuth } = require('../controllers/twoFactorAuth');
+const { otpAuth, otpVerify } = require('../controllers/twoFactorAuth');
 const router = express.Router();
 const jwtAuth = require('../middlewares/authorizeUser');
 
 // @route - /api/v1/auth/
 router.post('/otpAuth', otpAuth);
-router.post('/otpAuth/otpVerify', otpAuth);
+router.post('/otpAuth/otpVerify', otpVerify);
 router.route('/register').post(authControllers.createAuth);
 router.route('/login').post(authControllers.auth);
 router.post('/logout', jwtAuth.checkAuthorization, authControllers.logout);

@@ -7,6 +7,7 @@ const errorHandler = require('./middlewares/errorHandler');
 const helmet = require('helmet');
 const { log } = require('./utils/logger');
 const { sendEmail } = require('./config/nodemailer');
+const cookieParser = require('cookie-parser');
 
 // Database Connection
 const connectDB = async () => {
@@ -26,10 +27,12 @@ const connectDB = async () => {
 
 const app = express();
 
+
 // Middleware
 app.use(cors({
     exposedHeaders: ["user_token"]
 }));
+app.use(cookieParser());
 app.use(express.json());
 app.use(helmet());
 
