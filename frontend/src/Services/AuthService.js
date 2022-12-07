@@ -1,6 +1,7 @@
 import create from 'zustand';
 import axios from 'axios';
 
+axios.defaults.withCredentials = true;
 let cancel;
 console.warn("logging Cancel", cancel);
 
@@ -9,7 +10,9 @@ const initialState = {
     active: false,
     isLoading: false,
     error: {},
+    info: {},
     errActive: false,
+    userData: {},
     userToken: "",
     refreshToken: ""
 };
@@ -36,7 +39,7 @@ const useAuthService = create((set, get) => ({
 
     login: async (loginData) => {
         console.log("data Loading");
-        set(state => ({ ...state, isLoading: true }));
+        set(state => ({ ...state, isLoading: true, info: {} }));
         try {
             const { data, headers } = await API.post('/auth/login', loginData);
             const { user_token } = headers;
@@ -97,7 +100,7 @@ const useAuthService = create((set, get) => ({
         };
     },
     register: async (signupData) => {
-        set(state => ({ ...state, isLoading: true }));
+        set(state => ({ ...state, isLoading: true, info: {} }));
         try {
             const { data, headers } = await API.post('/auth/register', signupData);
             const { user_token } = headers;
@@ -111,6 +114,56 @@ const useAuthService = create((set, get) => ({
                 errActive: false,
                 userToken: user_token,
                 refreshToken: data.refreshToken
+            }));
+            return data;
+        } catch (error) {
+            console.warn(error);
+            set((state) => ({
+                ...state,
+                error: { ...error?.response?.data ?? error },
+                isLoading: false,
+                errActive: true,
+                userToken: "",
+                refreshToken: ""
+            }));
+            return error;
+        };
+    },
+    generateOtp: async (data) => {
+        const { email } = data;
+        set(state => ({ ...state, isLoading: true, info: {}, userData: data }));
+        try {
+            const { data } = await API.post('/auth/otpAuth', { email });
+            set((state) => ({
+                ...state,
+                info: data,
+                isLoading: false,
+                errActive: false
+            }));
+            return data;
+        } catch (error) {
+            console.warn(error);
+            set((state) => ({
+                ...state,
+                error: { ...error?.response?.data ?? error },
+                isLoading: false,
+                errActive: true,
+                userToken: "",
+                refreshToken: ""
+            }));
+            return error;
+        };
+    },
+    validateOtp: async ({ otp }) => {
+        console.warn("Verifying Entered OTP:", otp);
+        set(state => ({ ...state, isLoading: true, info: {} }));
+        try {
+            const { data } = await API.post('/auth/otpAuth/otpVerify', { otp }, { withCredentials: true });
+            set((state) => ({
+                ...state,
+                info: data,
+                isLoading: false,
+                errActive: false
             }));
             return data;
         } catch (error) {

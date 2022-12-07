@@ -5,19 +5,19 @@ import CustomField from "../../Components/Input/CustomField";
 import useAuthService from "../../Services/AuthService";
 import { useEffect } from "react";
 import Loader from "../../Components/Loader/Loader";
+import { useNavigate } from "react-router-dom";
 
 const SignupForm = () => {
-
+    const navigate = useNavigate();
     const submitBtn = useRef();
-    const { isLoading, register, error, errActive } = useAuthService();
-
-    console.log(error, errActive);
+    const { isLoading, generateOtp, error, errActive } = useAuthService();
 
     const handleSubmit = async (values, actions) => {
         console.log("handling submit", actions);
         submitBtn.current.disabled = true;
-        await register(values);
-        console.warn("Request Complete");
+        await generateOtp(values);
+        console.warn("Request Complete Generated OTP");
+        !errActive && navigate("/verify");
         return;
     };
 
@@ -53,7 +53,7 @@ const SignupForm = () => {
                             {props.isSubmitting ? "Loading" : "Submit"}
                         </button>
                         <div id="errorFeedback" className="text-rose-600">
-                            {errActive && <span className="err">{error?.message} !</span>}
+                            {errActive && <span className="err">{error?.message ?? error?.error} !</span>}
                         </div>
                         {(isLoading || props.isSubmitting) &&
                             <Loader />

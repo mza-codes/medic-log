@@ -8,6 +8,7 @@ const helmet = require('helmet');
 const { log } = require('./utils/logger');
 const { sendEmail } = require('./config/nodemailer');
 const cookieParser = require('cookie-parser');
+const { urlencoded } = require('express');
 
 // Database Connection
 const connectDB = async () => {
@@ -30,8 +31,11 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    exposedHeaders: ["user_token"]
+    exposedHeaders: ["user_token"],
+    credentials: true,
+    origin: "http://localhost:3000"
 }));
+app.use(urlencoded({ extended: true}));
 app.use(cookieParser());
 app.use(express.json());
 app.use(helmet());
