@@ -1,6 +1,7 @@
 import create from 'zustand';
 import axios from 'axios';
 
+axios.defaults.withCredentials = true;
 let cancel;
 console.warn("logging Cancel", cancel);
 
@@ -157,7 +158,7 @@ const useAuthService = create((set, get) => ({
         console.warn("Verifying Entered OTP:", otp);
         set(state => ({ ...state, isLoading: true, info: {} }));
         try {
-            const { data } = await API.post('/auth/otpAuth/otpVerify', { otp });
+            const { data } = await API.post('/auth/otpAuth/otpVerify', { otp }, { withCredentials: true });
             set((state) => ({
                 ...state,
                 info: data,

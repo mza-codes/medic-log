@@ -47,7 +47,7 @@ const LoginForm = () => {
                             {props.isSubmitting ? "Loading" : "Submit"}
                         </button>
                         <div className="errorFeedback text-rose-600">
-                            {errActive && <span className="err">{error?.message} !</span>}
+                            {errActive && <span className="err">{error?.message ?? error?.error} !</span>}
                         </div>
                         {(isLoading || props.isSubmitting) &&
                             <div className="lds-ellipsis ">

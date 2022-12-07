@@ -53,7 +53,7 @@ const SignupForm = () => {
                             {props.isSubmitting ? "Loading" : "Submit"}
                         </button>
                         <div id="errorFeedback" className="text-rose-600">
-                            {errActive && <span className="err">{error?.message} !</span>}
+                            {errActive && <span className="err">{error?.message ?? error?.error} !</span>}
                         </div>
                         {(isLoading || props.isSubmitting) &&
                             <Loader />

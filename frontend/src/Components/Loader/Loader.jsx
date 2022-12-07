@@ -1,8 +1,8 @@
 import './Loader.css';
 
-const Loader = () => {
+const Loader = ({ inline }) => {
     return (
-        <main className='loaderParent'>
+        <main className={inline ? "loaderSm" : `loaderParent`}>
             <div className="lds-ellipsis ">
                 <div />
                 <div />
