@@ -8,9 +8,10 @@ import { useEffect } from "react";
 const LoginForm = () => {
 
     const submitBtn = useRef();
-    const { isLoading, login, error, errActive } = useAuthService();
+    const { isLoading, login, error, errActive, errSource } = useAuthService();
+    const isCancelled = useAuthService(state => state.isCancelled);
 
-    console.log(error, errActive);
+    console.log(error, errActive, errSource);
 
     const handleSubmit = async (values, actions) => {
         console.log("handling submit", actions);
@@ -47,7 +48,7 @@ const LoginForm = () => {
                             {props.isSubmitting ? "Loading" : "Submit"}
                         </button>
                         <div className="errorFeedback text-rose-600">
-                            {errActive && <span className="err">{error?.message ?? error?.error} !</span>}
+                            {(errActive && errSource === "login") && <span className="err">{error?.message ?? error?.error} !</span>}
                         </div>
                         {(isLoading || props.isSubmitting) &&
                             <div className="lds-ellipsis ">

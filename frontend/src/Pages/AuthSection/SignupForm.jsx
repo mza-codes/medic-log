@@ -10,14 +10,14 @@ import { useNavigate } from "react-router-dom";
 const SignupForm = () => {
     const navigate = useNavigate();
     const submitBtn = useRef();
-    const { isLoading, generateOtp, error, errActive } = useAuthService();
+    const { isLoading, generateOtp, error, errActive, errSource } = useAuthService();
+    const isCancelled = useAuthService(state => state.isCancelled);
 
     const handleSubmit = async (values, actions) => {
-        console.log("handling submit", actions);
         submitBtn.current.disabled = true;
         const data = await generateOtp(values);
         data?.success && navigate("/verify");
-        console.warn("Request Complete Generated OTP", data);
+        console.log("Request Complete Generated OTP", data);
         return;
     };
 
@@ -53,7 +53,7 @@ const SignupForm = () => {
                             {props.isSubmitting ? "Loading" : "Submit"}
                         </button>
                         <div id="errorFeedback" className="text-rose-600">
-                            {errActive && <span className="err">{error?.message ?? error?.error} !</span>}
+                            {(errActive && errSource === "signup") && <span className="err">{error?.message ?? error?.error} !</span>}
                         </div>
                         {(isLoading || props.isSubmitting) &&
                             <Loader />

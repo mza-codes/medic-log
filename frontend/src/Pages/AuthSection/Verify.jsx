@@ -10,7 +10,7 @@ const Verify = () => {
     const info = useAuthService((state) => state.info);
     const validateOtp = useAuthService((state) => state.validateOtp);
     const isLoading = useAuthService((state) => state.isLoading);
-    const { errActive, error } = useAuthService();
+    const { errActive, error, errSource } = useAuthService();
 
     console.log(errActive, error, "\n Error UP");
 
@@ -42,7 +42,7 @@ const Verify = () => {
             </button>
 
             <p className="text-teal-600 whitespace-pre-line">{info?.message}</p>
-            {errActive && <p className="text-rose-500">{error?.message ?? error?.error}</p>}
+            {(errActive && errSource === "verify") && <p className="text-rose-500">{error?.message ?? error?.error}</p>}
             <Link to="/" state={{ disableError: true }} className=' text-emerald-500 hover:text-emerald-800 mb-2'>
                 Have'nt Receieved Verification Code ?
             </Link>
