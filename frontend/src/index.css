@@ -83,3 +83,30 @@ body {
         transform: translate(24px, 0);
     }
 }
+
+#otpField{
+    text-align: center;
+    letter-spacing: 1.3rem;
+    appearance: none;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: rgb(65, 64, 64);
+}
+
+#otpField::placeholder{
+    text-align: start;
+    letter-spacing: 0px;
+    font-size: 1rem;
+    font-weight: normal;
+}
+
+#otpField::-webkit-outer-spin-button,
+#otpField::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+#otpField[type=number] {
+  -moz-appearance: textfield;
+}

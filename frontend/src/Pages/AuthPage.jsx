@@ -10,6 +10,7 @@ const AuthPage = ({ login, signup, verify }) => {
   const SignupForm = lazy(() => import('./AuthSection/SignupForm'));
   const cancelReq = useAuthService(state => state.cancelReq);
   const isCancelled = useAuthService(state => state.isCancelled);
+  const isLoading = useAuthService(state => state.isLoading);
   const message = useRef();
 
   const disableBar = () => {
@@ -44,16 +45,17 @@ const AuthPage = ({ login, signup, verify }) => {
 
       </section>
 
-      <section className='w-full absolute bottom-0 h-[50px] p-1 flex items-center justify-center'>
-        <button type='button' onClick={cancelReq} className='fixed right-1 hover:bg-red-700 text-white rounded-md p-1 bg-teal-700'>
-          Cancel
-        </button>
-        {isCancelled.length !==0 && <>
+      <section className='w-full absolute bottom-1 h-[50px] flex items-center justify-center'>
+        {isLoading &&
+          <button type='button' onClick={cancelReq} className='fixed right-1 hover:bg-red-700 text-white rounded-md p-1 bg-teal-700'>
+            Cancel
+          </button>}
+        {/* {isCancelled.length !==0 && <>
           <p ref={message} className='text-gray-800 text-center'>{isCancelled}</p>
           <button type='button' onClick={disableBar} className='fixed left-1 text-red-600 rounded-xl p-2'>
             <iconify-icon icon="eva:close-circle-fill" width={33} height={33} />
           </button>
-        </>}
+        </>} */}
       </section>
 
     </main>
