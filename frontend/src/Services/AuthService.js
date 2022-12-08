@@ -3,7 +3,6 @@ import axios from 'axios';
 
 axios.defaults.withCredentials = true;
 let cancel;
-console.warn("logging Cancel", cancel);
 
 const initialState = {
     user: {},
@@ -29,17 +28,28 @@ const API = axios.create({
 //     }
 // });
 
-const fetchData = async (url) => {
-    const { data } = await API.get(url);
-    return data;
+const fetchData = async (request) => {
+    try {
+        const { data } = await request;
+        return data;
+    } catch (error) {
+        console.error("Catched Error", error);
+        return error;
+    };
 };
 
 const useAuthService = create((set, get) => ({
     ...initialState,
-
+    hideError: () => {
+        set((state) => ({
+            ...state,
+            errActive: false
+        }));
+        return;
+    },
     login: async (loginData) => {
         console.log("data Loading");
-        set(state => ({ ...state, isLoading: true, info: {} }));
+        set(state => ({ ...state, isLoading: true, info: {}, errActive: false }));
         try {
             const { data, headers } = await API.post('/auth/login', loginData);
             const { user_token } = headers;
@@ -100,7 +110,7 @@ const useAuthService = create((set, get) => ({
         };
     },
     register: async (signupData) => {
-        set(state => ({ ...state, isLoading: true, info: {} }));
+        set(state => ({ ...state, isLoading: true, info: {}, errActive: false }));
         try {
             const { data, headers } = await API.post('/auth/register', signupData);
             const { user_token } = headers;
@@ -129,11 +139,13 @@ const useAuthService = create((set, get) => ({
             return error;
         };
     },
-    generateOtp: async (data) => {
-        const { email } = data;
-        set(state => ({ ...state, isLoading: true, info: {}, userData: data }));
-        try {
-            const { data } = await API.post('/auth/otpAuth', { email });
+    generateOtp: async (formData) => {
+        const { email } = formData;
+        set(state => ({ ...state, isLoading: true, info: {}, userData: formData }));
+        // try {
+        // const { data } = await API.post('/auth/otpAuth', { email });
+        const data = await fetchData(API.post('/auth/otpAuth', { email }));
+        if (data?.success) {
             set((state) => ({
                 ...state,
                 info: data,
@@ -141,7 +153,9 @@ const useAuthService = create((set, get) => ({
                 errActive: false
             }));
             return data;
-        } catch (error) {
+        } else {
+            // } catch (error) {
+            let error = data;
             console.warn(error);
             set((state) => ({
                 ...state,
@@ -156,9 +170,11 @@ const useAuthService = create((set, get) => ({
     },
     validateOtp: async ({ otp }) => {
         console.warn("Verifying Entered OTP:", otp);
-        set(state => ({ ...state, isLoading: true, info: {} }));
-        try {
-            const { data } = await API.post('/auth/otpAuth/otpVerify', { otp }, { withCredentials: true });
+        set(state => ({ ...state, isLoading: true, info: {}, errActive: false }));
+        // try {
+        // const { data } = await API.post('/auth/otpAuth/otpVerify', { otp }, { withCredentials: true });
+        const data = await fetchData(API.post('/auth/otpAuth/otpVerify', { otp }, { withCredentials: true }));
+        if (data?.success) {
             set((state) => ({
                 ...state,
                 info: data,
@@ -166,7 +182,9 @@ const useAuthService = create((set, get) => ({
                 errActive: false
             }));
             return data;
-        } catch (error) {
+        } else {
+            // } catch (error) {
+            let error = data;
             console.warn(error);
             set((state) => ({
                 ...state,

@@ -1,12 +1,18 @@
-import { lazy, Suspense } from 'react';
-import { Link } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import bg from '../Assets/bg-small.jpg';
 import Loader from '../Components/Loader/Loader';
+import useAuthService from '../Services/AuthService';
 import Verify from './AuthSection/Verify';
 
 const AuthPage = ({ login, signup, verify }) => {
   const LoginForm = lazy(() => import('./AuthSection/LoginForm'));
   const SignupForm = lazy(() => import('./AuthSection/SignupForm'));
+  const hideError = useAuthService(state => state.hideError);
+
+  useEffect(() => {
+    hideError();
+  }, []);
 
   return (
     <main style={{ backgroundImage: `url(${bg})` }} className='w-full min-h-[94vh] bg-cover'>

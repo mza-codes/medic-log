@@ -15,9 +15,9 @@ const SignupForm = () => {
     const handleSubmit = async (values, actions) => {
         console.log("handling submit", actions);
         submitBtn.current.disabled = true;
-        await generateOtp(values);
-        console.warn("Request Complete Generated OTP");
-        !errActive && navigate("/verify");
+        const data = await generateOtp(values);
+        data?.success && navigate("/verify");
+        console.warn("Request Complete Generated OTP", data);
         return;
     };
 

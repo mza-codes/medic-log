@@ -23,7 +23,7 @@ const Header = () => {
                 </div>
             </section>
         </header>
-    )
-}
+    );
+};
 
-export default Header
+export default Header;

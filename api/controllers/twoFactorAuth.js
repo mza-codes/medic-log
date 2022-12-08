@@ -1,5 +1,6 @@
 require("dotenv").config();
 const { sendEmail } = require("../config/nodemailer");
+const colors = require("colors");
 const asyncHandler = require("../middlewares/asyncHandler");
 const User = require("../models/User");
 const Otp = require("../models/OTP");
@@ -38,8 +39,8 @@ exports.otpAuth = asyncHandler(async (req, res, next) => {
         httpOnly: true,
         sameSite: "lax"
     });
-    log.error("Exposing OTP: ", otp);
-    // await sendEmail(email, `OTP Verification from ${process.env.Brand}`, content);
+    log.warn(colors.green("Exposing OTP: ", otp));
+    // await sendEmail(email, `OTP Verification from ${process.env.Brand ?? "mza_Node Server"}`, content);
     return res.status(200).json({ success: true, message: `OTP has Successfully sent to ${email}` });
 });
 
@@ -47,12 +48,35 @@ exports.otpVerify = asyncHandler(async (req, res, next) => {
     const otp = req.body?.otp;
     if (!otp) return res.status(406).json({ success: false, message: 'Invalid OTP' });
     const cookie = req.headers.cookie;
-    log.info(cookie);
+    log.info(cookie, "<>", req.cookies);
+    if (!cookie?.includes(otpCookie)) {
+        return res.status(401).json({ success: false, message: 'Unable to verify user session,No Token Found' });
+    };
 
-    const token = cookie?.split("=")[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Session Expired or Malicious Activity, Token Error' });
+    const token = cookie?.split(`${otpCookie}=`)[1];
+    if (!token) return res.status(401).json({ success: false, message: 'Unable to verify user session,Invalid Token' }); // To Prevent Failure
 
     const data = jwt.verify(token, process.env.JWT_KEY);
+    const otpData = await Otp.findOne({ _id: data.otpId });
+    if (!otpData) return res.status(403).json({ succes: false, message: "Altered Values found in your cookie,Invalid Session" });
+
+    const status = await bcrypt.compare(String(otp), otpData.value);
+    if (status === true) {
+        res.clearCookie(otpCookie);
+        req.cookies[otpCookie] = "";
+        return res.status(200).json({ success: true, message: "OTP Verification Success" });
+    };
+    return res.status(401).json({ success: false, message: "Incorrect OTP" });
+});
+
+exports.otpVerifyV2 = asyncHandler(async (req, res, next) => {
+    const otp = req.body?.otp;
+    if (!otp) return res.status(406).json({ success: false, message: 'Invalid OTP' });
+
+    const token = req.cookies[otpCookie];
+    if (!token) return res.status(401).json({ success: false, message: 'Unable to verify user session,Invalid Token' });
+
+    let data = jwt.verify(token, process.env.JWT_KEY);
     const otpData = await Otp.findOne({ _id: data.otpId });
     if (!otpData) return res.status(403).json({ succes: false, message: "Altered Values found in your cookie,Invalid Session" });
 

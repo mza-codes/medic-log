@@ -17,9 +17,9 @@ const Verify = () => {
     const handleVerification = async () => {
         submitBtn.current.disabled = true;
         const otp = otpField.current.value;
-        const res = await validateOtp({ otp });
+        const data = await validateOtp({ otp });
         console.warn("Req Complete");
-        if (res.success) {
+        if (data.success) {
             navigate("/dashboard");
             return true;
         } else {
@@ -41,9 +41,11 @@ const Verify = () => {
                 {isLoading ? "Loading" : "Submit"}
             </button>
 
-            <span className="text-teal-600 whitespace-pre-line">{info?.message}</span>
-            {errActive && <span className="text-rose-500">{error?.message ?? error?.error}</span>}
-            <Link to="/" className=' text-emerald-500 hover:text-emerald-800 mb-2' >Have'nt Receieved Verification Code ?</Link>
+            <p className="text-teal-600 whitespace-pre-line">{info?.message}</p>
+            {errActive && <p className="text-rose-500">{error?.message ?? error?.error}</p>}
+            <Link to="/" state={{ disableError: true }} className=' text-emerald-500 hover:text-emerald-800 mb-2'>
+                Have'nt Receieved Verification Code ?
+            </Link>
             {isLoading && <Loader inline={0} />}
         </main>
     );
