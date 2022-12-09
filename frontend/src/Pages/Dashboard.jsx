@@ -3,7 +3,7 @@ import useAuthService from "../Services/AuthService";
 
 const Dashboard = () => {
     const { user } = useAuthService();
-
+    
     return (
         <main className="w-full h-[94vh] bg-teal-100 p-2">
             <h2 className="text-4xl font-semibol py-2 text-teal-900 font-kanit">Welcome, {user?.name ?? "User"}</h2>
