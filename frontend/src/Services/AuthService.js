@@ -18,10 +18,10 @@ const initialState = {
     refreshToken: ""
 };
 
-//20 seconds timeout set
+//30 seconds timeout set
 const API = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
-    timeout: 1000 * 20
+    timeout: 1000 * 30
 });
 
 // const secureAPI = axios.create({
@@ -76,10 +76,9 @@ const useAuthService = create((set, get) => ({
             }));
             return data;
         } catch (error) {
-            console.warn(error);
             set((state) => ({
                 ...state,
-                errSource:"login",
+                errSource: "login",
                 error: { ...error?.response?.data ?? error },
                 isLoading: false,
                 errActive: true,
@@ -120,10 +119,27 @@ const useAuthService = create((set, get) => ({
             return error;
         };
     },
-    register: async (signupData) => {
+    register: async () => {
+        controller = new AbortController();
         set(state => ({ ...state, isLoading: true, info: {}, errActive: false, isCancelled: "" }));
+        const { userData: signupData } = get();
+        console.log("Printing SignupData: >> from Register req", signupData);
+        if (!signupData?.email) {
+            //Case here add error
+            console.log("No userData found");
+            set(state => ({
+                ...state,
+                isLoading: false,
+                info: {},
+                errActive: true,
+                errSource:"verify",
+                error: { message: "No UserData Found,Please Try Signing Up Again !" },
+                isCancelled: ""
+            }));
+            return false;
+        };
         try {
-            const { data, headers } = await API.post('/auth/register', signupData);
+            const { data, headers } = await API.post('/auth/register', signupData, { signal: controller.signal });
             const { user_token } = headers;
             console.log("logging data", data, "<<<DATA || HEADERS >>>", user_token);
 
@@ -141,7 +157,7 @@ const useAuthService = create((set, get) => ({
             console.warn(error);
             set((state) => ({
                 ...state,
-                errSource:"signup",
+                errSource: "signup",
                 error: { ...error?.response?.data ?? error },
                 isLoading: false,
                 errActive: true,
@@ -153,9 +169,11 @@ const useAuthService = create((set, get) => ({
     },
     generateOtp: async (formData) => {
         const { email } = formData;
+        controller = new AbortController();
+        const signal = controller.signal;
         set(state => ({ ...state, isLoading: true, info: {}, userData: formData }));
 
-        const data = await fetchData(API.post('/auth/otpAuth', { email }));
+        const data = await fetchData(API.post('/auth/otpAuth', { email }, { signal }));
         if (data?.success) {
             set((state) => ({
                 ...state,
@@ -169,7 +187,7 @@ const useAuthService = create((set, get) => ({
             console.warn(error);
             set((state) => ({
                 ...state,
-                errSource:"signup",
+                errSource: "signup",
                 error: { ...error?.response?.data ?? error },
                 isLoading: false,
                 errActive: true,
@@ -189,6 +207,21 @@ const useAuthService = create((set, get) => ({
         }));
 
         if (data?.success) {
+            const { userData } = get();
+            if (!userData?.email) {
+                //Case here add error
+                console.warn("No userData found");
+                set(state => ({
+                    ...state,
+                    isLoading: false,
+                    info: data,
+                    errSource:"verify",
+                    errActive: true,
+                    error: { message: "No UserData Found,Please Try Signing Up Again !" },
+                    isCancelled: ""
+                }));
+                return { success: false, message: "No UserData Found !" };
+            };
             set((state) => ({
                 ...state,
                 info: data,
@@ -201,7 +234,7 @@ const useAuthService = create((set, get) => ({
             console.warn(error);
             set((state) => ({
                 ...state,
-                errSource:"verify",
+                errSource: "verify",
                 error: { ...error?.response?.data ?? error },
                 isLoading: false,
                 errActive: true,

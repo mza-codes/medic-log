@@ -11,7 +11,6 @@ const SignupForm = () => {
     const navigate = useNavigate();
     const submitBtn = useRef();
     const { isLoading, generateOtp, error, errActive, errSource } = useAuthService();
-    const isCancelled = useAuthService(state => state.isCancelled);
 
     const handleSubmit = async (values, actions) => {
         submitBtn.current.disabled = true;

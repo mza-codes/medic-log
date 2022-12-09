@@ -1,22 +1,18 @@
-import { lazy, Suspense, useRef } from 'react';
+import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import bg from '../Assets/bg-small.jpg';
 import Loader from '../Components/Loader/Loader';
 import useAuthService from '../Services/AuthService';
 import Verify from './AuthSection/Verify';
 
-const AuthPage = ({ login, signup, verify }) => {
-  const LoginForm = lazy(() => import('./AuthSection/LoginForm'));
-  const SignupForm = lazy(() => import('./AuthSection/SignupForm'));
-  const cancelReq = useAuthService(state => state.cancelReq);
-  const isCancelled = useAuthService(state => state.isCancelled);
-  const isLoading = useAuthService(state => state.isLoading);
-  const message = useRef();
+const LoginForm = lazy(() => import('./AuthSection/LoginForm'));
+const SignupForm = lazy(() => import('./AuthSection/SignupForm'));
 
-  const disableBar = () => {
-    message.current.innerText = "";
-    return true;
-  };
+const AuthPage = ({ login, signup, verify }) => {
+  const cancelReq = useAuthService(state => state.cancelReq);
+  const isLoading = useAuthService(state => state.isLoading);
+  // const message = useRef();
+  console.count("Component Rendered");
 
   return (
     <main style={{ backgroundImage: `url(${bg})` }} className='w-full min-h-[94vh] bg-cover'>

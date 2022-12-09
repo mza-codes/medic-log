@@ -84,10 +84,12 @@ body {
     }
 }
 
+/* Veridy.jsx Input Field */
 #otpField{
     text-align: center;
-    letter-spacing: 1.3rem;
+    letter-spacing: 1.2rem;
     appearance: none;
+    
     font-size: 1.3rem;
     font-weight: 700;
     color: rgb(65, 64, 64);
@@ -109,4 +111,16 @@ body {
 /* Firefox */
 #otpField[type=number] {
   -moz-appearance: textfield;
+}
+
+#otpField:invalid {
+    border-color: rgb(248, 143, 143);
+}
+
+#otpField:valid{
+    caret-color: transparent;
+}
+
+#otpField:placeholder-shown{
+    border-color: rgb(70, 70, 70);
 }
