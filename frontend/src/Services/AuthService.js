@@ -76,7 +76,6 @@ const useAuthService = create((set, get) => ({
             }));
             return data;
         } catch (error) {
-            console.warn(error);
             set((state) => ({
                 ...state,
                 errSource: "login",
