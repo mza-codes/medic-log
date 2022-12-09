@@ -1,12 +1,22 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import bg from '../Assets/bg-small.jpg';
 import Loader from '../Components/Loader/Loader';
+import useAuthService from '../Services/AuthService';
 import Verify from './AuthSection/Verify';
 
 const AuthPage = ({ login, signup, verify }) => {
   const LoginForm = lazy(() => import('./AuthSection/LoginForm'));
   const SignupForm = lazy(() => import('./AuthSection/SignupForm'));
+  const cancelReq = useAuthService(state => state.cancelReq);
+  const isCancelled = useAuthService(state => state.isCancelled);
+  const isLoading = useAuthService(state => state.isLoading);
+  const message = useRef();
+
+  const disableBar = () => {
+    message.current.innerText = "";
+    return true;
+  };
 
   return (
     <main style={{ backgroundImage: `url(${bg})` }} className='w-full min-h-[94vh] bg-cover'>
@@ -33,9 +43,19 @@ const AuthPage = ({ login, signup, verify }) => {
           {login ? "Don't" : signup && "Already"} have an Account ?
         </Link>}
 
-        {/* {verify &&
-          <Link to="/" className='text-emerald-500 hover:text-emerald-800' >Have'nt Receieved Verification Code ?</Link>
-        } */}
+      </section>
+
+      <section className='w-full absolute bottom-1 h-[50px] flex items-center justify-center'>
+        {isLoading &&
+          <button type='button' onClick={cancelReq} className='fixed right-1 hover:bg-red-700 text-white rounded-md p-1 bg-teal-700'>
+            Cancel
+          </button>}
+        {/* {isCancelled.length !==0 && <>
+          <p ref={message} className='text-gray-800 text-center'>{isCancelled}</p>
+          <button type='button' onClick={disableBar} className='fixed left-1 text-red-600 rounded-xl p-2'>
+            <iconify-icon icon="eva:close-circle-fill" width={33} height={33} />
+          </button>
+        </>} */}
       </section>
 
     </main>

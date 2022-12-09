@@ -2,8 +2,7 @@ import create from 'zustand';
 import axios from 'axios';
 
 axios.defaults.withCredentials = true;
-let cancel;
-console.warn("logging Cancel", cancel);
+let controller;
 
 const initialState = {
     user: {},
@@ -12,36 +11,57 @@ const initialState = {
     error: {},
     info: {},
     errActive: false,
+    errSource: "",
+    isCancelled: "",
     userData: {},
     userToken: "",
     refreshToken: ""
 };
 
+//20 seconds timeout set
 const API = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
-    cancelToken: new axios.CancelToken((c) => cancel = c)
+    timeout: 1000 * 20
 });
 
 // const secureAPI = axios.create({
 //     baseURL: process.env.REACT_APP_API_URL,
 //     headers: {
-//         authorization: `Bearer ${sessionTokens?.userToken}`
+//         authorization: `Bearer ${"sessionTokens?.userToken"}`
 //     }
 // });
 
-const fetchData = async (url) => {
-    const { data } = await API.get(url);
-    return data;
+const fetchData = async (request) => {
+    try {
+        const { data } = await request;
+        return data;
+    } catch (error) {
+        // console.error("Catched Error", error);
+        return error;
+    };
 };
 
 const useAuthService = create((set, get) => ({
     ...initialState,
-
+    hideError: () => {
+        set((state) => ({
+            ...state,
+            errActive: false
+        }));
+        return;
+    },
+    cancelReq: () => {
+        console.log("Cancel Req called from hook,Prinitng controller: ", controller);
+        controller?.abort("User Cancelled Request using hook");
+        set(state => ({ ...state, isLoading: false, isCancelled: "Request Cancelled !" }));
+        return;
+    },
     login: async (loginData) => {
         console.log("data Loading");
-        set(state => ({ ...state, isLoading: true, info: {} }));
+        set(state => ({ ...state, isLoading: true, info: {}, errActive: false, isCancelled: "" }));
+        controller = new AbortController();
         try {
-            const { data, headers } = await API.post('/auth/login', loginData);
+            const { data, headers } = await API.post('/auth/login', loginData, { signal: controller.signal });
             const { user_token } = headers;
             console.log("logging data", data, "<<<DATA || HEADERS >>>", user_token);
 
@@ -59,6 +79,7 @@ const useAuthService = create((set, get) => ({
             console.warn(error);
             set((state) => ({
                 ...state,
+                errSource:"login",
                 error: { ...error?.response?.data ?? error },
                 isLoading: false,
                 errActive: true,
@@ -69,7 +90,7 @@ const useAuthService = create((set, get) => ({
         };
     },
     logout: async () => {
-
+        // Case
     },
     updateSession: async (tokens) => {
         try {
@@ -100,7 +121,7 @@ const useAuthService = create((set, get) => ({
         };
     },
     register: async (signupData) => {
-        set(state => ({ ...state, isLoading: true, info: {} }));
+        set(state => ({ ...state, isLoading: true, info: {}, errActive: false, isCancelled: "" }));
         try {
             const { data, headers } = await API.post('/auth/register', signupData);
             const { user_token } = headers;
@@ -120,6 +141,7 @@ const useAuthService = create((set, get) => ({
             console.warn(error);
             set((state) => ({
                 ...state,
+                errSource:"signup",
                 error: { ...error?.response?.data ?? error },
                 isLoading: false,
                 errActive: true,
@@ -129,11 +151,12 @@ const useAuthService = create((set, get) => ({
             return error;
         };
     },
-    generateOtp: async (data) => {
-        const { email } = data;
-        set(state => ({ ...state, isLoading: true, info: {}, userData: data }));
-        try {
-            const { data } = await API.post('/auth/otpAuth', { email });
+    generateOtp: async (formData) => {
+        const { email } = formData;
+        set(state => ({ ...state, isLoading: true, info: {}, userData: formData }));
+
+        const data = await fetchData(API.post('/auth/otpAuth', { email }));
+        if (data?.success) {
             set((state) => ({
                 ...state,
                 info: data,
@@ -141,10 +164,12 @@ const useAuthService = create((set, get) => ({
                 errActive: false
             }));
             return data;
-        } catch (error) {
+        } else {
+            let error = data;
             console.warn(error);
             set((state) => ({
                 ...state,
+                errSource:"signup",
                 error: { ...error?.response?.data ?? error },
                 isLoading: false,
                 errActive: true,
@@ -156,9 +181,14 @@ const useAuthService = create((set, get) => ({
     },
     validateOtp: async ({ otp }) => {
         console.warn("Verifying Entered OTP:", otp);
-        set(state => ({ ...state, isLoading: true, info: {} }));
-        try {
-            const { data } = await API.post('/auth/otpAuth/otpVerify', { otp }, { withCredentials: true });
+        set(state => ({ ...state, isLoading: true, info: {}, errActive: false, isCancelled: "" }));
+
+        controller = new AbortController();
+        const data = await fetchData(API.post('/auth/otpAuth/otpVerify', { otp }, {
+            withCredentials: true, signal: controller.signal
+        }));
+
+        if (data?.success) {
             set((state) => ({
                 ...state,
                 info: data,
@@ -166,10 +196,12 @@ const useAuthService = create((set, get) => ({
                 errActive: false
             }));
             return data;
-        } catch (error) {
+        } else {
+            let error = data;
             console.warn(error);
             set((state) => ({
                 ...state,
+                errSource:"verify",
                 error: { ...error?.response?.data ?? error },
                 isLoading: false,
                 errActive: true,
