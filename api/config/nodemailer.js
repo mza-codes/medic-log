@@ -1,6 +1,5 @@
 require("dotenv").config();
 const nodemailer = require("nodemailer");
-const asyncHandler = require("../middlewares/asyncHandler");
 const { log } = require("../utils/logger");
 
 const sender = process.env.NODEMAILER;
@@ -13,6 +12,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// disabled while testing  
 transporter.verify((err, success) => {
     if (err) { log.error("Error Connecting Mailer", err); process.exit(0); }
     else {
