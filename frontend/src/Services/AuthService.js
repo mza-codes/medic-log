@@ -132,14 +132,16 @@ const useAuthService = create((set, get) => ({
                 isLoading: false,
                 info: {},
                 errActive: true,
-                errSource:"verify",
+                errSource: "verify",
                 error: { message: "No UserData Found,Please Try Signing Up Again !" },
                 isCancelled: ""
             }));
             return false;
         };
         try {
-            const { data, headers } = await API.post('/auth/register', signupData, { signal: controller.signal });
+            const { data, headers } = await API.post('/auth/register', signupData, {
+                signal: controller.signal, withCredentials: true
+            });
             const { user_token } = headers;
             console.log("logging data", data, "<<<DATA || HEADERS >>>", user_token);
 
@@ -215,7 +217,7 @@ const useAuthService = create((set, get) => ({
                     ...state,
                     isLoading: false,
                     info: data,
-                    errSource:"verify",
+                    errSource: "verify",
                     errActive: true,
                     error: { message: "No UserData Found,Please Try Signing Up Again !" },
                     isCancelled: ""

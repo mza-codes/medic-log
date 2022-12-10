@@ -5,6 +5,7 @@ const asyncHandler = require('../middlewares/asyncHandler');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 let { refreshTokens, userTokens } = require('../session/tokens');
+const { verifiedCookie } = require('./twoFactorAuth');
 
 
 exports.createAccessToken = ({ _id }) => {
@@ -33,7 +34,11 @@ exports.createAuth = asyncHandler(async (req, res, next) => {
 
     const token = this.createAccessToken(other);
     const refreshToken = this.createRefreshToken(other);
-
+    // clear verified cookies
+    res.clearCookie(verifiedCookie);
+    req.cookies[verifiedCookie] = "";
+    // add native cookies for better management
+    
     res.setHeader('user_token', token);
     return res.status(200).json({ success: true, user: other, refreshToken: refreshToken });
 });
