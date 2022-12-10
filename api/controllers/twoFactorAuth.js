@@ -9,8 +9,9 @@ const { generate } = require("../utils/otpGenerator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const otpCookie = "OTP_Session";
+const verifiedCookie = "isVerified";
 
-exports.otpAuth = asyncHandler(async (req, res, next) => {
+const otpAuth = asyncHandler(async (req, res, next) => {
     const email = req.body.email;
     if (!email) return res.status(406).json({ success: false, message: 'Invalid Email' });
 
@@ -44,7 +45,7 @@ exports.otpAuth = asyncHandler(async (req, res, next) => {
     return res.status(200).json({ success: true, message: `OTP has Successfully sent to ${email}` });
 });
 
-exports.otpVerify = asyncHandler(async (req, res, next) => {
+const otpVerify = asyncHandler(async (req, res, next) => {
     const otp = req.body?.otp;
     if (!otp) return res.status(406).json({ success: false, message: 'Invalid OTP' });
     const cookie = req.headers.cookie;
@@ -69,7 +70,7 @@ exports.otpVerify = asyncHandler(async (req, res, next) => {
     return res.status(401).json({ success: false, message: "Incorrect OTP" });
 });
 
-exports.otpVerifyV2 = asyncHandler(async (req, res, next) => {
+const otpVerifyV2 = asyncHandler(async (req, res, next) => {
     const otp = req.body?.otp;
     if (!otp) return res.status(406).json({ success: false, message: 'Invalid OTP' });
 
@@ -82,9 +83,43 @@ exports.otpVerifyV2 = asyncHandler(async (req, res, next) => {
 
     const status = await bcrypt.compare(String(otp), otpData.value);
     if (status === true) {
+        // clear previous cookies
         res.clearCookie(otpCookie);
         req.cookies[otpCookie] = "";
+
+        // issues new token for re verification
+        const newToken = jwt.sign({ otpId: data.otpId }, process.env.JWT_KEY, { expiresIn: "4m" });
+        await Otp.findByIdAndUpdate(otpData._id, { verified: true });
+        log.info("OTP Updated to verified");
+        res.cookie(String(verifiedCookie), newToken, {
+            path: "/",
+            expiry: new Date(Date.now() + (1000 * 60) * 4),
+            httpOnly: true,
+            sameSite: "lax"
+        });
         return res.status(200).json({ success: true, message: "OTP Verification Success" });
     };
     return res.status(401).json({ success: false, message: "Incorrect OTP" });
 });
+
+const verifySession = asyncHandler(async (req, res, next) => {
+    log.warn("Verifiying USER Session 2FA");
+    const token = req.cookies[verifiedCookie];
+    if (!token) return res.status(401).json({ success: false, message: 'Unable to verify user session,Invalid Token/No Cookies Found' });
+
+    let data = jwt.verify(token, process.env.JWT_KEY);
+    const otpData = await Otp.findOne({ _id: data.otpId });
+    if (!otpData) return res.status(500).json({ succes: false, message: "No OTP Verified Information found!" });
+
+    log.warn("Status of OTP Verified", otpData?.verified);
+    if (!otpData?.verified) return res.status(401).json({ success: false, message: "OTP not verified,Please try again!" });
+
+    if (token && otpData?.verified) {
+        log.info("Session OK, Proceed to Register");
+        next();
+        return;
+    };
+    return res.status(500).json({ success: false, message: "OTP Re Verification Error !" });
+});
+
+module.exports = { verifySession, otpVerifyV2, otpAuth, verifiedCookie };
