@@ -4,19 +4,21 @@ const User = require('../models/User');
 const asyncHandler = require('../middlewares/asyncHandler');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-let { refreshTokens, userTokens } = require('../session/tokens');
+let { refreshTokens, userTokens} = require('../session/tokens');
 const { verifiedCookie } = require('./twoFactorAuth');
 
 
 exports.createAccessToken = ({ _id }) => {
     const newToken = jwt.sign({ userId: _id }, process.env.JWT_KEY ?? "m$auth", { expiresIn: "5m" });
     userTokens.push(newToken);
+    // cacheData("sessionToken", userTokens);
     return newToken;
 };
 
 exports.createRefreshToken = ({ _id }) => {
     const newToken = jwt.sign({ userId: _id }, process.env.JWT_REFRESH_KEY ?? "m$authRefresh", { expiresIn: "1d" });
     refreshTokens.push(newToken);
+    // cacheData("sessionToken", refreshTokens);
     return newToken;
 };
 
@@ -38,7 +40,7 @@ exports.createAuth = asyncHandler(async (req, res, next) => {
     res.clearCookie(verifiedCookie);
     req.cookies[verifiedCookie] = "";
     // add native cookies for better management
-    
+
     res.setHeader('user_token', token);
     return res.status(200).json({ success: true, user: other, refreshToken: refreshToken });
 });
