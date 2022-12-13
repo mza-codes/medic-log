@@ -13,4 +13,4 @@ const Loader = ({ inline }) => {
     );
 };
 
-export default Loader
+export default Loader;
