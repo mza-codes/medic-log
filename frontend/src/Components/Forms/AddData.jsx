@@ -1,12 +1,8 @@
 import { Form, Formik } from "formik";
-import { lazy, Suspense } from "react";
 import styled from 'styled-components';
 import * as Yup from 'yup';
 import CustomField from "../Input/CustomField";
 import Loader from "../Loader/Loader";
-// import RTF from "./RichTextEditor";
-
-const RTF = lazy(() => import("./RichTextEditor"));
 
 const Stack = styled.div`
     display: flex;
@@ -49,13 +45,14 @@ const AddData = () => {
         "lastCheckup": ""
     };
 
+    console.count("AddData rendered");
     return (
         <Formik
             initialValues={initialValues}
             validationSchema={formSchema}
             onSubmit={handleSubmit} >
             {props => (
-                <Form className="flex flex-col items-center justify-center text-center gap-3 p-4">
+                <Form className="flex flex-col items-center justify-center gap-3 p-4">
                     <Stack>
                         <CustomField placeholder="Enter Name" type="text" label="Name" name="name" />
                         <CustomField placeholder="Enter Age" type="number" label="Age" name="age" />
@@ -64,10 +61,6 @@ const AddData = () => {
                         <CustomField placeholder="Enter City" type="text" label="City" name="city" />
                         <CustomField label="Checkup Date" name="lastCheckup" placeholder="Enter Checkup Date" type="datetime-local" />
                     </Stack>
-
-                    <Suspense fallback={<Loader />}>
-                        <RTF />
-                    </Suspense>
 
                     <Stack>
                         <button type="button" onClick={e => handleCancel(props.resetForm)} title="Reset Form"

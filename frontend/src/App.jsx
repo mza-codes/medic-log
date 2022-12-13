@@ -3,7 +3,10 @@ import { HashRouter } from 'react-router-dom';
 import Header from './Components/Header';
 import Router from './router';
 import { Suspense } from 'react';
+import { atom } from 'jotai';
 import Loader from './Components/Loader/Loader';
+
+export const docAtom = atom("<h1>Wow This is nice</h1>");
 
 const App = () => {
 
