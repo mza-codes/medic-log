@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const errorHandler = require('./middlewares/errorHandler');
 const helmet = require('helmet');
 const { log } = require('./utils/logger');
-const { sendEmail } = require('./config/nodemailer');
+const { sendEmail, testConnection } = require('./config/nodemailer');
 const cookieParser = require('cookie-parser');
 const { urlencoded } = require('express');
 
@@ -49,6 +49,7 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     connectDB();
+    testConnection();
     // connectRedis();
     log.info(`Node Server Started On PORT: ${PORT}`);
 });

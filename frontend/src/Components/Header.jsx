@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import useAuthService from "../Services/AuthService"
+import useAuthService from "../Services/AuthService";
 
+// header height : 6vh
 const Header = () => {
     const navigate = useNavigate();
     const { user } = useAuthService();
