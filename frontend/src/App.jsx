@@ -2,6 +2,8 @@ import './index.css';
 import { HashRouter } from 'react-router-dom';
 import Header from './Components/Header';
 import Router from './router';
+import { Suspense } from 'react';
+import Loader from './Components/Loader/Loader';
 
 const App = () => {
 
@@ -10,7 +12,9 @@ const App = () => {
             <HashRouter hashType="hashbang">
                 <Header />
                 {/* Header for all pages */}
-                <Router />
+                <Suspense fallback={<Loader />}>
+                    <Router />
+                </Suspense>
             </HashRouter>
         </>
     );

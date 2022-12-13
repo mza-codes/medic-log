@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
-import bg from '../Assets/bg-small.jpg';
+import { bg } from '../Assets';
 import Loader from '../Components/Loader/Loader';
 import useAuthService from '../Services/AuthService';
 import Verify from './AuthSection/Verify';
