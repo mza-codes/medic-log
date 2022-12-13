@@ -13,10 +13,10 @@ const AddRecord = () => {
                 <h2 className="text-3xl font-semibold text-center my-3">Add Person Data</h2>
                 <AddData />
                 <Suspense fallback={<Loader />}>
-                    <section className="max-w-[100%] p-1">
-                        <center className="text-4xl my-2">Description</center>
-                        <RTF />
-                    </section>
+                        <div className="max-w-[100vw] p-2 flex flex-col items-center justify-center">
+                            <h1 className="text-4xl my-2 text-center">Description</h1>
+                            <RTF className="lg:max-w-[800px]" />
+                        </div>
                 </Suspense>
             </section>
         </main>

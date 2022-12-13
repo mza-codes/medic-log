@@ -9,12 +9,12 @@ import SubScript from '@tiptap/extension-subscript';
 import { docAtom } from '../../App';
 import { useAtom } from 'jotai';
 
-const RTF = () => {
+const RTF = (props) => {
     console.count("RTF rendered");
     const [data, setData] = useAtom(docAtom);
 
     const handleChange = (e) => {
-        console.log("handling changer rtf editor", e.target.value);
+        console.log("handling changer rtf editor",e, e.target.value);
         setData(e.target.value ?? "value");
     };
 
@@ -30,11 +30,11 @@ const RTF = () => {
         ],
         value: data,
         onChange: handleChange,
-        // content: data
+        content: data
     });
 
     return (
-        <RichTextEditor editor={editor}>
+        <RichTextEditor editor={editor} {...props}>
             <RichTextEditor.Toolbar sticky stickyOffset={60}>
                 <RichTextEditor.ControlsGroup>
                     <RichTextEditor.Bold />

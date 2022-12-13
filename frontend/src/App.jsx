@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 import { atom } from 'jotai';
 import Loader from './Components/Loader/Loader';
 
-export const docAtom = atom("<h1>Wow This is nice</h1>");
+export const docAtom = atom("<h4>Enter Something Here !</h4>");
 
 const App = () => {
 
