@@ -11,7 +11,7 @@ const jwt = require("jsonwebtoken");
 const otpCookie = "OTP_Session";
 const verifiedCookie = "isVerified";
 
-const otpAuth = asyncHandler(async (req, res, next) => {
+exports.otpAuth = asyncHandler(async (req, res, next) => {
     const email = req.body.email;
     if (!email) return res.status(406).json({ success: false, message: 'Invalid Email' });
 
@@ -45,7 +45,7 @@ const otpAuth = asyncHandler(async (req, res, next) => {
     return res.status(200).json({ success: true, message: `OTP has Successfully sent to ${email}` });
 });
 
-const otpVerify = asyncHandler(async (req, res, next) => {
+exports.otpVerify = asyncHandler(async (req, res, next) => {
     const otp = req.body?.otp;
     if (!otp) return res.status(406).json({ success: false, message: 'Invalid OTP' });
     const cookie = req.headers.cookie;
@@ -70,7 +70,7 @@ const otpVerify = asyncHandler(async (req, res, next) => {
     return res.status(401).json({ success: false, message: "Incorrect OTP" });
 });
 
-const otpVerifyV2 = asyncHandler(async (req, res, next) => {
+exports.otpVerifyV2 = asyncHandler(async (req, res, next) => {
     const otp = req.body?.otp;
     if (!otp) return res.status(406).json({ success: false, message: 'Invalid OTP' });
 
@@ -102,7 +102,7 @@ const otpVerifyV2 = asyncHandler(async (req, res, next) => {
     return res.status(401).json({ success: false, message: "Incorrect OTP" });
 });
 
-const verifySession = asyncHandler(async (req, res, next) => {
+exports.verifySession = asyncHandler(async (req, res, next) => {
     log.warn("Verifiying USER Session 2FA");
     const token = req.cookies[verifiedCookie];
     if (!token) return res.status(401).json({ success: false, message: 'Unable to verify user session,Invalid Token/No Cookies Found' });
@@ -119,7 +119,8 @@ const verifySession = asyncHandler(async (req, res, next) => {
         next();
         return;
     };
-    return res.status(500).json({ success: false, message: "OTP Re Verification Error !" });
+    return res.status(500).json({ success: false, message: "OTP ReVerification Error !" });
 });
 
-module.exports = { verifySession, otpVerifyV2, otpAuth, verifiedCookie };
+// module.exports = { verifySession, otpVerifyV2, otpAuth, verifiedCookie };
+exports.verifiedCookie = verifiedCookie;

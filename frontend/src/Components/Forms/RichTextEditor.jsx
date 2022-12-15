@@ -19,10 +19,10 @@ const RTFViewWrapper = styled.div`
     max-width: inherit;
 `;
 
-const RTF = (props) => {
+const RTF = () => {
     console.count("RTF rendered");
     const [data, setData] = useAtom(docAtom);
-    const setDocument = hooker("setDocument",useApiService);
+    const setDocument = hooker("setDocument", useApiService);
 
     const handleChange = (html, json) => {
         console.log(html);
@@ -31,7 +31,7 @@ const RTF = (props) => {
     };
 
     const handleConfirm = () => {
-        console.log("HANDLING CONFIRM",data.length); // 136
+        console.log("HANDLING CONFIRM", data.length); // 136
         setDocument(data);
         return true;
     };
@@ -44,7 +44,7 @@ const RTF = (props) => {
             Superscript,
             SubScript,
             Highlight,
-            TextAlign.configure({ types: ['heading', 'paragraph','list'] }),
+            TextAlign.configure({ types: ['heading', 'paragraph', 'list'] }),
         ],
         onUpdate({ editor }) {
             handleChange(editor.getHTML(), editor.getJSON());
@@ -59,7 +59,7 @@ const RTF = (props) => {
 
     return (
         <>
-            <RichTextEditor editor={editor} {...props}>
+            <RichTextEditor editor={editor} className="lg:max-w-[800px] relative rtfEditor" >
                 <RichTextEditor.Toolbar sticky stickyOffset={60}>
                     <RichTextEditor.ControlsGroup>
                         <RichTextEditor.Bold />
@@ -101,6 +101,10 @@ const RTF = (props) => {
                 </RichTextEditor.Toolbar>
 
                 <RichTextEditor.Content />
+                <button type='button' onClick={handleConfirm}
+                    className='bg-teal-400 my-2 hover:bg-teal-500 p-2 absolute -top-14 right-0'>
+                    Confirm
+                </button>
             </RichTextEditor>
 
             <RTFViewWrapper>
@@ -110,7 +114,7 @@ const RTF = (props) => {
                 </RTFDoc>
             </RTFViewWrapper>
 
-            <button type='button' onClick={handleConfirm} className='bg-teal-400 my-2 hover:bg-teal-500 p-2'>Confirm</button>
+
         </>
     );
 };

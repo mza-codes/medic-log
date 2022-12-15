@@ -1,9 +1,9 @@
 import useAuthService from "../Services/AuthService";
-
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
     const { user } = useAuthService();
-    console.log("%cLogging USER","color:cyan", user);
+    console.log("%cLogging USER", "color:cyan", user);
 
     return (
         <main className="w-full h-[94vh] bg-teal-100 p-2">
@@ -24,6 +24,7 @@ const Dashboard = () => {
                     <br />
                     Pending Cases: 18
                 </div>
+                <Link to='/add-record' className="bg-teal-100 text-slate-800 hover:bg-emerald-200">Add Patient Data</Link>
             </section>
         </main>
     )

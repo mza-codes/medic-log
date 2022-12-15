@@ -1,8 +1,9 @@
 import { Form, Formik } from "formik";
+import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import * as Yup from 'yup';
 import { hooker } from "../../Assets";
-import useApiService from "../../Services/APIService";
+import useApiService, { controller } from "../../Services/APIService";
 import CustomField from "../Input/CustomField";
 import Loader from "../Loader/Loader";
 
@@ -17,8 +18,11 @@ const Stack = styled.div`
 `;
 
 const AddDataForm = () => {
+    const navigate = useNavigate();
     const setPayload = hooker("setPayload", useApiService);
     const error = hooker("error", useApiService);
+    const isLoading = hooker("isLoading", useApiService);
+    const handleSubmission = hooker("handleSubmission", useApiService);
 
     const RequiredMsg = "Required Field !";
     const formSchema = Yup.object().shape({
@@ -28,18 +32,24 @@ const AddDataForm = () => {
         lastCheckup: Yup.date().required(RequiredMsg).max(new Date(), "Invalid Date !"),
     });
 
-    const handleSubmit = (values, actions) => {
-        console.log("Handling Submit", values);
-        setPayload(values);
-        setTimeout(() => {
-            actions.setSubmitting(false);
-            return true;
-        }, 6000);
+    const handleSubmit = async (values, actions) => {
+        console.log("Handling Submit", actions);
+        const isValid = await setPayload(values);
+        if (isValid) {
+            const status = await handleSubmission();
+            if (status) {
+                actions?.resetForm();
+                return navigate('/');
+            };
+        };
+        actions.setSubmitting(false);
+        return isValid;
     };
 
     const clearForm = (clearData) => {
-        // Add Request aborter here 
+        // Add Request aborter here
         clearData();
+        controller?.abort("User Cancelled");
         return true;
     };
 
@@ -73,13 +83,13 @@ const AddDataForm = () => {
                             <iconify-icon icon="pajamas:clear-all" width="auto" height="auto" />
                         </button>
 
-                        <button type="submit" title="Submit Form" disabled={!props.isValid || props.isSubmitting}
+                        <button type="submit" title="Submit Form" disabled={!props.isValid || props.isSubmitting || isLoading}
                             className="bg-teal-700 hover:bg-teal-400 p-2 text-white rounded-md disabled:bg-slate-600">
-                            {props.isSubmitting ? "Loading" : "Submit"}
+                            {(props.isSubmitting || isLoading) ? "Loading" : "Submit"}
                         </button>
                     </Stack>
-                    {props.isSubmitting && <Loader inline={1} />}
-                    {error?.active && <p className="text-red-500">{error?.message}</p>}
+                    {(props.isSubmitting || isLoading) && <Loader inline={1} />}
+                    {error?.active && <p className="text-red-500">{error?.message || error?.code}</p>}
                 </Form>
             )}
         </Formik>

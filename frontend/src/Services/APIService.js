@@ -1,6 +1,8 @@
 import create from 'zustand';
+import { API } from '../Assets';
 
-let controller;
+export let controller;
+
 const initialState = {
     data: {
         document: ""
@@ -9,7 +11,18 @@ const initialState = {
     error: {
         active: false
     },
-    success: false
+    success: false,
+
+};
+
+const fetchData = async (request) => {
+    try {
+        const { data } = await request;
+        return data;
+    } catch (error) {
+        console.error("Catched Error: >", error);
+        return error;
+    };
 };
 
 const useApiService = create((set, get) => ({
@@ -29,6 +42,13 @@ const useApiService = create((set, get) => ({
         }));
         return true;
     },
+    setLoading: (boolean = false) => {
+        set((state) => ({
+            ...state,
+            isLoading: boolean,
+        }));
+        return true;
+    },
     handleError: (err) => {
         if (!err) return false;
         set((state) => ({
@@ -37,7 +57,8 @@ const useApiService = create((set, get) => ({
                 active: true,
                 ...err
             },
-            success: false
+            success: false,
+            isLoading: false
         }));
         return true;
     },
@@ -51,7 +72,7 @@ const useApiService = create((set, get) => ({
         }));
         return true;
     },
-    setPayload: (data) => {
+    setPayload: async (data) => {
         const doc = get().data.document;
         if (!data || !doc) {
             console.log("NO Data Found Doc: ", doc, "data: ", data);
@@ -66,10 +87,35 @@ const useApiService = create((set, get) => ({
                 ...data
             }
         }));
+        return true;
     },
-    handleSubmission: () => {
-        // case
+    handleSubmission: async () => {
+        // @route /api/v1/app/add-data
         controller = new AbortController();
+        const signal = controller.signal;
+        const handleError = get().handleError;
+        const setLoading = get().setLoading;
+        const payload = get().data;
+        if (!payload) {
+            handleError({ active: true, message: "No Data Found, Please ReSubmit Form !" })
+            return false;
+        };
+        setLoading(true);
+        const data = await fetchData(API.post('/app/add-data', { ...payload }, { withCredentials: true, signal }));
+        console.log("FETCHED DATA", data);
+
+        if (data?.code) {
+            handleError(data?.response?.data ?? data);
+            return false;
+        };
+        if (data?.success) {
+            set((s) => ({ ...s, success: true, isLoading: false }));
+            return data?.success ?? true;
+        } else {
+            handleError({ message: "Unknown Error Occurred,Please Contact Vendor!" });
+            console.log("FIX THIS IN APISERVICE.JS, data.code && data.success shows falsy values");
+            return false;
+        };
     },
 }));
 

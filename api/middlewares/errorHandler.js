@@ -19,6 +19,7 @@ const errorHandler = (err, req, res, next) => {
     };
 
     if (err.message === "ValidationError") {
+        log.error("Validation Error",err);
         const message = Object.values(err.errors).map(error => error.message).join(', ');
         err = new ErrorResponse(message, 400);
     };
@@ -27,7 +28,7 @@ const errorHandler = (err, req, res, next) => {
 
     return res.status(err.statusCode || 500).json({
         success: false,
-        error: error.message || 'Server Error'
+        message: error.message || 'Server Error'
     });
 };
 

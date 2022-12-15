@@ -1,7 +1,8 @@
 import create from 'zustand';
 import axios from 'axios';
+import { API } from '../Assets';
 
-axios.defaults.withCredentials = true;
+// axios.defaults.withCredentials = true;
 let controller;
 
 const initialState = {
@@ -17,12 +18,6 @@ const initialState = {
     userToken: "",
     refreshToken: ""
 };
-
-//30 seconds timeout set
-const API = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
-    timeout: 1000 * 30
-});
 
 // const secureAPI = axios.create({
 //     baseURL: process.env.REACT_APP_API_URL,

@@ -17,7 +17,7 @@ const AddRecord = () => {
                 <Suspense fallback={<Loader />}>
                         <div className="max-w-[100vw] p-2 flex flex-col items-center justify-center">
                             <h1 className="text-4xl my-2 text-center">Add Patient Log</h1>
-                            <RTF className="lg:max-w-[800px] rtfEditor" />
+                            <RTF />
                         </div>
                 </Suspense>
             </section>
