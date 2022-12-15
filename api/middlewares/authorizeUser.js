@@ -2,20 +2,36 @@ require('dotenv').config();
 
 const asyncHandler = require("./asyncHandler");
 const jwt = require("jsonwebtoken");
-const { createAccessToken, createRefreshToken } = require('../controllers/authControllers');
+const { createAccessToken, createRefreshToken, userCookie } = require('../controllers/authControllers');
 let { refreshTokens, userTokens } = require('../session/tokens');
+const { log } = require('../utils/logger');
 
 exports.checkAuthorization = asyncHandler(async (req, res, next) => {
     console.log("Checking Authorization");
     const token = req.headers?.authorization?.split(" ")[1];
 
     if (!token || !userTokens.includes(token)) {
-        return res.status(401).json({ success: false, message: "User token depreceated or not found" });
+        return res.status(401).json({ success: false, message: "User token depreceated or not found !" });
     };
 
     let data = jwt.verify(token, process.env.JWT_KEY ?? "m$auth");
     req.userId = data.userId;
     req.userToken = token;
+    next();
+});
+
+exports.checkCookie = asyncHandler(async (req, res, next) => {
+    console.log("Checking Authorization Via Cookie");
+    const token = req?.cookies[userCookie];
+
+    if (!token || !userTokens.includes(token)) {
+        return res.status(401).json({ success: false, message: "User token depreceated or not found,Please Login !" });
+    };
+
+    let data = jwt.verify(token, process.env.JWT_KEY ?? "m$auth");
+    req.userId = data.userId;
+    req.userToken = token;
+    log.info("COOKIE VERIFIED", req.userId);
     next();
 });
 

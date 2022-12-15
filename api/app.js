@@ -6,9 +6,11 @@ const mongoose = require('mongoose');
 const errorHandler = require('./middlewares/errorHandler');
 const helmet = require('helmet');
 const { log } = require('./utils/logger');
-const { sendEmail, testConnection } = require('./config/nodemailer');
+const { testConnection } = require('./config/nodemailer');
 const cookieParser = require('cookie-parser');
 const { urlencoded } = require('express');
+const addRecords = require('./routes/addRecords');
+const authRoute = require('./routes/auth');
 
 // Database Connection
 const connectDB = async () => {
@@ -41,7 +43,8 @@ app.use(express.json());
 app.use(helmet());
 
 // Routes
-app.use('/api/v1/auth', require('./routes/auth'));
+app.use('/api/v1/auth', authRoute);
+app.use('/api/v1/app', addRecords);
 
 // Error Handler
 app.use(errorHandler);
@@ -49,7 +52,7 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     connectDB();
-    testConnection();
+    // testConnection();
     // connectRedis();
     log.info(`Node Server Started On PORT: ${PORT}`);
 });

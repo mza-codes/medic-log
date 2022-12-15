@@ -4,9 +4,10 @@ const User = require('../models/User');
 const asyncHandler = require('../middlewares/asyncHandler');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-let { refreshTokens, userTokens} = require('../session/tokens');
+let { refreshTokens, userTokens } = require('../session/tokens');
 const { verifiedCookie } = require('./twoFactorAuth');
 
+const userCookie = "_ga_medic_log_sess";
 
 exports.createAccessToken = ({ _id }) => {
     const newToken = jwt.sign({ userId: _id }, process.env.JWT_KEY ?? "m$auth", { expiresIn: "5m" });
@@ -42,6 +43,13 @@ exports.createAuth = asyncHandler(async (req, res, next) => {
     // add native cookies for better management
 
     res.setHeader('user_token', token);
+    // Sending Cookie
+    res.cookie(String(userCookie), token, {
+        path: "/",
+        expiry: new Date(Date.now() + (1000 * 60) * 4),
+        httpOnly: true,
+        sameSite: "lax"
+    });
     return res.status(200).json({ success: true, user: other, refreshToken: refreshToken });
 });
 
@@ -61,6 +69,13 @@ exports.auth = asyncHandler(async (req, res, next) => {
         const refreshToken = this.createRefreshToken(other);
         res.setHeader('user_token', token);
 
+        // Sending cookie
+        res.cookie(String(userCookie), token, {
+            path: "/",
+            expiry: new Date(Date.now() + (1000 * 60) * 4),
+            httpOnly: true,
+            sameSite: "lax"
+        });
         return res.status(200).json({ success: true, user: other, refreshToken: refreshToken });
     } else {
         return res.status(401).json({ success: false, message: 'Incorrect Password' });
@@ -86,3 +101,5 @@ exports.removeAuth = asyncHandler(async (req, res, next) => {
     console.log("req.id", req.userId);
     return res.status(200).json('removeAuth delete route');
 });
+
+exports.userCookie =  userCookie;

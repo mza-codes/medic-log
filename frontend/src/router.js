@@ -8,18 +8,17 @@ const AddRecord = lazy(() => import('./Pages/AddRecord'));
 
 const Router = () => {
 
-    const user = useAuthService(state => state.user);
+    const userActive = useAuthService(state => state.active);
+    // const user = useAuthService(state => state.user);
 
     const ProtectedRoute = ({ children }) => {
-        if (user) return children;
-        else return children;
-        // return <Navigate to="/login" />;
+        if (userActive) return children;
+        else return <Navigate to="/login" />;
     };
 
     const AuthRoute = ({ children }) => {
-        if (user) return children;
-        else return children;
-        // return <Navigate to="/login" />;
+        if (!userActive) return children;
+        else return <Navigate to="/dashboard" />;
     };
 
     return useRoutes([

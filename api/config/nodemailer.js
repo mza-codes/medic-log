@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // disabled while testing  
-const testConnection = () => {
+exports.testConnection = () => {
     transporter.verify((err, success) => {
         if (err) { log.error("Error Connecting Mailer", err); process.exit(0); }
         if (success) {
@@ -35,7 +35,7 @@ const testConnection = () => {
 //     html: "<b>Hello world?</b>", // html body
 // };
 
-const sendEmail = async (to, subject, body) => {
+exports.sendEmail = async (to, subject, body) => {
 
     try {
         const mail = {
@@ -54,4 +54,5 @@ const sendEmail = async (to, subject, body) => {
     };
 };
 
-module.exports = { transporter, sendEmail, testConnection };
+// module.exports = { transporter, sendEmail, testConnection };
+exports.transporter = transporter;
