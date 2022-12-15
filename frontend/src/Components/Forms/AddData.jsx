@@ -1,6 +1,8 @@
 import { Form, Formik } from "formik";
+import { useAtom } from "jotai";
 import styled from 'styled-components';
 import * as Yup from 'yup';
+import { docAtom } from "../../App";
 import CustomField from "../Input/CustomField";
 import Loader from "../Loader/Loader";
 
@@ -16,6 +18,7 @@ const Stack = styled.div`
 
 const AddData = () => {
 
+    const [data] = useAtom(docAtom);
     const RequiredMsg = "Required Field !";
     const formSchema = Yup.object().shape({
         name: Yup.string().required(RequiredMsg).min(3).max(34),
@@ -25,7 +28,7 @@ const AddData = () => {
     });
 
     const handleSubmit = (values, actions) => {
-        console.log("Handling Submit", values);
+        console.log("Handling Submit", values,data);
         setTimeout(() => {
             actions.setSubmitting(false);
             return true;
