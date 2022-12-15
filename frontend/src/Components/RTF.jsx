@@ -11,10 +11,12 @@ export const RTFDoc = styled.section`
     background: linear-gradient(to right, #d9f1f1,#cefae9);
     border: 3px solid #4e4e4e;
     /* background-color: ${mainBg}; */
+    position: relative;
     color:${black};
     padding: ${defPadding};
     max-width: 900px;
-    min-width: 800px;
+    /* min-width: 800px; */ // taken care by tailwind class
+    /* font-family: 'Kanit', monospace; */
     border-radius: 6px;
     min-height: 250px;
     display: flex;

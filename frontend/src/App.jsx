@@ -7,7 +7,8 @@ import { atom } from 'jotai';
 import Loader from './Components/Loader/Loader';
 import { RTFTemplate } from './Assets';
 
-export const docAtom = atom(RTFTemplate);
+export const docAtom = atom({ doc: RTFTemplate, avatar: null });
+export const avatarAtom = atom(null);
 
 const App = () => {
 

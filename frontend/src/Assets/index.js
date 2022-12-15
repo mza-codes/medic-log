@@ -1,8 +1,11 @@
 import axios from 'axios';
 import background from './bg-small.jpg';
+import avatar from './avatar.jpg';
+
 axios.defaults.withCredentials = true;
 
 export const bg = background;
+export const defaultAvatar = avatar;
 
 export const hooker = (field, hook) => {
     return hook((state) => state[field]);
