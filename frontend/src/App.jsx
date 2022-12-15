@@ -8,6 +8,7 @@ import Loader from './Components/Loader/Loader';
 import { RTFTemplate } from './Assets';
 
 export const docAtom = atom({ doc: RTFTemplate, avatar: null });
+export const avatarAtom = atom(null);
 
 const App = () => {
 
