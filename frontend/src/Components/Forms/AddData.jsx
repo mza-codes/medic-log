@@ -1,8 +1,8 @@
 import { Form, Formik } from "formik";
-import { useAtom } from "jotai";
 import styled from 'styled-components';
 import * as Yup from 'yup';
-import { docAtom } from "../../App";
+import { hooker } from "../../Assets";
+import useApiService from "../../Services/APIService";
 import CustomField from "../Input/CustomField";
 import Loader from "../Loader/Loader";
 
@@ -16,9 +16,10 @@ const Stack = styled.div`
     gap: 0.5rem;
 `;
 
-const AddData = () => {
+const AddDataForm = () => {
+    const setPayload = hooker("setPayload", useApiService);
+    const error = hooker("error", useApiService);
 
-    const [data] = useAtom(docAtom);
     const RequiredMsg = "Required Field !";
     const formSchema = Yup.object().shape({
         name: Yup.string().required(RequiredMsg).min(3).max(34),
@@ -28,16 +29,17 @@ const AddData = () => {
     });
 
     const handleSubmit = (values, actions) => {
-        console.log("Handling Submit", values,data);
+        console.log("Handling Submit", values);
+        setPayload(values);
         setTimeout(() => {
             actions.setSubmitting(false);
             return true;
         }, 6000);
     };
 
-    const handleCancel = (clearForm) => {
+    const clearForm = (clearData) => {
         // Add Request aborter here 
-        clearForm();
+        clearData();
         return true;
     };
 
@@ -48,7 +50,7 @@ const AddData = () => {
         "lastCheckup": ""
     };
 
-    console.count("AddData rendered");
+    console.count("AddData Formik rendered");
     return (
         <Formik
             initialValues={initialValues}
@@ -66,7 +68,7 @@ const AddData = () => {
                     </Stack>
 
                     <Stack>
-                        <button type="button" onClick={e => handleCancel(props.resetForm)} title="Reset Form"
+                        <button type="button" onClick={e => clearForm(props.resetForm)} title="Reset Form"
                             className="bg-rose-400 hover:bg-rose-700 text-white rounded-md p-1">
                             <iconify-icon icon="pajamas:clear-all" width="auto" height="auto" />
                         </button>
@@ -77,13 +79,14 @@ const AddData = () => {
                         </button>
                     </Stack>
                     {props.isSubmitting && <Loader inline={1} />}
+                    {error?.active && <p className="text-red-500">{error?.message}</p>}
                 </Form>
             )}
         </Formik>
     );
 };
 
-export default AddData;
+export default AddDataForm;
 
 // const pattern = /(^[A-Za-z]{3,16})([ ]{0,1})([A-Za-z]{3,16})?([ ]{0,1})?([A-Za-z]{3,16})?([ ]{0,1})?([A-Za-z]{3,16})/; 
 // fullname validation using regex use if necessary, do test before deploy // 

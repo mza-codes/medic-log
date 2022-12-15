@@ -13,7 +13,13 @@ const Router = () => {
     const ProtectedRoute = ({ children }) => {
         if (user) return children;
         else return children;
-        // <Navigate to="/login" />;
+        // return <Navigate to="/login" />;
+    };
+
+    const AuthRoute = ({ children }) => {
+        if (user) return children;
+        else return children;
+        // return <Navigate to="/login" />;
     };
 
     return useRoutes([
@@ -23,21 +29,21 @@ const Router = () => {
         },
         {
             path: "/login",
-            element: <ProtectedRoute>
+            element: <AuthRoute>
                 <AuthPage login={1} />
-            </ProtectedRoute>
+            </AuthRoute>
         },
         {
             path: "/signup",
-            element: <ProtectedRoute>
+            element: <AuthRoute>
                 <AuthPage signup={1} />
-            </ProtectedRoute>
+            </AuthRoute>
         },
         {
             path: "/verify",
-            element: <ProtectedRoute>
+            element: <AuthRoute>
                 <AuthPage verify={1} />
-            </ProtectedRoute>
+            </AuthRoute>
         },
         {
             path: "/dashboard",

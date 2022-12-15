@@ -10,58 +10,29 @@ import { docAtom } from '../../App';
 import { useAtom } from 'jotai';
 import styled from 'styled-components';
 import parse from 'html-react-parser';
+import { hooker } from '../../Assets';
+import useApiService from '../../Services/APIService';
+import { RTFDoc } from '../RTF';
 
 const RTFViewWrapper = styled.div`
     width: inherit;
     max-width: inherit;
 `;
-// 249ea0,008083,005f60
-const RTFDoc = styled.section`
-    /* background: linear-gradient(to right, #8ccbcc,#40adaf); */
-    background-color: #d9f1f1;
-    color:#000;
-    padding: 0.5rem;
-    max-width: 100vw;
-    border-radius: 4px;
-    min-width: 90vw;
-    
-    h1 {
-        font-size: 4.0rem;
-        font-weight: bolder;
-    }
-    h2 {
-        font-size: 3.5rem;
-        font-weight: bolder;
-    }
-    h3 {
-        font-size: 3.0rem;
-        font-weight: bolder;
-    }
-    h4 {
-        font-size: 2.5rem;
-        font-weight: bolder;
-    }
-    h5 {
-        font-size: 2.0rem;
-        font-weight: bolder;
-    }
-    h6 {
-        font-size: 1.5rem;
-        font-weight: bolder;
-    }
-    ul{
-        list-style: disc;
-    }
-`
 
 const RTF = (props) => {
     console.count("RTF rendered");
     const [data, setData] = useAtom(docAtom);
+    const setDocument = hooker("setDocument",useApiService);
 
     const handleChange = (html, json) => {
-        console.log("handling changer rtf editor", data);
         console.log(html);
         setData(html);
+        return true;
+    };
+
+    const handleConfirm = () => {
+        console.log("HANDLING CONFIRM",data.length); // 136
+        setDocument(data);
         return true;
     };
 
@@ -73,7 +44,7 @@ const RTF = (props) => {
             Superscript,
             SubScript,
             Highlight,
-            TextAlign.configure({ types: ['heading', 'paragraph'] }),
+            TextAlign.configure({ types: ['heading', 'paragraph','list'] }),
         ],
         onUpdate({ editor }) {
             handleChange(editor.getHTML(), editor.getJSON());
@@ -88,7 +59,7 @@ const RTF = (props) => {
 
     return (
         <>
-            <RichTextEditor editor={editor} {...props} editable={false}>
+            <RichTextEditor editor={editor} {...props}>
                 <RichTextEditor.Toolbar sticky stickyOffset={60}>
                     <RichTextEditor.ControlsGroup>
                         <RichTextEditor.Bold />
@@ -133,11 +104,13 @@ const RTF = (props) => {
             </RichTextEditor>
 
             <RTFViewWrapper>
-                <h1 className="text-4xl my-2 text-center">View Patient Log</h1>
-                <RTFDoc className="">
+                <h1 className="text-3xl my-4 text-center">View Patient Log</h1>
+                <RTFDoc>
                     {parse(data)}
                 </RTFDoc>
             </RTFViewWrapper>
+
+            <button type='button' onClick={handleConfirm} className='bg-teal-400 my-2 hover:bg-teal-500 p-2'>Confirm</button>
         </>
     );
 };

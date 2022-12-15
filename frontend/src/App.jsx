@@ -5,8 +5,9 @@ import Router from './router';
 import { Suspense } from 'react';
 import { atom } from 'jotai';
 import Loader from './Components/Loader/Loader';
+import { RTFTemplate } from './Assets';
 
-export const docAtom = atom("<h4>Patient Description goes here !</h4>");
+export const docAtom = atom(RTFTemplate);
 
 const App = () => {
 
