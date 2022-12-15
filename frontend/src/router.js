@@ -12,13 +12,15 @@ const Router = () => {
     // const user = useAuthService(state => state.user);
 
     const ProtectedRoute = ({ children }) => {
-        if (userActive) return children;
-        else return <Navigate to="/login" />;
+        // if (userActive) return children;
+        // else return <Navigate to="/login" />;
+        return children;
     };
 
     const AuthRoute = ({ children }) => {
-        if (!userActive) return children;
-        else return <Navigate to="/dashboard" />;
+        // if (!userActive) return children;
+        // else return <Navigate to="/dashboard" />;
+        return children;
     };
 
     return useRoutes([

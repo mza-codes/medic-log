@@ -13,6 +13,7 @@ import parse from 'html-react-parser';
 import { hooker } from '../../Assets';
 import useApiService from '../../Services/APIService';
 import { RTFDoc } from '../RTF';
+import AvatarSection from './AvatarSection';
 
 const RTFViewWrapper = styled.div`
     width: inherit;
@@ -25,14 +26,13 @@ const RTF = () => {
     const setDocument = hooker("setDocument", useApiService);
 
     const handleChange = (html, json) => {
-        console.log(html);
-        setData(html);
+        setData((curr) => ({ ...curr, doc: html }));
         return true;
     };
 
     const handleConfirm = () => {
         console.log("HANDLING CONFIRM", data.length); // 136
-        setDocument(data);
+        setDocument(data.doc);
         return true;
     };
 
@@ -54,7 +54,7 @@ const RTF = () => {
                 tag: 'node-view',
             }]
         },
-        content: data
+        content: data.doc
     });
 
     return (
@@ -110,8 +110,10 @@ const RTF = () => {
             <RTFViewWrapper>
                 <h1 className="text-3xl my-4 text-center">View Patient Log</h1>
                 <RTFDoc>
-                    {parse(data)}
+                    {parse(data.doc)}
+                    <AvatarSection />
                 </RTFDoc>
+
             </RTFViewWrapper>
 
 

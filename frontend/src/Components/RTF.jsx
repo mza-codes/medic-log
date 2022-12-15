@@ -11,6 +11,7 @@ export const RTFDoc = styled.section`
     background: linear-gradient(to right, #d9f1f1,#cefae9);
     border: 3px solid #4e4e4e;
     /* background-color: ${mainBg}; */
+    position: relative;
     color:${black};
     padding: ${defPadding};
     max-width: 900px;
