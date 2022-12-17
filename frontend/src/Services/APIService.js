@@ -97,7 +97,7 @@ const useApiService = create((set, get) => ({
         const setLoading = get().setLoading;
         const payload = get().data;
         if (!payload) {
-            handleError({ active: true, message: "No Data Found, Please ReSubmit Form !" })
+            handleError({ active: true, message: "No Data Found, Please ReSubmit Form !" });
             return false;
         };
         setLoading(true);
@@ -111,7 +111,7 @@ const useApiService = create((set, get) => ({
         if (data?.success) {
             set((s) => ({ ...s, success: true, isLoading: false }));
             return data?.success ?? true;
-        } else {
+        } else { // failure prevention
             handleError({ message: "Unknown Error Occurred,Please Contact Vendor!" });
             console.log("FIX THIS IN APISERVICE.JS, data.code && data.success shows falsy values");
             return false;

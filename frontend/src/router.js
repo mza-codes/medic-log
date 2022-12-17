@@ -2,6 +2,7 @@ import { lazy } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 import useAuthService from './Services/AuthService';
 
+const LandingPage = lazy(() => import('./Pages/LandingPage'));
 const Dashboard = lazy(() => import('./Pages/Dashboard'));
 const AuthPage = lazy(() => import('./Pages/AuthPage'));
 const AddRecord = lazy(() => import('./Pages/AddRecord'));
@@ -9,24 +10,23 @@ const AddRecord = lazy(() => import('./Pages/AddRecord'));
 const Router = () => {
 
     const userActive = useAuthService(state => state.active);
-    // const user = useAuthService(state => state.user);
 
     const ProtectedRoute = ({ children }) => {
-        // if (userActive) return children;
-        // else return <Navigate to="/login" />;
-        return children;
+        if (userActive) return children;
+        else return <Navigate to="/login" />;
+        // return children;
     };
 
     const AuthRoute = ({ children }) => {
-        // if (!userActive) return children;
-        // else return <Navigate to="/dashboard" />;
-        return children;
+        if (!userActive) return children;
+        else return <Navigate to="/dashboard" />;
+        // return children;
     };
 
     return useRoutes([
         {
             path: "/",
-            element: <Navigate to="/login" />
+            element: <LandingPage />
         },
         {
             path: "/login",

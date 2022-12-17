@@ -30,6 +30,12 @@ exports.checkCookie = asyncHandler(async (req, res, next) => {
 
     let data = jwt.verify(token, process.env.JWT_KEY ?? "m$auth");
     req.userId = data.userId;
+    if (!data.userId) {
+        return res.status(500).json({
+            success: false, 
+            message: `UserID not found in Token, Received ID:${req.userId}, Please Contact Vendor!`
+        });
+    };
     req.userToken = token;
     log.info("COOKIE VERIFIED", req.userId);
     next();
