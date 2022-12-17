@@ -84,7 +84,22 @@ body {
     }
 }
 
-/* Veridy.jsx Input Field */
+/* App.jsx */
+.errorBar{
+    visibility: hidden;
+}
+
+/* ErrorBar */
+.hoverEffects{
+    transition: all 900ms ease;
+    opacity: 0;
+    cursor: default;
+}
+.hoverEffects:hover{
+    opacity: 1.0;
+}
+
+/* Verify.jsx Input Field */
 #otpField{
     text-align: center;
     letter-spacing: 1.2rem;

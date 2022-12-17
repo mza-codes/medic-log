@@ -1,5 +1,4 @@
 import create from 'zustand';
-import axios from 'axios';
 import { API } from '../Assets';
 
 // axios.defaults.withCredentials = true;
@@ -16,7 +15,8 @@ const initialState = {
     isCancelled: "",
     userData: {},
     userToken: "",
-    refreshToken: ""
+    refreshToken: "",
+    serverConnected: false
 };
 
 // const secureAPI = axios.create({
@@ -85,6 +85,46 @@ const useAuthService = create((set, get) => ({
     },
     logout: async () => {
         // Case
+    },
+    setUser: (userData) => {
+        if (!userData) return false;
+        set((s) => ({
+            ...s,
+            user: userData,
+            active: true
+        }));
+        return true;
+    },
+    setLoading: (action = true) => {
+        set((s) => ({
+            ...s, isLoading: action,
+        }));
+        return true;
+    },
+    verifySession: async (signal, errMsg) => {
+        console.warn("Fetching Session ie verifiy session");
+        const setUser = get().setUser;
+        const setLoading = get().setLoading;
+
+        setLoading(true);
+        await API.get('/auth/verifyUser', {
+            withCredentials: true, signal
+        }).then((res) => {
+            setLoading(false);
+            console.log("Verifyuser returned success", res);
+            setUser(res?.data?.user);
+            return set((s) => ({ ...s, serverConnected: true }));
+        }).catch((err) => {
+            setLoading(false);
+            if (err.code === "ECONNABORTED") {
+                console.warn("Timeout");
+                errMsg.current.style.visibility = "visible";
+                return set((s) => ({ ...s, serverConnected: false }));
+            };
+            console.log("error Veriffying user: ", err);
+            return set((s) => ({ ...s, serverConnected: true }));
+        });
+        return;
     },
     updateSession: async (tokens) => {
         try {

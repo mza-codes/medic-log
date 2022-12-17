@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 let { refreshTokens, userTokens } = require('../session/tokens');
 const { verifiedCookie } = require('./twoFactorAuth');
+const { log } = require('../utils/logger');
 
 const userCookie = "_ga_medic_log_sess";
 
@@ -82,6 +83,18 @@ exports.auth = asyncHandler(async (req, res, next) => {
     };
 });
 
+exports.provideUser = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.userId, "-password");
+    if (!user) {
+        return res.status(500).json({
+            success: false,
+            message: `User with ID: ${req.userId} not Found in Database,Please Contact Vendor!`
+        });
+    };
+    return res.status(200).json({ success: true, user: user });
+});
+
+// Under Development
 exports.logout = asyncHandler(async (req, res, next) => {
     console.log("Logout User");
     const currentRefreshToken = req.body.refreshToken;
@@ -102,4 +115,4 @@ exports.removeAuth = asyncHandler(async (req, res, next) => {
     return res.status(200).json('removeAuth delete route');
 });
 
-exports.userCookie =  userCookie;
+exports.userCookie = userCookie;

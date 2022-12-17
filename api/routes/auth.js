@@ -13,7 +13,9 @@ router.post('/login',authControllers.auth);
 
 router.post('/logout', jwtAuth.checkAuthorization, authControllers.logout);
 router.post('/refresh-token', jwtAuth.refreshToken);
+router.get('/verifyUser', jwtAuth.checkCookie, authControllers.provideUser);
 
+// test routes !!
 router.get('/test2', jwtAuth.checkAuthorization, authControllers.updateAuth);
 
 router.get('/test', authControllers.updateAuth);
