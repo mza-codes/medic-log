@@ -24,7 +24,10 @@ const Dashboard = () => {
                     <br />
                     Pending Cases: 18
                 </div>
-                <Link to='/add-record' className="bg-teal-100 text-slate-800 hover:bg-emerald-200">Add Patient Data</Link>
+                <br />
+                <Link to='/add-record' className="bg-teal-200 text-slate-800 hover:bg-teal-400 p-2 rounded-lg ">
+                    Add Patient Data
+                </Link>
             </section>
         </main>
     )

@@ -1,5 +1,6 @@
 import create from 'zustand';
-import { API } from '../Assets';
+import { SecureAPI } from '../Assets';
+import { fetchData } from './AuthService';
 
 export let controller;
 
@@ -15,15 +16,15 @@ const initialState = {
 
 };
 
-const fetchData = async (request) => {
-    try {
-        const { data } = await request;
-        return data;
-    } catch (error) {
-        console.error("Catched Error: >", error);
-        return error;
-    };
-};
+// const fetchData = async (request) => {
+//     try {
+//         const { data } = await request;
+//         return data;
+//     } catch (error) {
+//         console.error("Catched Error: >", error);
+//         return error;
+//     };
+// };
 
 const useApiService = create((set, get) => ({
     ...initialState,
@@ -101,7 +102,7 @@ const useApiService = create((set, get) => ({
             return false;
         };
         setLoading(true);
-        const data = await fetchData(API.post('/app/add-data', { ...payload }, { withCredentials: true, signal }));
+        const data = await fetchData(SecureAPI.post('/app/add-data', { ...payload }, { withCredentials: true, signal }));
         console.log("FETCHED DATA", data);
 
         if (data?.code) {

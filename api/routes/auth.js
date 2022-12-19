@@ -1,7 +1,7 @@
-const express = require('express');
+// const express = require('express');
+const router = require('express').Router();
 const authControllers = require('../controllers/authControllers');
 const { otpAuth, otpVerifyV2, verifySession } = require('../controllers/twoFactorAuth');
-const router = express.Router();
 const jwtAuth = require('../middlewares/authorizeUser');
 
 // @route - /api/v1/auth/
@@ -12,7 +12,11 @@ router.post('/register', verifySession, authControllers.createAuth);
 router.post('/login',authControllers.auth);
 
 router.post('/logout', jwtAuth.checkAuthorization, authControllers.logout);
-router.post('/refresh-token', jwtAuth.refreshToken);
+router.post('/refresh-token', jwtAuth.provideRefreshToken);
+
+// @isToken Expired (check if request is valid)
+router.get('/is-valid', jwtAuth.checkValidity);
+// @get current user via cookie
 router.get('/verifyUser', jwtAuth.checkCookie, authControllers.provideUser);
 
 // test routes !!
