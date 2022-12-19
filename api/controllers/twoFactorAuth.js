@@ -36,7 +36,7 @@ exports.otpAuth = asyncHandler(async (req, res, next) => {
     };
     res.cookie(String(otpCookie), token, {
         path: "/",
-        expiry: new Date(Date.now() + (1000 * 60) * 5),
+        expires: new Date(Date.now() + (1000 * 60) * 5),
         httpOnly: true,
         sameSite: "lax"
     });
@@ -93,7 +93,7 @@ exports.otpVerifyV2 = asyncHandler(async (req, res, next) => {
         log.info("OTP Updated to verified");
         res.cookie(String(verifiedCookie), newToken, {
             path: "/",
-            expiry: new Date(Date.now() + (1000 * 60) * 4),
+            expires: new Date(Date.now() + (1000 * 60) * 4),
             httpOnly: true,
             sameSite: "lax"
         });

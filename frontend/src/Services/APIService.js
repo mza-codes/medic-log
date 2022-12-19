@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { API } from '../Assets';
+import { SecureAPI } from '../Assets';
 import { fetchData } from './AuthService';
 
 export let controller;
@@ -102,7 +102,7 @@ const useApiService = create((set, get) => ({
             return false;
         };
         setLoading(true);
-        const data = await fetchData(API.post('/app/add-data', { ...payload }, { withCredentials: true, signal }));
+        const data = await fetchData(SecureAPI.post('/app/add-data', { ...payload }, { withCredentials: true, signal }));
         console.log("FETCHED DATA", data);
 
         if (data?.code) {

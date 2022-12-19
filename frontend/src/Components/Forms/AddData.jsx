@@ -2,7 +2,7 @@ import { Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import * as Yup from 'yup';
-import { hooker } from "../../Assets";
+import {  hooker } from "../../Assets";
 import useApiService, { controller } from "../../Services/APIService";
 import CustomField from "../Input/CustomField";
 import Loader from "../Loader/Loader";
@@ -89,7 +89,7 @@ const AddDataForm = () => {
                         </button>
                     </Stack>
                     {(props.isSubmitting || isLoading) && <Loader inline={1} />}
-                    {error?.active && <p className="text-red-500">{error?.message || error?.code}</p>}
+                    {error?.active && <p className="text-red-500 text-center max-w-[600px]">{error?.message || error?.code}</p>}
                 </Form>
             )}
         </Formik>
