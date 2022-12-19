@@ -26,12 +26,15 @@ const initialState = {
 //     }
 // });
 
-const fetchData = async (request) => {
+export const fetchData = async (request) => {
     try {
         const { data } = await request;
         return data;
     } catch (error) {
         // console.error("Catched Error", error);
+        if (error?.response?.data?.message === "jwt expired") {
+            error.response.data.message = "Session Expired,Please Login!";
+        };
         return error;
     };
 };

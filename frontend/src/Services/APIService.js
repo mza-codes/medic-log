@@ -1,5 +1,6 @@
 import create from 'zustand';
 import { API } from '../Assets';
+import { fetchData } from './AuthService';
 
 export let controller;
 
@@ -15,15 +16,15 @@ const initialState = {
 
 };
 
-const fetchData = async (request) => {
-    try {
-        const { data } = await request;
-        return data;
-    } catch (error) {
-        console.error("Catched Error: >", error);
-        return error;
-    };
-};
+// const fetchData = async (request) => {
+//     try {
+//         const { data } = await request;
+//         return data;
+//     } catch (error) {
+//         console.error("Catched Error: >", error);
+//         return error;
+//     };
+// };
 
 const useApiService = create((set, get) => ({
     ...initialState,

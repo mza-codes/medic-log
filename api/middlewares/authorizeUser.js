@@ -41,7 +41,7 @@ exports.checkCookie = asyncHandler(async (req, res, next) => {
     next();
 });
 
-exports.refreshToken = asyncHandler(async (req, res) => {
+exports.provideRefreshToken = asyncHandler(async (req, res) => {
     console.log("Refreshing token");
     const currentToken = req.body?.refreshToken;
     const currentUserToken = req.body?.userToken;

@@ -12,7 +12,7 @@ router.post('/register', verifySession, authControllers.createAuth);
 router.post('/login',authControllers.auth);
 
 router.post('/logout', jwtAuth.checkAuthorization, authControllers.logout);
-router.post('/refresh-token', jwtAuth.refreshToken);
+router.post('/refresh-token', jwtAuth.provideRefreshToken);
 router.get('/verifyUser', jwtAuth.checkCookie, authControllers.provideUser);
 
 // test routes !!
