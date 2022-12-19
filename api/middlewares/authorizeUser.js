@@ -1,12 +1,12 @@
 require('dotenv').config();
 const asyncHandler = require("./asyncHandler");
 const jwt = require("jsonwebtoken");
-const { createAccessToken, createRefreshToken, userCookie, cookieConfig } = require('../controllers/authControllers');
+const { createAccessToken, createRefreshToken, userCookie, cookieConfig, refreshCookie } = require('../controllers/authControllers');
 let { refreshTokens, userTokens } = require('../session/tokens');
 const { log } = require('../utils/logger');
 
 const handleTokenStorage = (removeToken, addToken, storageArray) => {
-    if (!removeToken || !addToken) return false;
+    if (!removeToken || !addToken || !storageArray) return false;
 
     storageArray = storageArray.filter((item) => item !== removeToken);
     storageArray.push(addToken);
@@ -68,7 +68,7 @@ exports.provideRefreshToken = asyncHandler(async (req, res) => {
     };
 
     let data = jwt.verify(currentToken, process.env.JWT_REFRESH_KEY);
-    const { newUserToken, newRefreshToken } = tokenGenerator({ _id: data?.userId });
+    const { newUserToken, newRefreshToken } = tokenGenerator({ userId: data?.userId });
     // const newRefreshToken = createRefreshToken({ _id: data?.userId });
 
     handleTokenStorage(currentToken, newRefreshToken, refreshTokens);
@@ -88,9 +88,21 @@ exports.provideRefreshToken = asyncHandler(async (req, res) => {
 exports.checkValidity = async (req, res) => {
     log.warn("Checking Validity Via Cookie");
     const token = req?.cookies[userCookie];
-    if (!token || !userTokens.includes(token)) {
+    const refreshToken = req.cookies[refreshCookie];
+    if (!token || !refreshToken ||
+        !refreshTokens.includes(refreshToken) ||
+        !userTokens.includes(token)
+    ) {
         return res.status(401).json({ success: false, message: "User token depreceated or not found,Please Login !" });
     };
+
+    let refreshValue;
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY, (err, payload) => {
+        if (err) {
+            return res.status(401).json({ success: false, message: "Refresh Token Expired,Please Login Again!" });
+        };
+        refreshValue = payload;
+    });
 
     try {
         const data = jwt.verify(token, process.env.JWT_KEY);
@@ -99,14 +111,22 @@ exports.checkValidity = async (req, res) => {
 
     } catch (err) {
         if (err.name === "TokenExpiredError") {
-            
-            const data = jwt.verify(token, process.env.JWT_KEY, { ignoreExpiration: true });
-            const { newUserToken } = tokenGenerator({ _id: data?.userId });
 
-            // handleTokenStorage(currentToken, newRefreshToken, refreshTokens);
+            // const data = jwt.verify(token, process.env.JWT_KEY, { ignoreExpiration: true });
+            const data = jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY);
+            const { newUserToken, newRefreshToken } = tokenGenerator({ userId: data?.userId });
+
+            handleTokenStorage(refreshToken, newRefreshToken, refreshTokens);
             handleTokenStorage(token, newUserToken, userTokens);
 
-            res.cookie(String(userCookie), newUserToken, cookieConfig);
+            res.cookie(String(userCookie), newUserToken, {
+                ...cookieConfig,
+                expires: new Date(Date.now() + (1000 * 60) * 14)
+            });
+            res.cookie(String(refreshCookie), newRefreshToken, {
+                ...cookieConfig,
+                expires: new Date(Date.now() + (1000 * 60) * 14)
+            });
             return res.status(200).json({ success: true, message: "User Session Refreshed" });
         };
         log.error("Request CheckValidity Error >", err);

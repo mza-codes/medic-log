@@ -9,29 +9,30 @@ const { verifiedCookie } = require('./twoFactorAuth');
 const { log } = require('../utils/logger');
 
 const userCookie = "_ga_medic_log_sess";
+const refreshCookie = `_ga_medic_log_refresh`;
 const cookieOptions = {
     path: "/",
-    expires: new Date(Date.now() + (1000 * 60) * 8),
+    expires: new Date(Date.now() + (1000 * 60) * 12),
     // expiry:
     httpOnly: true,
     sameSite: "lax"
 };
 
-exports.createAccessToken = ({ _id }) => {
-    const newToken = jwt.sign({ userId: _id }, process.env.JWT_KEY ?? "m$auth", { expiresIn: "3m" });
+exports.createAccessToken = (data) => {
+    const newToken = jwt.sign(data, process.env.JWT_KEY, { expiresIn: "1m" });
     userTokens.push(newToken);
     // cacheData("sessionToken", userTokens);
     return newToken;
 };
 
-exports.createRefreshToken = ({ _id }) => {
-    const newToken = jwt.sign({ userId: _id }, process.env.JWT_REFRESH_KEY ?? "m$authRefresh", { expiresIn: "1d" });
+exports.createRefreshToken = (data) => {
+    const newToken = jwt.sign(data, process.env.JWT_REFRESH_KEY, { expiresIn: "1d" });
     refreshTokens.push(newToken);
     // cacheData("sessionToken", refreshTokens);
     return newToken;
 };
 
-exports.createAuth = asyncHandler(async (req, res, next) => {
+exports.createAuth = asyncHandler(async (req, res) => {
     const duplicateUser = await User.findOne({ email: req.body.email });
 
     if (duplicateUser || duplicateUser !== null) {
@@ -43,22 +44,23 @@ exports.createAuth = asyncHandler(async (req, res, next) => {
     const newUser = await User.create(req.body);
     const { password, ...other } = newUser._doc; // _doc is specified to get the actual JSON data
 
-    const token = this.createAccessToken(other);
-    const refreshToken = this.createRefreshToken(other);
+    const token = this.createAccessToken({ userId: other?._id });
+    const refreshToken = this.createRefreshToken({ userId: other?._id });
     // clear verified cookies
     res.clearCookie(verifiedCookie);
     req.cookies[verifiedCookie] = "";
     // add native cookies for better management
-
     res.setHeader('user_token', token);
     // Sending Cookie
-    res.cookie(String(userCookie), token, cookieOptions);
-    // res.cookie(String(userCookie), token, {
-    //     path: "/",
-    //     expiry: new Date(Date.now() + (1000 * 60) * 4),
-    //     httpOnly: true,
-    //     sameSite: "lax"
-    // });
+    res.cookie(String(userCookie), token, {
+        ...cookieOptions,
+        expires: new Date(Date.now() + (1000 * 60) * 12)
+    });
+    res.cookie(String(refreshCookie), refreshToken, {
+        ...cookieOptions,
+        expires: new Date(Date.now() + (1000 * 60) * 12)
+    });
+    log.info("New User Created: ", newUser?.name);
     return res.status(200).json({ success: true, user: other, refreshToken: refreshToken });
 });
 
@@ -73,21 +75,20 @@ exports.auth = asyncHandler(async (req, res, next) => {
     if (stat === true) {
         const { password, ...other } = dbUser._doc; // _doc is specified to get the actual JSON data
 
-        const token = this.createAccessToken(other);
+        const token = this.createAccessToken({ userId: other?._id });
         // Custom caching
-        const refreshToken = this.createRefreshToken(other);
+        const refreshToken = this.createRefreshToken({ userId: other?._id });
         res.setHeader('user_token', token);
-
         // Sending cookie
-        res.cookie(String(userCookie), token, cookieOptions);
-        // res.cookie(String(userCookie), token, {
-        //     path: "/",
-        //     maxAge: new Date(Date.now() + (1000 * 60) * 4),
-        //     // expiry:
-        //     httpOnly: true,
-        //     sameSite: "lax"
-        // });
-        return res.status(200).json({ success: true, user: other, refreshToken: refreshToken });
+        res.cookie(String(userCookie), token, {
+            ...cookieOptions,
+            expires: new Date(Date.now() + (1000 * 60) * 3)
+        });
+        res.cookie(String(refreshCookie), refreshToken, {
+            ...cookieOptions,
+            expires: new Date(Date.now() + (1000 * 60) * 6)
+        });
+        return res.status(200).json({ success: true, user: other });
     } else {
         return res.status(401).json({ success: false, message: 'Incorrect Password' });
     };
@@ -127,3 +128,4 @@ exports.removeAuth = asyncHandler(async (req, res, next) => {
 
 exports.userCookie = userCookie;
 exports.cookieConfig = cookieOptions;
+exports.refreshCookie = refreshCookie;

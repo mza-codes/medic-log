@@ -8,6 +8,7 @@ const { log } = require("../utils/logger");
 const { generate } = require("../utils/otpGenerator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
 const otpCookie = "OTP_Session";
 const verifiedCookie = "isVerified";
 
