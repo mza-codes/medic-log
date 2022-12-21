@@ -93,13 +93,13 @@ exports.checkValidity = async (req, res) => {
         !refreshTokens.includes(refreshToken) ||
         !userTokens.includes(token)
     ) {
-        return res.status(401).json({ success: false, message: "User token depreceated or not found,Please Login !" });
+        return res.status(401).json({ success: false, message: "User session expired or not found,Please Login!" });
     };
 
     let refreshValue;
     jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY, (err, payload) => {
         if (err) {
-            return res.status(401).json({ success: false, message: "Refresh Token Expired,Please Login Again!" });
+            return res.status(401).json({ success: false, message: "Refresh Token Expired,Please Login!" });
         };
         refreshValue = payload;
     });

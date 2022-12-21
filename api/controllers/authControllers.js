@@ -58,7 +58,7 @@ exports.createAuth = asyncHandler(async (req, res) => {
     });
     res.cookie(String(refreshCookie), refreshToken, {
         ...cookieOptions,
-        expires: new Date(Date.now() + (1000 * 60) * 12)
+        // expires: new Date(Date.now() + (1000 * 60) * 12) //  commenting expires default to session cookie
     });
     log.info("New User Created: ", newUser?.name);
     return res.status(200).json({ success: true, user: other, refreshToken: refreshToken });
@@ -86,7 +86,7 @@ exports.auth = asyncHandler(async (req, res, next) => {
         });
         res.cookie(String(refreshCookie), refreshToken, {
             ...cookieOptions,
-            expires: new Date(Date.now() + (1000 * 60) * 6)
+            // expires: new Date(Date.now() + (1000 * 60) * 12) //  commenting expires default to session cookie
         });
         return res.status(200).json({ success: true, user: other });
     } else {
