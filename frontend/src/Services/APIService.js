@@ -13,7 +13,8 @@ const initialState = {
         active: false
     },
     success: false,
-
+    // Records
+    patientRecords: [],
 };
 
 // const fetchData = async (request) => {
@@ -90,7 +91,9 @@ const useApiService = create((set, get) => ({
         }));
         return true;
     },
-    handleSubmission: async () => {
+    handleSubmission: async (update, recordId) => {
+        // if (update === 1) return console.warn("It's an Update");
+        // else return console.warn("I's adding Data");
         // @route /api/v1/app/add-data
         controller = new AbortController();
         const signal = controller.signal;
@@ -102,7 +105,16 @@ const useApiService = create((set, get) => ({
             return false;
         };
         setLoading(true);
-        const data = await fetchData(SecureAPI.post('/app/add-data', { ...payload }, { withCredentials: true, signal }));
+        let data;
+        if (update === 1 && recordId) {
+            data = await fetchData(SecureAPI.put(`/app/update-record/${recordId}`,
+                { ...payload },
+                { withCredentials: true, signal }));
+        } else {
+            data = await fetchData(SecureAPI.post('/app/add-data',
+                { ...payload },
+                { withCredentials: true, signal }));
+        };
         console.log("FETCHED DATA", data);
 
         if (data?.code) {
@@ -117,6 +129,22 @@ const useApiService = create((set, get) => ({
             console.log("FIX THIS IN APISERVICE.JS, data.code && data.success shows falsy values");
             return false;
         };
+    },
+    getRecords: async (signal) => {
+        console.warn("fetching Records");
+        get().setLoading(true);
+        const data = await fetchData(SecureAPI.get('/app/get-all-records', { withCredentials: true, signal }));
+        console.log("getRecords Data", data);
+        if (data?.code) {
+            get().handleError(data?.response?.data ?? data);
+            return false;
+        };
+        set((s) => ({
+            ...s,
+            patientRecords: data?.records ?? [],
+            isLoading: false
+        }));
+        return true;
     },
 }));
 

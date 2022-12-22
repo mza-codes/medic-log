@@ -35,10 +35,18 @@ exports.updateRecord = asyncHandler(async (req, res) => {
     const recordId = req?.params?.id;
     console.log("UpdateRecord Route", data);
     if (!data || !recordId) return res.status(400).json({ success: false, message: "No Data Provided to Update!" });
-    const newData = await Patient.findByIdAndUpdate(recordId, { $push: { lastCheckup: data.lastCheckup }, $addToSet: { ...data } });
+    const newData = await Patient.findByIdAndUpdate(recordId, data, { runValidators: true, new: true });
+    log.error("updated Data", newData);
 
+    return res.status(200).json({ success: true, message: "complete" });
 });
 
-// @ another method
+// @Overrides testing
+exports.getAllRecords = asyncHandler(async (req, res) => {
+    const data = await Patient.find({});
+    return res.status(200).json({ success: true, records: data });
+});
+
+// @ mongoose save alternate method
 // const newData = new Patient(data);
 // newData.save();

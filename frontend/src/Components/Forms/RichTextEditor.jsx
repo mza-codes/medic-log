@@ -11,7 +11,7 @@ import { useAtom } from 'jotai';
 import { hooker } from '../../Assets';
 import useApiService from '../../Services/APIService';
 
-const RTF = () => {
+const RTF = ({ record }) => {
     console.count("RTF rendered");
     const [data, setData] = useAtom(docAtom);
     const setDocument = hooker("setDocument", useApiService);
@@ -44,7 +44,7 @@ const RTF = () => {
                 tag: 'node-view',
             }]
         },
-        content: data.doc
+        content: record ?? data.doc
     });
 
     return (

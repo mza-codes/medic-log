@@ -27,11 +27,15 @@ const LandingPage = () => {
     const isLoading = useAuthService(state => state.isLoading);
     const serverConnected = useAuthService(state => state.serverConnected);
     const errRef = document.querySelector("#errRef");
+    const logoIcon = document.querySelector("#_logo");
 
     useEffect(() => {
         console.log("Router.js >", userActive, isLoading);
 
-        if (!serverConnected && !isLoading) errRef.innerText = contactMsg;
+        if (!serverConnected && !isLoading) {
+            errRef.innerText = contactMsg;
+            logoIcon.style.color = "red";
+        };
         if (userActive && !isLoading && serverConnected) route('/dashboard');
         if (!userActive && !isLoading && serverConnected) route("/login");
     }, [userActive, isLoading, serverConnected]);
@@ -39,7 +43,7 @@ const LandingPage = () => {
     return (
         <Page className="min-h-[94vh]">
             <section className="wrapper flex flex-col items-center justify-center text-center p-2 pb-[20vh]">
-                <Logo />
+                <Logo id="_logo" />
 
                 {isLoading && <Loader inline={1} />}
 
