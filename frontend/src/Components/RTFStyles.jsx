@@ -22,33 +22,34 @@ export const RTFDoc = styled.section`
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+
     
     h1 {
-        font-size: 3.5rem;
-        font-weight: 600;
-    }
-    h2 {
         font-size: 3.0rem;
         font-weight: 600;
     }
-    h3 {
+    h2 {
         font-size: 2.5rem;
+        font-weight: 600;
+    }
+    h3 {
+        font-size: 2.0rem;
         font-weight: 700;
     }
     h4 {
-        font-size: 2.0rem;
+        font-size: 1.5rem;
         font-weight: 500;
     }
     h5 {
-        font-size: 2.0rem;
+        font-size: 1.0rem;
         font-weight: 400;
     }
     h6 {
-        font-size: 1.5rem;
+        font-size: 0.75rem;
         font-weight: 300;
     }
     ul {
-        margin: 0 0 0 2em ;
+        margin: 0 0 0 2rem ;
         list-style: disc;
     }
     blockquote {
@@ -60,5 +61,4 @@ export const RTFDoc = styled.section`
         padding: ${defPadding};
         border-color: #4e4d4d;
     }
-    
 `;

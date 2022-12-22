@@ -2,6 +2,7 @@ NEWDB=mogodburl
 JWT_KEY=key
 JWT_REFRESH_KEY=key
 PORT=optional
+BRAND=brandname for mail
 NODEMAILER=email
 MAILER_PASSWORD=password
 TWILIO_ACCOUNT_SID=account_sid <optional>

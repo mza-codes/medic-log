@@ -6,6 +6,8 @@ const LandingPage = lazy(() => import('./Pages/LandingPage'));
 const Dashboard = lazy(() => import('./Pages/Dashboard'));
 const AuthPage = lazy(() => import('./Pages/AuthPage'));
 const AddRecord = lazy(() => import('./Pages/AddRecord'));
+const ViewRecords = lazy(() => import('./Pages/ViewRecords'));
+const EditRecord = lazy(() => import('./Pages/EditRecord'));
 
 const Router = () => {
 
@@ -56,6 +58,18 @@ const Router = () => {
             path: "/add-record",
             element: <ProtectedRoute>
                 <AddRecord />
+            </ProtectedRoute>
+        },
+        {
+            path: "/view-records",
+            element: <ProtectedRoute>
+                <ViewRecords />
+            </ProtectedRoute>
+        },
+        {
+            path: "/edit-record",
+            element: <ProtectedRoute>
+                <EditRecord />
             </ProtectedRoute>
         },
 

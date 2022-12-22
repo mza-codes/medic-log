@@ -8,6 +8,7 @@ const { log } = require("../utils/logger");
 const { generate } = require("../utils/otpGenerator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
 const otpCookie = "OTP_Session";
 const verifiedCookie = "isVerified";
 
@@ -41,7 +42,7 @@ exports.otpAuth = asyncHandler(async (req, res, next) => {
         sameSite: "lax"
     });
     log.warn(colors.green("Exposing OTP: ", otp));
-    // await sendEmail(email, `OTP Verification from ${process.env.Brand ?? "mza_Node Server"}`, content);
+    // await sendEmail(email, `OTP Verification from ${process.env.BRAND ?? "mza_Node Server"}`, content);
     return res.status(200).json({ success: true, message: `OTP has Successfully sent to ${email}` });
 });
 

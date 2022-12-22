@@ -2,7 +2,7 @@ import { Form, Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import * as Yup from 'yup';
-import {  hooker } from "../../Assets";
+import { hooker } from "../../Assets";
 import useApiService, { controller } from "../../Services/APIService";
 import CustomField from "../Input/CustomField";
 import Loader from "../Loader/Loader";
@@ -17,7 +17,7 @@ const Stack = styled.div`
     gap: 0.5rem;
 `;
 
-const AddDataForm = () => {
+const AddDataForm = ({ data, update }) => {
     const navigate = useNavigate();
     const setPayload = hooker("setPayload", useApiService);
     const error = hooker("error", useApiService);
@@ -33,11 +33,14 @@ const AddDataForm = () => {
     });
 
     const handleSubmit = async (values, actions) => {
-        console.log("Handling Submit", actions);
         const isValid = await setPayload(values);
         if (isValid) {
-            const status = await handleSubmission();
-            if (status) {
+
+            let status;
+            if (update === 1) status = await handleSubmission(update,data?._id);
+            else status = await handleSubmission();
+
+            if (status === true) {
                 actions?.resetForm();
                 return navigate('/');
             };
@@ -54,10 +57,10 @@ const AddDataForm = () => {
     };
 
     const initialValues = {
-        "name": "",
-        "age": "",
-        "city": "",
-        "lastCheckup": ""
+        "name": data?.name ?? "",
+        "age": data?.age ?? "",
+        "city": data?.city ?? "",
+        "lastCheckup": data?.lastCheckup?.[0] ?? ""
     };
 
     console.count("AddData Formik rendered");
