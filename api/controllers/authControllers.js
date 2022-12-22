@@ -19,7 +19,7 @@ const cookieOptions = {
 };
 
 exports.createAccessToken = (data) => {
-    const newToken = jwt.sign(data, process.env.JWT_KEY, { expiresIn: "1m" });
+    const newToken = jwt.sign(data, process.env.JWT_KEY, { expiresIn: "20m" });
     userTokens.push(newToken);
     // cacheData("sessionToken", userTokens);
     return newToken;
@@ -51,13 +51,16 @@ exports.createAuth = asyncHandler(async (req, res) => {
     req.cookies[verifiedCookie] = "";
     // add native cookies for better management
     res.setHeader('user_token', token);
+    const cookieExpiration = new Date(Date.now() + (1000 * 60) * (60 * 24));
+
     // Sending Cookie
     res.cookie(String(userCookie), token, {
         ...cookieOptions,
-        expires: new Date(Date.now() + (1000 * 60) * 12)
+        expires: cookieExpiration
     });
     res.cookie(String(refreshCookie), refreshToken, {
         ...cookieOptions,
+        expires: cookieExpiration
         // expires: new Date(Date.now() + (1000 * 60) * 12) //  commenting expires default to session cookie
     });
     log.info("New User Created: ", newUser?.name);
@@ -79,13 +82,15 @@ exports.auth = asyncHandler(async (req, res, next) => {
         // Custom caching
         const refreshToken = this.createRefreshToken({ userId: other?._id });
         res.setHeader('user_token', token);
+        const cookieExpiration = new Date(Date.now() + (1000 * 60) * (60 * 24));
         // Sending cookie
         res.cookie(String(userCookie), token, {
             ...cookieOptions,
-            expires: new Date(Date.now() + (1000 * 60) * 3)
+            expires: cookieExpiration
         });
         res.cookie(String(refreshCookie), refreshToken, {
             ...cookieOptions,
+            expires: cookieExpiration
             // expires: new Date(Date.now() + (1000 * 60) * 12) //  commenting expires default to session cookie
         });
         return res.status(200).json({ success: true, user: other });
@@ -97,7 +102,7 @@ exports.auth = asyncHandler(async (req, res, next) => {
 exports.provideUser = asyncHandler(async (req, res) => {
     const user = await User.findById(req.userId, "-password");
     if (!user) {
-        return res.status(500).json({
+        return res.status(500).json({ // prevent failure
             success: false,
             message: `User with ID: ${req.userId} not Found in Database,Please Contact Vendor!`
         });
@@ -106,7 +111,7 @@ exports.provideUser = asyncHandler(async (req, res) => {
 });
 
 // Under Development
-exports.logout = asyncHandler(async (req, res, next) => {
+exports.logout = asyncHandler(async (req, res) => {
     console.log("Logout User");
     const currentRefreshToken = req.body.refreshToken;
     refreshTokens = refreshTokens.filter((item) => item !== currentRefreshToken);
@@ -114,13 +119,13 @@ exports.logout = asyncHandler(async (req, res, next) => {
     return res.status(200).json({ success: true, message: "Logout Complete", user: {} });
 });
 
-exports.updateAuth = asyncHandler(async (req, res, next) => {
+exports.updateAuth = asyncHandler(async (req, res) => {
     console.log("REACHED updateAuth");
     console.log("req.id", req.userId);
     return res.status(200).json("Good");
 });
 
-exports.removeAuth = asyncHandler(async (req, res, next) => {
+exports.removeAuth = asyncHandler(async (req, res) => {
     console.log("REACHED removeAuth route");
     console.log("req.id", req.userId);
     return res.status(200).json('removeAuth delete route');

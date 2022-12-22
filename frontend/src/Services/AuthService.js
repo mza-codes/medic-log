@@ -16,7 +16,7 @@ const initialState = {
     userData: {},
     userToken: "",
     refreshToken: "",
-    serverConnected: false
+    serverConnected: false,
 };
 
 // const secureAPI = axios.create({
@@ -59,8 +59,7 @@ const useAuthService = create((set, get) => ({
         set(state => ({ ...state, isLoading: true, info: {}, errActive: false, isCancelled: "" }));
         controller = new AbortController();
         try {
-            const { data, headers } = await API.post('/auth/login', loginData, { signal: controller.signal });
-            const { user_token } = headers;
+            const { data, headers: { user_token } } = await API.post('/auth/login', loginData, { signal: controller.signal });
             console.log("logging data", data, "<<<DATA || HEADERS >>>", user_token);
 
             set(state => ({
@@ -70,7 +69,7 @@ const useAuthService = create((set, get) => ({
                 isLoading: false,
                 errActive: false,
                 userToken: user_token,
-                refreshToken: data.refreshToken
+                refreshToken: data?.refreshToken,
             }));
             return data;
         } catch (error) {
