@@ -6,6 +6,7 @@ const patientSchema = new mongoose.Schema({
     city: { type: String, required: [true, "City is a required field !"], },
     lastCheckup: { type: Array, required: [true, "LastCheckup Date is a required field !"], },
     document: { type: String, required: [true, "Patient Document is a required field !"], },
+    owner: { type: String, required: [true, "Owner ID Required while adding Patient"] }
 
 }, { timestamps: true });
 

@@ -9,8 +9,6 @@ const { log } = require('./utils/logger');
 const { testConnection } = require('./config/nodemailer');
 const cookieParser = require('cookie-parser');
 const { urlencoded } = require('express');
-const addRecords = require('./routes/addRecords');
-const authRoute = require('./routes/auth');
 
 // Database Connection
 const connectDB = async () => {
@@ -43,8 +41,8 @@ app.use(express.json());
 app.use(helmet());
 
 // Routes
-app.use('/api/v1/auth', authRoute);
-app.use('/api/v1/app', addRecords);
+app.use('/api/v1/auth', require('./routes/auth.js'));
+app.use('/api/v1/app', require("./routes/records.js"));
 
 // Error Handler
 app.use(errorHandler);

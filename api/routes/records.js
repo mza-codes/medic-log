@@ -1,4 +1,4 @@
-const { addPatient } = require("../controllers/patientRecords");
+const { addPatient, getPatients, getPatient } = require("../controllers/patientRecords");
 const { checkCookie } = require("../middlewares/authorizeUser");
 
 const router = require("express").Router();
@@ -7,5 +7,8 @@ const router = require("express").Router();
 
 // @route - /api/v1/app 
 router.post('/add-data', checkCookie, addPatient);
+router.get('/get-records', checkCookie, getPatients);
+router.get('/get-record/:id', checkCookie, getPatient);
+router.put('/update-record/:id',checkCookie, )
 
 module.exports = router;
