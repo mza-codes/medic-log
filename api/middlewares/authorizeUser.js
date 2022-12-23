@@ -42,7 +42,6 @@ exports.checkCookie = asyncHandler(async (req, res, next) => {
     };
 
     let data = jwt.verify(token, process.env.JWT_KEY);
-    log.info("Cookie Decoded Data:", data);
     req.userId = data.userId;
     if (!data.userId) {
         // @ Failure prevention
@@ -63,7 +62,6 @@ exports.checkRefreshCookie = asyncHandler(async (req, res, next) => {
         return res.status(401).json({ success: false, message: "User session expired or not found,Please Login !" });
     };
     let data = jwt.verify(token, process.env.JWT_REFRESH_KEY);
-    log.info("RefreshCookie Decoded Data:", data);
     next();
 });
 
