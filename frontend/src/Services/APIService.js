@@ -55,8 +55,8 @@ const useApiService = create((set, get) => ({
         set((s) => ({
             ...s,
             error: {
-                active: bool ?? true,
-                ...s.error
+                ...s.error,
+                active: bool ?? false,
             }
         }))
     },
@@ -65,8 +65,8 @@ const useApiService = create((set, get) => ({
         set((state) => ({
             ...state,
             error: {
+                ...err,
                 active: true,
-                ...err
             },
             success: false,
             isLoading: false
@@ -112,6 +112,10 @@ const useApiService = create((set, get) => ({
         set((s) => ({
             ...s,
             patientRecords: data?.records ?? [],
+            error: {
+                ...s.error,
+                active: !data?.success ?? false,
+            }
         }));
         return true;
     },
@@ -185,6 +189,7 @@ const useApiService = create((set, get) => ({
             return false;
         };
         get().setRecords(data);
+        get().setErrorView(false);
         return data;
     },
 }));

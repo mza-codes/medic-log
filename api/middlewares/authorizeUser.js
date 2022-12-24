@@ -57,7 +57,7 @@ exports.checkCookie = asyncHandler(async (req, res, next) => {
 
 exports.checkRefreshCookie = asyncHandler(async (req, res, next) => {
     const token = req?.cookies?.[refreshCookie];
-    log.warn("Refresh token >>",token);
+    
     if (!token || !refreshTokens.includes(token)) {
         return res.status(401).json({ success: false, message: "User session expired or not found,Please Login !" });
     };

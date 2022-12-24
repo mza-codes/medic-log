@@ -10,6 +10,7 @@ router.post('/otpAuth/otpVerify', otpVerifyV2);
 router.post('/register', verifySession, authControllers.createAuth);
 
 router.post('/login', authControllers.auth);
+router.get('/logout', authControllers.logout);
 
 router.post('/logout', authorizeSession.checkAuthorization, authControllers.logout);
 router.post('/refresh-token', authorizeSession.provideRefreshToken);

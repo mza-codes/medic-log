@@ -34,19 +34,21 @@ const TopBar = () => {
 
     const handleSearch = async () => {
         const query = searchRef?.current?.value;
-        if (query.length < 0) return fetchAllRecords();
-        if (query.length < 2) return;
-
+        if (query.length <= 0) return fetchAllRecords();
         await searchRecords(query);
         return controller?.abort();
     };
 
+    console.log(error);
     console.count("Rendered TopBar.jsx");
     return (
         <>
             <div className="controls flex flex-wrap gap-2 justify-between items-center w-[90%] ">
                 <div className="searchBox relative">
-                    <SearchBox ref={searchRef} placeholder="Search.." />
+                    <SearchBox ref={searchRef} placeholder="Search.."
+                        onKeyPress={e => {
+                            if (e.key === "Enter") return handleSearch();
+                        }} />
                     <IconButton className="absolute right-1 top-2 cursor-pointer"
                         onClick={handleSearch}
                         disabled={isLoading}>

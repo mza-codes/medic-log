@@ -112,10 +112,17 @@ exports.provideUser = asyncHandler(async (req, res) => {
 
 // Under Development
 exports.logout = asyncHandler(async (req, res) => {
-    console.log("Logout User");
-    const currentRefreshToken = req.body.refreshToken;
-    refreshTokens = refreshTokens.filter((item) => item !== currentRefreshToken);
-    userTokens = userTokens.filter((item) => item !== req.userToken);
+    const refreshToken = req.cookies?.[refreshCookie];
+    const accessToken = req?.cookies?.[userCookie];
+
+    res.clearCookie(userCookie);
+    res.clearCookie(refreshCookie);
+    req.cookies[userCookie] = "";
+    req.cookies[refreshCookie] = "";
+
+    refreshTokens = refreshTokens.filter((item) => item !== refreshToken);
+    userTokens = userTokens.filter((item) => item !== accessToken);
+
     return res.status(200).json({ success: true, message: "Logout Complete", user: {} });
 });
 
