@@ -26,6 +26,8 @@
     "html-react-parser": "^3.0.4",
     "jotai": "^1.11.2",
     "jwt-decode": "^3.1.2",
+    "loader-utils":"3.2.1",
+    "nth-check":"^2.0.1",
     "lozad": "^1.16.0",
     "prosemirror-commands": "^1.5.0",
     "prosemirror-dropcursor": "^1.6.1",
