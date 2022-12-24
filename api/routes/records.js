@@ -1,4 +1,4 @@
-const { addPatient, getPatients, getPatient, updateRecord, getAllRecords } = require("../controllers/patientRecords");
+const { addPatient, getPatients, getPatient, updateRecord, getAllRecords, searchRecords } = require("../controllers/patientRecords");
 const { checkCookie } = require("../middlewares/authorizeUser");
 
 const router = require("express").Router();
@@ -9,9 +9,10 @@ const router = require("express").Router();
 router.post('/add-data', checkCookie, addPatient);
 router.get('/get-records', checkCookie, getPatients);
 router.get('/get-record/:id', checkCookie, getPatient);
-router.put('/update-record/:id',checkCookie, updateRecord);
+router.put('/update-record/:id', checkCookie, updateRecord);
+router.get('/search-records/?', checkCookie, searchRecords);
 
 // @Override
-router.get('/get-all-records',checkCookie,getAllRecords);
+router.get('/get-all-records', checkCookie, getAllRecords);
 
 module.exports = router;

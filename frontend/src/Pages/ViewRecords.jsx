@@ -21,7 +21,7 @@ const ViewRecords = () => {
 
     useEffect(() => {
         const controller = new AbortController();
-        // getRecords(controller.signal);
+        getRecords(controller.signal);
         return () => controller.abort();
     }, [getRecords]);
 
