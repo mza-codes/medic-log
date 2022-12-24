@@ -50,6 +50,22 @@ exports.getAllRecords = asyncHandler(async (req, res) => {
     return res.status(200).json({ success: true, records: data });
 });
 
+exports.searchRecords = asyncHandler(async (req, res) => {
+    let { query } = req.query;
+    let records = [];
+    records = await Patient.find({
+        $or: [
+            { name: { $regex: query, $options: "$i" } },
+            { city: { $regex: query, $options: "$i" } },
+            { document: { $regex: query, $options: "$i" } }
+        ]
+    });
+
+    if (records.length <= 0) return res.status(404).json({ success: false, message: `No Results found for Query "${query}"` });
+    log.info("REQUEST COMPLETED !!");
+    res.status(200).json({ success: true, message: `Results for "${query}"`, records });
+});
+
 // @ mongoose save alternate method
 // const newData = new Patient(data);
 // newData.save();

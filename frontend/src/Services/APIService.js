@@ -51,6 +51,15 @@ const useApiService = create((set, get) => ({
         }));
         return true;
     },
+    setErrorView: (bool) => {
+        set((s) => ({
+            ...s,
+            error: {
+                active: bool ?? true,
+                ...s.error
+            }
+        }))
+    },
     handleError: (err) => {
         if (!err) return false;
         set((state) => ({
@@ -77,8 +86,16 @@ const useApiService = create((set, get) => ({
     setPayload: async (data) => {
         const doc = get().data.document;
         if (!data || !doc) {
-            console.log("NO Data Found Doc: ", doc, "data: ", data);
-            !doc && set((s) => ({ ...s, error: { ...s.error, active: true, message: "Patient Document must be filled & Confirmed !" } }));
+            if (!doc) {
+                set((s) => ({
+                    ...s, error: {
+                        ...s.error,
+                        active: true,
+                        message: "Patient Document must be filled & Confirmed !"
+                    }
+                }));
+                return false;
+            };
             return false;
         };
         console.log("Final Payload :", { ...data, doc });
@@ -88,6 +105,13 @@ const useApiService = create((set, get) => ({
                 ...s.data,
                 ...data
             }
+        }));
+        return true;
+    },
+    setRecords: (data) => {
+        set((s) => ({
+            ...s,
+            patientRecords: data?.records ?? [],
         }));
         return true;
     },
@@ -144,7 +168,24 @@ const useApiService = create((set, get) => ({
             patientRecords: data?.records ?? [],
             isLoading: false
         }));
+        get().setErrorView(false);
         return true;
+    },
+    searchRecords: async (query) => {
+        get().setLoading(true);
+        controller = new AbortController();
+        const signal = controller.signal;
+        const data = await fetchData(SecureAPI.get(`/app/search-records/?query=${query}`,
+            { withCredentials: true, signal }
+        ));
+        get().setLoading(false);
+        console.warn("Fetched for Query: ", query, ">>", data);
+        if (data?.code) {
+            get().handleError(data?.response?.data ?? data);
+            return false;
+        };
+        get().setRecords(data);
+        return data;
     },
 }));
 
