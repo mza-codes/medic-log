@@ -19,7 +19,7 @@ const IconButton = styled.button`
     color: #004b4b;
 `;
 
-const TopBar = () => {
+const TopBar = ({ filterButton }) => {
     let controller;
     const searchRef = useRef();
     const searchRecords = useApiService(s => s.searchRecords);
@@ -55,7 +55,7 @@ const TopBar = () => {
                         <Icon icon="material-symbols:manage-search-rounded" w={29} h={29} label="Search" color="inherit" />
                     </IconButton>
                 </div>
-                <button title='Under Progress' type='button'
+                <button title='Under Progress' type='button' onClick={filterButton}
                     className='p-2 font-semibold rounded-lg bg-teal-800 hover:bg-teal-700 text-gray-100'>
                     Filter
                 </button>
