@@ -6,6 +6,7 @@
   "repository": "https://github.com/mza-codes/mern-mFlux.git",
   "author": "muzammil",
   "license": "MIT",
+  "type": "module",
   "private": true,
   "dependencies": {
     "bcrypt": "^5.1.0",

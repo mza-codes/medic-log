@@ -30,6 +30,7 @@ SecureAPI.interceptors.request.use(async (config) => {
         console.warn("using incerceptor !!!");
         const { data } = await API.get('/auth/is-valid', { withCredentials: true });
         console.log("INTERCEPTOR Response: >", data);
+        localStorage.setItem("expiration", data?.expiry);
         return config;
     };
     console.warn("Session Clear: ", (expiration * 1000), "<", new Date().getTime());

@@ -1,9 +1,8 @@
-const { addPatient, getPatients, getPatient, updateRecord, getAllRecords, searchRecords } = require("../controllers/patientRecords");
-const { checkCookie } = require("../middlewares/authorizeUser");
+import express from "express";
+import { addPatient, getPatients, getPatient, updateRecord, getAllRecords, searchRecords } from "../controllers/patientRecords.js";
+import { checkCookie } from "../middlewares/authorizeUser.js";
 
-const router = require("express").Router();
-// const express = require("express");
-// const router = express.Router();
+const router = express.Router();
 
 // @route - /api/v1/app 
 router.post('/add-data', checkCookie, addPatient);
@@ -15,4 +14,4 @@ router.get('/search-records/?', checkCookie, searchRecords);
 // @Override
 router.get('/get-all-records', checkCookie, getAllRecords);
 
-module.exports = router;
+export { router as recordRoutes };

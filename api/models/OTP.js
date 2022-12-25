@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+import mongoose from "mongoose";
 
 const otpSchema = new mongoose.Schema({
     value: { type: String, required: [true, "OTP is a Required Field"] },
@@ -8,4 +8,4 @@ const otpSchema = new mongoose.Schema({
 
 const Otp = mongoose.model('Otp', otpSchema);
 
-module.exports = Otp;
+export default Otp;
