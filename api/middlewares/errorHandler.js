@@ -1,5 +1,5 @@
-const ErrorResponse = require('../utils/errorResponse');
-const { log } = require('../utils/logger');
+import ErrorResponse from '../utils/errorResponse.js';
+import { log } from '../utils/logger.js';
 
 const errorHandler = (err, req, res, next) => {
     log.error('ERROR OCCURED !!!');
@@ -19,7 +19,7 @@ const errorHandler = (err, req, res, next) => {
     };
 
     if (err.message === "ValidationError") {
-        log.error("Validation Error",err);
+        log.error("Validation Error", err);
         const message = Object.values(err.errors).map(error => error.message).join(', ');
         err = new ErrorResponse(message, 400);
     };
@@ -32,4 +32,4 @@ const errorHandler = (err, req, res, next) => {
     });
 };
 
-module.exports = errorHandler;
+export default errorHandler;

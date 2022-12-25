@@ -1,11 +1,11 @@
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 const digits = '0123456789';
 const lowerCaseAlphabets = 'abcdefghijklmnopqrstuvwxyz';
 const upperCaseAlphabets = lowerCaseAlphabets.toUpperCase();
 const specialChars = '#!&@';
 
-module.exports = {
+const otpGenerator = {
     /**
      * Generate OTP of the length
      * @param  {number} length length of password.
@@ -46,5 +46,7 @@ module.exports = {
         return otp;
     }
 };
+
+export default otpGenerator;
 
 // Copied from https://www.npmjs.com/package/otp-generator // Copied for editing & study purpose! Thanks to Contributors !

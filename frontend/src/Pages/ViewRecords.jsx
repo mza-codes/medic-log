@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Loader from "../Components/Loader/Loader";
 import parse from 'html-react-parser';
 import useApiService from "../Services/APIService";
@@ -6,6 +6,7 @@ import Icon from "../Components/Icon";
 import { useNavigate } from "react-router-dom";
 import useLocalState from "../Services/LocalState";
 import TopBar from "../Components/TopBar";
+import Sidebar from "../Components/Sidebar";
 
 const ViewRecords = () => {
     const route = useNavigate();
@@ -13,26 +14,33 @@ const ViewRecords = () => {
     const patientRecords = useApiService(s => s.patientRecords);
     const isLoading = useApiService(s => s.isLoading);
     const setEditData = useLocalState(s => s.setEditData);
+    const sideBarRef = useRef();
 
     const editData = (data) => {
         setEditData(data);
         route('/edit-record');
     };
 
+    const openSideBar = () => {
+        sideBarRef.current.style.visibility = "visible";
+        return;
+    };
+
     useEffect(() => {
         const controller = new AbortController();
-        getRecords(controller.signal);
+        // getRecords(controller.signal);
         return () => controller.abort();
     }, [getRecords]);
 
     console.count("Rendered ViewRecords.jsx");
     return (
         <main className='w-full min-h-[94vh] relative bg-gradient-to-r from-teal-50 via-emerald-100 to-teal-100'>
+            <Sidebar ref={sideBarRef} />
             <section className="w-full py-4 bg-black bg-opacity-5 min-h-[94vh]">
                 <h1 className="text-4xl text-black text-center py-3">Patient Records</h1>
                 {isLoading && <Loader />}
                 <div className="flex flex-wrap items-center justify-center gap-2">
-                    <TopBar />
+                    <TopBar filterButton={openSideBar} />
                     {patientRecords?.map((record) => (
                         <div className="bg-white bg-opacity-40 text-gray-800 hover:bg-opacity-100 flex flex-col gap-2 min-h-[250px]
                             sm:min-h-[200px] relative p-4 font-medium min-w-[90vw] rounded-lg" key={record._id}>

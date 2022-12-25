@@ -1,5 +1,5 @@
 import create from 'zustand';
-import { API } from '../Assets';
+import { API, SecureAPI } from '../Assets';
 
 // axios.defaults.withCredentials = true;
 let controller;
@@ -17,6 +17,11 @@ const initialState = {
     userToken: "",
     refreshToken: "",
     serverConnected: false,
+};
+
+const genSignal = () => {
+    controller = new AbortController();
+    return controller.signal;
 };
 
 // const secureAPI = axios.create({
@@ -48,6 +53,22 @@ const useAuthService = create((set, get) => ({
         }));
         return;
     },
+    setUser: (userData) => {
+        set((s) => ({
+            ...s,
+            user: userData,
+            active: true
+        }));
+        return true;
+    },
+    handleError: (error) => {
+        set((s) => ({
+            ...s,
+            errActive: true,
+            ...error,
+        }));
+        return true;
+    },
     cancelReq: () => {
         console.log("Cancel Req called from hook,Prinitng controller: ", controller);
         controller?.abort("User Cancelled Request using hook");
@@ -61,7 +82,7 @@ const useAuthService = create((set, get) => ({
         try {
             const { data, headers: { user_token } } = await API.post('/auth/login', loginData, { signal: controller.signal });
             console.log("logging data", data, "<<<DATA || HEADERS >>>", user_token);
-
+            localStorage.setItem("expiration", data?.expiry);
             set(state => ({
                 ...state,
                 user: data?.user,
@@ -86,14 +107,13 @@ const useAuthService = create((set, get) => ({
         };
     },
     logout: async () => {
-        // Case
-    },
-    setUser: (userData) => {
-        if (!userData) return false;
+        const signal = genSignal();
+        const data = await fetchData(SecureAPI.get('/auth/logout', { withCredentials: true, signal }));
+        if (data?.code) return get().handleError(data?.response?.data ?? data);
         set((s) => ({
             ...s,
-            user: userData,
-            active: true
+            user: {},
+            active: false
         }));
         return true;
     },
@@ -179,6 +199,7 @@ const useAuthService = create((set, get) => ({
             const { data, headers } = await API.post('/auth/register', signupData, {
                 signal: controller.signal, withCredentials: true
             });
+            localStorage.setItem("expiration", data?.expiry);
             const { user_token } = headers;
             console.log("logging data", data, "<<<DATA || HEADERS >>>", user_token);
 

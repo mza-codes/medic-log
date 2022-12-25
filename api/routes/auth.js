@@ -1,32 +1,48 @@
-// const express = require('express');
-const router = require('express').Router();
-const authControllers = require('../controllers/authControllers');
-const { otpAuth, otpVerifyV2, verifySession } = require('../controllers/twoFactorAuth');
-const authorizeSession = require('../middlewares/authorizeUser');
+import express from 'express';
+import { otpAuth, otpVerifyV2, verifySession } from '../controllers/twoFactorAuth.js';
+import {
+    checkAuthorization,
+    provideRefreshToken,
+    checkValidity,
+    checkCookie,
+    checkRefreshCookie,
+} from '../middlewares/authorizeUser.js';
+
+import {
+    createAuth,
+    auth,
+    logout,
+    provideUser,
+    updateAuth,
+    removeAuth,
+} from "../controllers/authControllers.js";
+
+const router = express.Router();
 
 // @route - /api/v1/auth/
 router.post('/otpAuth', otpAuth);
 router.post('/otpAuth/otpVerify', otpVerifyV2);
-router.post('/register', verifySession, authControllers.createAuth);
+router.post('/register', verifySession, createAuth);
 
-router.post('/login', authControllers.auth);
+router.post('/login', auth);
+router.get('/logout', logout);
 
-router.post('/logout', authorizeSession.checkAuthorization, authControllers.logout);
-router.post('/refresh-token', authorizeSession.provideRefreshToken);
+router.post('/logout', checkAuthorization, logout);
+router.post('/refresh-token', provideRefreshToken);
 
 // @isToken Expired (check if request is valid)
-router.get('/is-valid', authorizeSession.checkValidity);
+router.get('/is-valid', checkValidity);
 // @get current user via cookie
-router.get('/verifyUser', authorizeSession.checkCookie, authorizeSession.checkRefreshCookie, authControllers.provideUser);
+router.get('/verifyUser', checkCookie, checkRefreshCookie, provideUser);
 
 // test routes !!
-router.get('/test2', authorizeSession.checkAuthorization, authControllers.updateAuth);
+router.get('/test2', checkAuthorization, updateAuth);
 
-router.get('/test', authControllers.updateAuth);
+router.get('/test', updateAuth);
 
 // @route - /api/v1/auth/<id>
 router.route('/:id')
-    .put(authorizeSession.checkAuthorization, authControllers.updateAuth)
-    .delete(authorizeSession.checkAuthorization, authControllers.removeAuth);
+    .put(checkAuthorization, updateAuth)
+    .delete(checkAuthorization, removeAuth);
 
-module.exports = router;
+export { router as authRoutes };

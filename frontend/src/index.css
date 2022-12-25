@@ -14,6 +14,7 @@ font-family: 'Righteous', cursive; */
 body {
     margin: 0;
     font-family: 'Poppins', cursive;
+    background-color: rgba(147, 255, 223, 0.315);
 }
 
 /* ellipsis animat */
@@ -85,32 +86,33 @@ body {
 }
 
 /* App.jsx */
-.errorBar{
+.errorBar {
     visibility: hidden;
 }
 
 /* ErrorBar */
-.hoverEffects{
+.hoverEffects {
     transition: all 900ms ease;
     opacity: 0;
     cursor: default;
 }
-.hoverEffects:hover{
+
+.hoverEffects:hover {
     opacity: 1.0;
 }
 
 /* Verify.jsx Input Field */
-#otpField{
+#otpField {
     text-align: center;
     letter-spacing: 1.2rem;
     appearance: none;
-    
+
     font-size: 1.3rem;
     font-weight: 700;
     color: rgb(65, 64, 64);
 }
 
-#otpField::placeholder{
+#otpField::placeholder {
     text-align: start;
     letter-spacing: 0px;
     font-size: 1rem;
@@ -119,23 +121,40 @@ body {
 
 #otpField::-webkit-outer-spin-button,
 #otpField::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* Firefox */
 #otpField[type=number] {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
 #otpField:invalid {
     border-color: rgb(248, 143, 143);
 }
 
-#otpField:valid{
+#otpField:valid {
     caret-color: transparent;
 }
 
-#otpField:placeholder-shown{
+#otpField:placeholder-shown {
     border-color: rgb(70, 70, 70);
+}
+
+.filterSidebar {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) 0ms forwards forwards;
+    /* animation: name duration timing-function delay iteration-count direction fill-mode; */
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .5;
+    }
 }
