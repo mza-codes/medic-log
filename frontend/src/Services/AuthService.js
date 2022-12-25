@@ -82,7 +82,7 @@ const useAuthService = create((set, get) => ({
         try {
             const { data, headers: { user_token } } = await API.post('/auth/login', loginData, { signal: controller.signal });
             console.log("logging data", data, "<<<DATA || HEADERS >>>", user_token);
-
+            localStorage.setItem("expiration", data?.expiry);
             set(state => ({
                 ...state,
                 user: data?.user,
@@ -199,6 +199,7 @@ const useAuthService = create((set, get) => ({
             const { data, headers } = await API.post('/auth/register', signupData, {
                 signal: controller.signal, withCredentials: true
             });
+            localStorage.setItem("expiration", data?.expiry);
             const { user_token } = headers;
             console.log("logging data", data, "<<<DATA || HEADERS >>>", user_token);
 

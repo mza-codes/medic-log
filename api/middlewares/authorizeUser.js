@@ -29,13 +29,14 @@ exports.checkAuthorization = asyncHandler(async (req, res, next) => {
 
     let data = jwt.verify(token, process.env.JWT_KEY);
     req.userId = data.userId;
+    // req.EXPIRY = data.exp;
     req.userToken = token;
     next();
 });
 
 exports.checkCookie = asyncHandler(async (req, res, next) => {
-    log.warn("Checking Authorization Via Cookie");
     const token = req?.cookies[userCookie];
+    log.warn("Checking Authorization Via Cookie", token, "===", userTokens);
 
     if (!token || !userTokens.includes(token)) {
         return res.status(401).json({ success: false, message: "User session expired or not found,Please Login !" });
@@ -43,6 +44,7 @@ exports.checkCookie = asyncHandler(async (req, res, next) => {
 
     let data = jwt.verify(token, process.env.JWT_KEY);
     req.userId = data.userId;
+    // req.EXPIRY = data.exp;
     if (!data.userId) {
         // @ Failure prevention
         return res.status(500).json({
@@ -57,11 +59,13 @@ exports.checkCookie = asyncHandler(async (req, res, next) => {
 
 exports.checkRefreshCookie = asyncHandler(async (req, res, next) => {
     const token = req?.cookies?.[refreshCookie];
-    
+    log.warn("RefreshCookie Checking Authorization Via Cookie", token, "===", refreshTokens);
+
     if (!token || !refreshTokens.includes(token)) {
         return res.status(401).json({ success: false, message: "User session expired or not found,Please Login !" });
     };
     let data = jwt.verify(token, process.env.JWT_REFRESH_KEY);
+    // req.RefCookie_EXPIRY = data.exp;
     next();
 });
 
@@ -97,12 +101,10 @@ exports.checkValidity = async (req, res) => {
         return res.status(401).json({ success: false, message: "User session expired or not found,Please Login!" });
     };
 
-    let refreshValue;
     jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY, (err, payload) => {
         if (err) {
             return res.status(401).json({ success: false, message: "Refresh Token Expired,Please Login!" });
         };
-        refreshValue = payload;
     });
 
     try {
@@ -134,3 +136,5 @@ exports.checkValidity = async (req, res) => {
         return res.status(400).json({ success: false, message: err?.message ?? "User Session Invalid!" });
     };
 };
+
+exports.handleTokenStorage = handleTokenStorage;

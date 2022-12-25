@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 let { refreshTokens, userTokens } = require('../session/tokens');
 const { verifiedCookie } = require('./twoFactorAuth');
 const { log } = require('../utils/logger');
+const { handleTokenStorage } = require('../middlewares/authorizeUser');
 
 const userCookie = "_ga_medic_log_sess";
 const refreshCookie = `_ga_medic_log_refresh`;
@@ -45,6 +46,7 @@ exports.createAuth = asyncHandler(async (req, res) => {
     const { password, ...other } = newUser._doc; // _doc is specified to get the actual JSON data
 
     const token = this.createAccessToken({ userId: other?._id });
+    const { exp } = jwt.verify(token, process.env.JWT_KEY);
     const refreshToken = this.createRefreshToken({ userId: other?._id });
     // clear verified cookies
     res.clearCookie(verifiedCookie);
@@ -64,7 +66,7 @@ exports.createAuth = asyncHandler(async (req, res) => {
         // expires: new Date(Date.now() + (1000 * 60) * 12) //  commenting expires default to session cookie
     });
     log.info("New User Created: ", newUser?.name);
-    return res.status(200).json({ success: true, user: other, refreshToken: refreshToken });
+    return res.status(200).json({ success: true, user: other, refreshToken: refreshToken, expiry: exp });
 });
 
 exports.auth = asyncHandler(async (req, res, next) => {
@@ -79,6 +81,7 @@ exports.auth = asyncHandler(async (req, res, next) => {
         const { password, ...other } = dbUser._doc; // _doc is specified to get the actual JSON data
 
         const token = this.createAccessToken({ userId: other?._id });
+        const { exp } = jwt.verify(token, process.env.JWT_KEY);
         // Custom caching
         const refreshToken = this.createRefreshToken({ userId: other?._id });
         res.setHeader('user_token', token);
@@ -93,7 +96,7 @@ exports.auth = asyncHandler(async (req, res, next) => {
             expires: cookieExpiration
             // expires: new Date(Date.now() + (1000 * 60) * 12) //  commenting expires default to session cookie
         });
-        return res.status(200).json({ success: true, user: other });
+        return res.status(200).json({ success: true, user: other, expiry: exp });
     } else {
         return res.status(401).json({ success: false, message: 'Incorrect Password' });
     };
@@ -107,7 +110,7 @@ exports.provideUser = asyncHandler(async (req, res) => {
             message: `User with ID: ${req.userId} not Found in Database,Please Contact Vendor!`
         });
     };
-    return res.status(200).json({ success: true, user: user });
+    return res.status(200).json({ success: true, user: user, expiry: req.EXPIRY });
 });
 
 // Under Development
@@ -119,7 +122,7 @@ exports.logout = asyncHandler(async (req, res) => {
     res.clearCookie(refreshCookie);
     req.cookies[userCookie] = "";
     req.cookies[refreshCookie] = "";
-
+    
     refreshTokens = refreshTokens.filter((item) => item !== refreshToken);
     userTokens = userTokens.filter((item) => item !== accessToken);
 
