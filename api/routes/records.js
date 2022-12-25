@@ -14,4 +14,5 @@ router.get('/search-records/?', checkCookie, searchRecords);
 // @Override
 router.get('/get-all-records', checkCookie, getAllRecords);
 
-export { router as recordRoutes };
+// export { router as recordRoutes };
+export default router;
