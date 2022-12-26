@@ -12,7 +12,7 @@ import { testConnection } from './config/nodemailer.js';
 import { connectRedis } from './utils/redisConfig.js';
 import { userCookie, refreshCookie } from './controllers/authControllers.js';
 import { authRoutes } from './routes/auth.js';
-import { recordRoutes } from './routes/records.js';
+import recordRoutes from './routes/records.js';
 
 // Database Connection
 const connectDB = async () => {
