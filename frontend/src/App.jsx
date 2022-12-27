@@ -10,15 +10,13 @@ import ErrorBar from './Components/ErrorBar';
 import { useRef } from 'react';
 import useAuthService from './Services/AuthService';
 
-export const docAtom = atom({ doc: RTFTemplate, avatar: null });
+// export const docAtom = atom({ doc: RTFTemplate, avatar: null });
 export const avatarAtom = atom(null);
 let fetchCompleted = false;
 
 const App = () => {
     const errMsg = useRef();
     const verifySession = useAuthService(s => s.verifySession);
-    // const refreshSession = useAuthService(s => s.refreshSession);
-    // const expiration = parseInt(localStorage.getItem("expiration")) ?? null;
 
     useEffect(() => {
         const controller = new AbortController();
@@ -30,15 +28,6 @@ const App = () => {
         return () => controller.abort();
 
     }, []);
-
-    // useEffect(() => {
-    //     if (expiration !== null &&
-    //         (expiration * 1000) < new Date().getTime()
-    //     ) {
-    //         console.warn("Expired Session,refreshign session");
-    //         refreshSession();
-    //     };
-    // }, [expiration * 1000 < new Date().getTime()]);
 
     console.count("Rendered App.JSX");
     return (

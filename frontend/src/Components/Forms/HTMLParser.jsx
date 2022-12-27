@@ -1,26 +1,20 @@
-import { useAtom } from 'jotai';
 import { RTFDoc } from '../RTFStyles';
-// import parse from 'html-react-parser';
-import { docAtom } from '../../App';
+import parse from 'html-react-parser';
 import { useEffect } from 'react';
+import useApiService from '../../Services/APIService';
 
 const HTMLParser = ({ record }) => {
-    const data = useAtom(docAtom)[0];
-    const setData = useAtom(docAtom)[1];
+    const setData = useApiService(s => s.setDocument);
+    const data = useApiService(s => s.data.document);
 
     useEffect(() => {
-        const myDoc = document.getElementById("rtfDoc");
-        myDoc.innerHTML = data.doc;
-    }, [data]);
-
-    useEffect(() => {
-        if (record) setData((c) => ({ ...c, doc: record }));
+        if (record) setData(record);
     }, []);
 
     console.count("Rendered HTML viewer");
     return (
-        <RTFDoc className='min-w-[90vw] lg:min-w-[800px]' id='rtfDoc'>
-            {/* {parse(data.doc)} */}
+        <RTFDoc className='min-w-[90vw] lg:min-w-[800px]'>
+            {parse(data)}
         </RTFDoc>
     );
 };

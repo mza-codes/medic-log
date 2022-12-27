@@ -19,7 +19,7 @@ export const cookieConfig = {
 };
 
 export const createAccessToken = (data) => {
-    const newToken = jwt.sign(data, process.env.JWT_KEY, { expiresIn: "1m" });
+    const newToken = jwt.sign(data, process.env.JWT_KEY, { expiresIn: "20m" });
     return newToken;
 };
 
