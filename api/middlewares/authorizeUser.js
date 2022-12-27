@@ -7,7 +7,7 @@ import {
     createRefreshToken,
     userCookie,
     cookieConfig,
-    refreshCookie
+    refreshCookie,
 }
     from '../controllers/authControllers.js';
 import { log } from '../utils/logger.js';
@@ -55,7 +55,7 @@ export const checkCookie = asyncHandler(async (req, res, next) => {
             message: `UserID not found in Token, Received ID:${req.userId}, Please Contact Vendor!`
         });
     };
-    req.refreshToken = token;
+    // req.refreshToken = token;
     log.info("COOKIE VERIFIED", req.userId);
     next();
 });
@@ -148,6 +148,22 @@ export const checkValidity = async (req, res) => {
         return res.status(400).json({ success: false, message: err?.message ?? "User Session Invalid!" });
     };
 };
+
+export const refreshSession = asyncHandler(async (req, res) => {
+    // const userToken = req.cookies[userCookie];
+    // const refreshToken = req.cookies[refreshCookie];
+    const { newUserToken, newRefreshToken } = tokenGenerator({ userId: req?.userId });
+
+    res.cookie(String(userCookie), newUserToken, {
+        ...cookieConfig,
+        expires: new Date(Date.now() + (1000 * 60) * (60 * 24))
+    });
+    res.cookie(String(refreshCookie), newRefreshToken, {
+        ...cookieConfig,
+        expires: new Date(Date.now() + (1000 * 60) * (60 * 24))
+    });
+    return res.status(200).json({ success: true, message: "User Session Updated!" });
+});
 
 // ----------------------- //
 // @unsused functions

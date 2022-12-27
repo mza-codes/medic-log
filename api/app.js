@@ -10,7 +10,6 @@ import errorHandler from './middlewares/errorHandler.js';
 import { log } from './utils/logger.js';
 import { testConnection } from './config/nodemailer.js';
 import { connectRedis } from './utils/redisConfig.js';
-import { userCookie, refreshCookie } from './controllers/authControllers.js';
 import { authRoutes } from './routes/auth.js';
 import recordRoutes from './routes/records.js';
 
@@ -53,7 +52,6 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     connectDB();
-    log.error("Values for userCookie,RefreshCookie", userCookie, refreshCookie);
     // testConnection();
     connectRedis();
     log.info(`Node Server Started On PORT: ${PORT}`);
