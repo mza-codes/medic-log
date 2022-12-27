@@ -6,6 +6,7 @@ import {
     checkValidity,
     checkCookie,
     checkRefreshCookie,
+    refreshSession,
 } from '../middlewares/authorizeUser.js';
 
 import {
@@ -28,7 +29,10 @@ router.post('/login', auth);
 router.get('/logout', logout);
 
 router.post('/logout', checkAuthorization, logout);
-router.post('/refresh-token', provideRefreshToken);
+// router.post('/refresh-token', provideRefreshToken);
+
+// @refreshToken
+router.post('/refresh-session', checkCookie, checkRefreshCookie, refreshSession);
 
 // @isToken Expired (check if request is valid)
 router.get('/is-valid', checkValidity);

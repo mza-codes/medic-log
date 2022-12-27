@@ -75,6 +75,27 @@ const useAuthService = create((set, get) => ({
         set(state => ({ ...state, isLoading: false, isCancelled: "Request Cancelled !" }));
         return;
     },
+    refreshSession: async () => {
+        if (get().active) {
+            console.warn("User Status is Active Requesting token");
+            const data = await fetchData(SecureAPI.post('/auth/refresh-session', {}, {
+                withCredentials: true, signal: genSignal()
+            }));
+            if (data?.code) {
+                set(s => ({
+                    ...s,
+                    active: false,
+                    user: {},
+                    errActive: false
+                }));
+                return false;
+            };
+            console.warn("Request to refresh session complete", data);
+            return true;
+        };
+        console.warn("get().active returned false! no user logged in");
+        return false;
+    },
     login: async (loginData) => {
         console.log("data Loading");
         set(state => ({ ...state, isLoading: true, info: {}, errActive: false, isCancelled: "" }));
