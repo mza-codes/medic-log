@@ -1,9 +1,12 @@
 import { Form, Formik } from "formik";
+import { useAtom } from "jotai";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import * as Yup from 'yup';
 import { hooker } from "../../Assets";
 import useApiService, { controller } from "../../Services/APIService";
+import useLocalState from "../../Services/LocalState";
 import CustomField from "../Input/CustomField";
 import Loader from "../Loader/Loader";
 
@@ -23,6 +26,8 @@ const AddDataForm = ({ data, update }) => {
     const error = hooker("error", useApiService);
     const isLoading = hooker("isLoading", useApiService);
     const handleSubmission = hooker("handleSubmission", useApiService);
+    const setState = useLocalState(s => s.setPersonData);
+    const setDocument = useApiService(s => s.setDocument);
 
     const RequiredMsg = "Required Field !";
     const formSchema = Yup.object().shape({
@@ -37,11 +42,12 @@ const AddDataForm = ({ data, update }) => {
         if (isValid) {
 
             let status;
-            if (update === 1) status = await handleSubmission(update,data?._id);
+            if (update === 1) status = await handleSubmission(update, data?._id);
             else status = await handleSubmission();
 
             if (status === true) {
                 actions?.resetForm();
+                setDocument(" ");
                 return navigate('/');
             };
         };
@@ -50,7 +56,6 @@ const AddDataForm = ({ data, update }) => {
     };
 
     const clearForm = (clearData) => {
-        // Add Request aborter here
         clearData();
         controller?.abort("User Cancelled");
         return true;
@@ -63,6 +68,19 @@ const AddDataForm = ({ data, update }) => {
         "lastCheckup": data?.lastCheckup?.[0] ?? ""
     };
 
+    const fillDoc = (data) => {
+        const { name, age, lastCheckup, city } = data;
+        setState(
+            `<h2 style="text-align: justify">${name}</h2><p style="text-align: justify"><strong>Place: ${city}</strong></p><p style="text-align: justify"><strong>Age: ${age}</strong></p><p style="text-align: justify"><strong>Last Checkup: ${new Date(lastCheckup).toLocaleString()}</strong></p>`
+        );
+        return true;
+    };
+
+    useEffect(() => {
+        return () => setDocument(" ");
+    }, []);
+
+    console.warn("Adddata.jsx Fromik Rendered");
     console.count("AddData Formik rendered");
     return (
         <Formik
@@ -90,9 +108,15 @@ const AddDataForm = ({ data, update }) => {
                             className="bg-teal-700 hover:bg-teal-400 p-2 text-white rounded-md disabled:bg-slate-600">
                             {(props.isSubmitting || isLoading) ? "Loading" : "Submit"}
                         </button>
+
+                        <button type="button" onClick={e => fillDoc(props.values)} title="Pass Form Data to Document (Beta)"
+                            className="bg-amber-400 hover:bg-amber-700 text-white rounded-md p-1">
+                            <iconify-icon icon="fluent:form-28-filled" width="auto" height="auto" />
+                        </button>
                     </Stack>
                     {(props.isSubmitting || isLoading) && <Loader inline={1} />}
                     {error?.active && <p className="text-red-500 text-center max-w-[600px]">{error?.message || error?.code}</p>}
+                    {<p className="text-teal-900 text-center max-w-[600px]">Please Verify How the Document Looks like before Submit !</p>}
                 </Form>
             )}
         </Formik>
