@@ -8,9 +8,11 @@ const AuthPage = lazy(() => import('./Pages/AuthPage'));
 const AddRecord = lazy(() => import('./Pages/AddRecord'));
 const ViewRecords = lazy(() => import('./Pages/ViewRecords'));
 const EditRecord = lazy(() => import('./Pages/EditRecord'));
+const DeleteRecord = lazy(() => import('./Pages/DeleteRecord'));
+const Page404 = lazy(() => import('./Pages/Page404'));
 
+const hexPattern = /[0-9a-fA-F]{24}/;
 const Router = () => {
-
     const userActive = useAuthService(state => state.active);
 
     const ProtectedRoute = ({ children }) => {
@@ -23,6 +25,12 @@ const Router = () => {
         if (!userActive) return children;
         else return <Navigate to="/dashboard" />;
         // return children;
+    };
+
+    const VerifyId = ({ children }) => {
+        const isHex = hexPattern.test(window.location.href?.split("/")?.at(-1));
+        if (isHex) return children;
+        else return <Page404 />
     };
 
     return useRoutes([
@@ -72,7 +80,22 @@ const Router = () => {
                 <EditRecord />
             </ProtectedRoute>
         },
-
+        {
+            path: "/delete-record/:id",
+            element: <ProtectedRoute>
+                <VerifyId>
+                    <DeleteRecord />
+                </VerifyId>
+            </ProtectedRoute>
+        },
+        {
+            path: "/404",
+            element: <Page404 />
+        },
+        {
+            path: "*",
+            element: <Page404 />
+        },
     ]);
 };
 

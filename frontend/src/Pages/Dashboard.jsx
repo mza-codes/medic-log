@@ -24,13 +24,17 @@ const Dashboard = () => {
                     <br />
                     Pending Cases: 18
                 </div>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 my-2">
                     <Link to='/add-record' className="bg-teal-200 text-slate-800 hover:bg-teal-400 p-2 rounded-lg ">
                         Add Patient Data
                     </Link>
 
                     <Link to='/view-records' className="bg-teal-800 text-slate-100 hover:bg-teal-700 p-2 rounded-lg ">
                         View All Patients Data
+                    </Link>
+
+                    <Link to='/delete-record/hfdtrgdttre' className="bg-emerald-800 text-slate-100 hover:bg-emerald-700 p-2 rounded-lg ">
+                        Re Auth
                     </Link>
                 </div>
 

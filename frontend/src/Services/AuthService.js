@@ -96,6 +96,9 @@ const useAuthService = create((set, get) => ({
         console.warn("get().active returned false! no user logged in");
         return false;
     },
+    // passwordAuth: async (data) => {
+    //     const data = await fetchData(SecureAPI.post('/delete-record/:id'))
+    // },
     login: async (loginData) => {
         console.log("data Loading");
         set(state => ({ ...state, isLoading: true, info: {}, errActive: false, isCancelled: "" }));

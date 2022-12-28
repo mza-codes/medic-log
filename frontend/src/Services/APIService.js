@@ -17,15 +17,10 @@ const initialState = {
     patientRecords: [],
 };
 
-// const fetchData = async (request) => {
-//     try {
-//         const { data } = await request;
-//         return data;
-//     } catch (error) {
-//         console.error("Catched Error: >", error);
-//         return error;
-//     };
-// };
+const genSignal = () => {
+    controller = new AbortController();
+    return controller.signal;
+};
 
 const useApiService = create((set, get) => ({
     ...initialState,
@@ -191,6 +186,24 @@ const useApiService = create((set, get) => ({
         get().setRecords(data);
         get().setErrorView(false);
         return data;
+    },
+    deleteRecord: async (id, password) => {
+        if (!id || !password) return get().handleError({ message: "Record ID & Password required to proceed!" });
+        get().setLoading(true);
+        const data = await fetchData(SecureAPI.patch(`/app/delete-record/${id}`, { password }, {
+            withCredentials: true,
+            signal: genSignal()
+        }));
+        console.warn("Rsponse from DeleteRecord Request", data);
+        get().setLoading(false);
+        if (data?.code) {
+            get().handleError(data?.response?.data ?? data);
+            return false;
+        };
+        if (data?.success) get().setErrorView(false);
+        console.warn(("Document with ID", id, " :: Deleted SuccessFully"));
+        // Case for a toast notify
+        return true;
     },
 }));
 

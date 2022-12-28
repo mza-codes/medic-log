@@ -2,7 +2,7 @@ import ErrorResponse from '../utils/errorResponse.js';
 import { log } from '../utils/logger.js';
 
 const errorHandler = (err, req, res, next) => {
-    log.error('ERROR OCCURED !!!');
+    console.error('ERROR OCCURED !!!',err);
     log.error(err);
 
     let error = { ...err }
@@ -11,6 +11,7 @@ const errorHandler = (err, req, res, next) => {
     if (err.message === "CastError") {
         const message = 'Resource Not Found';
         err = new ErrorResponse(message, 404);
+        console.log("CastError",err);
     };
 
     if (err.code === 11000) {

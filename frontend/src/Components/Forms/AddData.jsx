@@ -1,5 +1,4 @@
 import { Form, Formik } from "formik";
-import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
@@ -71,7 +70,7 @@ const AddDataForm = ({ data, update }) => {
     const fillDoc = (data) => {
         const { name, age, lastCheckup, city } = data;
         setState(
-            `<h2 style="text-align: justify">${name}</h2><p style="text-align: justify"><strong>Place: ${city}</strong></p><p style="text-align: justify"><strong>Age: ${age}</strong></p><p style="text-align: justify"><strong>Last Checkup: ${new Date(lastCheckup).toLocaleString()}</strong></p>`
+            `<h2 style="text-align: justify">${name}</h2><p style="text-align: justify"><strong>Place: ${city}</strong></p><p style="text-align: justify"><strong>Age: ${age}</strong></p><p style="text-align: justify"><strong>Last Checkup: ${new Date(lastCheckup).toLocaleDateString()}</strong></p>`
         );
         return true;
     };

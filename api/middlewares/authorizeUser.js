@@ -1,5 +1,6 @@
 import { } from 'dotenv/config';
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 import asyncHandler from "./asyncHandler.js";
 import {
@@ -12,6 +13,7 @@ import {
     from '../controllers/authControllers.js';
 import { log } from '../utils/logger.js';
 import { redisClient } from '../utils/redisConfig.js';
+import User from '../models/User.js';
 
 export const tokenGenerator = (data) => {
     const newUserToken = createAccessToken(data);
@@ -163,6 +165,25 @@ export const refreshSession = asyncHandler(async (req, res) => {
         expires: new Date(Date.now() + (1000 * 60) * (60 * 24))
     });
     return res.status(200).json({ success: true, message: "User Session Updated!" });
+});
+
+export const verifyPassword = asyncHandler(async (req, res, next) => {
+    const { body: { password }, params: { id } } = req;
+    console.log(password, id, req.body);
+    if (!password || !id) {
+        return res.status(400).json({
+            success: false,
+            message: `${!password ? "Password Not Found on Request" : "Record ID Not Found"}`
+        });
+    };
+
+    const userData = await User.findById(req.userId);
+    const status = await bcrypt.compare(password, userData.password);
+    if (status === true) {
+        next();
+    } else {
+        return res.status(400).json({ success: false, message: "Incorrect Password!" });
+    };
 });
 
 // ----------------------- //
