@@ -15,6 +15,7 @@ const ViewRecords = () => {
     const isLoading = useApiService(s => s.isLoading);
     const setEditData = useLocalState(s => s.setEditData);
     const sideBarRef = useRef();
+    const setErrorView = useApiService(s => s.setErrorView);
 
     const editData = (data) => {
         setEditData(data);
@@ -26,11 +27,20 @@ const ViewRecords = () => {
         return;
     };
 
+    const handleDelete = ({ _id }) => {
+        route(`/delete-record/${_id}`);
+        return;
+    };
+
     useEffect(() => {
         const controller = new AbortController();
-        // getRecords(controller.signal);
+        getRecords(controller.signal);
         return () => controller.abort();
     }, [getRecords]);
+
+    useEffect(() => {
+        return () => setErrorView(false);
+    }, []);
 
     console.count("Rendered ViewRecords.jsx");
     return (
@@ -38,6 +48,11 @@ const ViewRecords = () => {
             <Sidebar ref={sideBarRef} />
             <section className="w-full py-4 bg-black bg-opacity-5 min-h-[94vh]">
                 <h1 className="text-4xl text-black text-center py-3">Patient Records</h1>
+                <h2 className="text-center py-2 font-semibold">
+                    {patientRecords?.length > 0 ? `
+                    Displaying Total Of ${patientRecords?.length ?? 0} Records from Database`
+                        : "No Records Found"}
+                </h2>
                 {isLoading && <Loader />}
                 <div className="flex flex-wrap items-center justify-center gap-2">
                     <TopBar filterButton={openSideBar} />
@@ -53,13 +68,16 @@ const ViewRecords = () => {
                                 {parse(record?.document)}
                             </div>
                             {/* <AvatarSection /> */}
-                            <div className="absolute right-2 bottom-2" onClick={() => editData(record)}>
+                            <div className="absolute right-2 bottom-2 flex flex-row-reverse flex-wrap gap-2">
                                 <Icon w={36} h={36} color="#006d5b" label="Edit Record"
                                     icon="material-symbols:edit-document-rounded" />
-                            </div>
-                            <div className="absolute right-[3rem] bottom-2" onClick={() => { }}>
                                 <Icon w={36} h={36} color="#008080" label="Expand View"
                                     icon="mdi:arrow-expand-all" />
+                                <Icon w={36} h={36} color="#e40800" label="Deletw Document"
+                                    onClick={e => {
+                                        if (window.confirm("This Record Will be Deleted!, Continue ?")) handleDelete(record);
+                                    }}
+                                    icon="mdi:file-document-delete" />
                             </div>
                         </div>
                     ))}

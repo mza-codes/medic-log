@@ -54,14 +54,16 @@ export const updateRecord = asyncHandler(async (req, res) => {
 
 // @Overrides testing
 export const getAllRecords = asyncHandler(async (req, res) => {
-    let data = await redisClient.get("all-records");
+    // let data = await redisClient.get("all-records");
+    let data;
     if (!data) {
         log.warn("Fetching ALL RECORDS from SERVER");
         data = await Patient.find({});
         redisClient.set("all-records", JSON.stringify(data));
     };
+    // data = JSON.parse(data);
     data && log.info("fetched from Cache");
-    return res.status(200).json({ success: true, records: JSON.parse(data) });
+    return res.status(200).json({ success: true, records: data });
 });
 
 export const searchRecords = asyncHandler(async (req, res) => {
@@ -93,6 +95,13 @@ export const searchRecords = asyncHandler(async (req, res) => {
     if (records.length <= 0) return res.status(404).json({ success: false, message: `No Results found for Query "${query}"` });
     log.info("REQUEST COMPLETED !!");
     res.status(200).json({ success: true, message: `Results for "${query}"`, records });
+});
+
+export const deleteRecord = asyncHandler(async (req, res) => {
+    let { id } = req.params;
+    const recordId = String(id);
+    const status = await Patient.findByIdAndDelete(recordId);
+    res.status(200).json({ success: true, message: `Deleted Patient with ID: ${id}`, status });
 });
 
 // @ mongoose save alternate method
