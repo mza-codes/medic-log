@@ -2,6 +2,7 @@ import asyncHandler from "../middlewares/asyncHandler.js";
 import Patient from "../models/Patient.js";
 import { log } from "../utils/logger.js";
 import { redisClient } from "../utils/redisConfig.js";
+import { deleteReqCookie } from "./authControllers.js";
 
 // function* generateId() {
 //     let i = 0;
@@ -99,8 +100,10 @@ export const searchRecords = asyncHandler(async (req, res) => {
 
 export const deleteRecord = asyncHandler(async (req, res) => {
     let { id } = req.params;
-    const recordId = String(id);
-    const status = await Patient.findByIdAndDelete(recordId);
+    const status = await Patient.findByIdAndDelete(id);
+    console.warn("Record WITH ID: ", id, " Deleted SUCCESSFULLY", status);
+    res.clearCookie(deleteReqCookie);
+    req.cookies[deleteReqCookie] = "";
     res.status(200).json({ success: true, message: `Deleted Patient with ID: ${id}`, status });
 });
 

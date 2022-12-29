@@ -1,10 +1,11 @@
 import express from "express";
+import { genDelTokenByPwd } from "../controllers/authControllers.js";
 import {
     addPatient, getPatients, getPatient, updateRecord,
     getAllRecords, searchRecords, deleteRecord
 } from "../controllers/patientRecords.js";
-import { checkCookie, verifyPassword } from "../middlewares/authorizeUser.js";
-// import { verifyHex } from "../middlewares/verifyHex.js";
+import { verifyDelToken } from "../middlewares/authDelToken.js";
+import { checkCookie } from "../middlewares/authorizeUser.js";
 
 const router = express.Router();
 
@@ -14,7 +15,10 @@ router.get('/get-records', checkCookie, getPatients);
 router.get('/get-record/:id', checkCookie, getPatient);
 router.put('/update-record/:id', checkCookie, updateRecord);
 router.get('/search-records/?', checkCookie, searchRecords);
-router.patch('/delete-record/:id', checkCookie, verifyPassword, deleteRecord);
+
+// @routes related to Deletion
+router.post('/delete-record/:id/authenticate', checkCookie, genDelTokenByPwd);
+router.delete('/delete-record/:id', checkCookie, verifyDelToken, deleteRecord);
 
 // @Override
 router.get('/get-all-records', checkCookie, getAllRecords);
