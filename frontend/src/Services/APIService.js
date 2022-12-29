@@ -187,23 +187,47 @@ const useApiService = create((set, get) => ({
         get().setErrorView(false);
         return data;
     },
-    deleteRecord: async (id, password) => {
-        if (!id || !password) return get().handleError({ message: "Record ID & Password required to proceed!" });
+    deleteRecordWAuth: async (id) => {
+        console.warn("Delete by id",id);
         get().setLoading(true);
-        const data = await fetchData(SecureAPI.patch(`/app/delete-record/${id}`, { password }, {
+        const data = await fetchData(SecureAPI.delete(`/app/delete-record/${id}`, {
             withCredentials: true,
             signal: genSignal()
         }));
-        console.warn("Rsponse from DeleteRecord Request", data);
         get().setLoading(false);
         if (data?.code) {
             get().handleError(data?.response?.data ?? data);
             return false;
         };
-        if (data?.success) get().setErrorView(false);
-        console.warn(("Document with ID", id, " :: Deleted SuccessFully"));
-        // Case for a toast notify
-        return true;
+        if (data?.success) {
+            get().setErrorView(false);
+            console.warn("Response from Actual Delete Request", data);
+            return true;
+        };
+        return;
+    },
+    deleteRecord: async (id, password) => {
+        if (!id || !password) return get().handleError({ message: "Record ID & Password required to proceed!" });
+        get().setLoading(true);
+        const data = await fetchData(SecureAPI.post(`/app/delete-record/${id}/authenticate`, { password }, {
+            withCredentials: true,
+            signal: genSignal()
+        }));
+        console.warn("Rsponse from DeleteRecord Request", data);
+        // get().setLoading(false);
+
+        if (data?.code) {
+            console.warn("data.code found handling Error");
+            get().handleError(data?.response?.data ?? data);
+            return false;
+        };
+        if (data?.success) {
+            console.warn("data.success found calling func");
+            get().setErrorView(false);
+            const status = await get().deleteRecordWAuth(id);
+            return status;
+        };
+        return;
     },
 }));
 

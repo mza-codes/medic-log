@@ -1,4 +1,4 @@
-import {} from 'dotenv/config';
+import { } from 'dotenv/config';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -7,9 +7,11 @@ import asyncHandler from '../middlewares/asyncHandler.js';
 import { verifiedCookie } from './twoFactorAuth.js';
 import { log } from '../utils/logger.js';
 import { redisClient } from '../utils/redisConfig.js';
+import Patient from '../models/Patient.js';
 
 export const userCookie = "_ga_medic_log_sess";
 export const refreshCookie = `_ga_medic_log_refresh`;
+export const deleteReqCookie = `_sa_medic_log_important`;
 export const cookieConfig = {
     path: "/",
     expires: new Date(Date.now() + (1000 * 60) * 12),
@@ -113,8 +115,6 @@ export const provideUser = asyncHandler(async (req, res) => {
 
 // Under Development
 export const logout = asyncHandler(async (req, res) => {
-    const refreshToken = req.cookies?.[refreshCookie];
-    const accessToken = req?.cookies?.[userCookie];
 
     res.clearCookie(userCookie);
     res.clearCookie(refreshCookie);
@@ -124,6 +124,43 @@ export const logout = asyncHandler(async (req, res) => {
     await redisClient.set(String(req.userId), JSON.stringify({ userToken: null, refreshToken: null }));
 
     return res.status(200).json({ success: true, message: "Logout Complete", user: {} });
+});
+
+export const genDelTokenByPwd = asyncHandler(async (req, res) => {
+    const { body: { password }, params: { id } } = req;
+    console.log(password, req.body, id);
+    if (!password || !id) {
+        return res.status(400).json({
+            success: false,
+            message: `${!password ? "Password Not Found on Request" : "Record ID Not Found"}`
+        });
+    };
+    const record = await Patient.findById(id);
+
+    if (!record || record?.owner !== req.userId) {
+        let statusCode = !record ? 404 : 403;
+        return res.status(statusCode).json({
+            success: false,
+            message: `${!record ? "Record with ID: " + id + " Not Found!"
+                : "Only Record Owners are Authorized to Delete!"}`
+        });
+    };
+
+    const userData = await User.findById(req.userId);
+    const status = await bcrypt.compare(password, userData.password);
+    if (status === true) {
+        const token = jwt.sign({ recordId: id }, process.env.JWT_REFRESH_KEY, { expiresIn: "5m" });
+        res.cookie(deleteReqCookie, token, {
+            ...cookieConfig,
+            expires: new Date(Date.now() + (1000 * 60) * 5)
+        });
+        return res.status(200).json({
+            success: true,
+            message: `Generated Delete Token!`
+        });
+    } else {
+        return res.status(400).json({ success: false, message: "Incorrect Password!" });
+    };
 });
 
 export const updateAuth = asyncHandler(async (req, res) => {
