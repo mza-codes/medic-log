@@ -20,6 +20,7 @@ const ViewRecords = () => {
     const editData = (data) => {
         setEditData(data);
         route('/edit-record');
+        return;
     };
 
     const openSideBar = () => {
@@ -42,6 +43,7 @@ const ViewRecords = () => {
         return () => setErrorView(false);
     }, []);
 
+    console.log(sideBarRef);
     console.count("Rendered ViewRecords.jsx");
     return (
         <main className='w-full min-h-[94vh] relative bg-gradient-to-r from-teal-50 via-emerald-100 to-teal-100'>
@@ -69,19 +71,18 @@ const ViewRecords = () => {
                             </div>
                             {/* <AvatarSection /> */}
                             <div className="absolute right-2 bottom-2 flex flex-row-reverse flex-wrap gap-2">
-                                <Icon w={36} h={36} color="#006d5b" label="Edit Record"
+                                <Icon w={36} h={36} color="#006d5b" label="Edit Record" onClick={() => editData(record)}
                                     icon="material-symbols:edit-document-rounded" />
                                 <Icon w={36} h={36} color="#008080" label="Expand View"
                                     icon="mdi:arrow-expand-all" />
-                                <Icon w={36} h={36} color="#e40800" label="Deletw Document"
-                                    onClick={e => {
+                                <Icon w={36} h={36} color="#e40800" label="Deletw Document" icon="mdi:file-document-delete"
+                                    onClick={() => {
                                         if (window.confirm("This Record Will be Deleted!, Continue ?")) handleDelete(record);
                                     }}
-                                    icon="mdi:file-document-delete" />
+                                />
                             </div>
                         </div>
                     ))}
-
                 </div>
             </section>
         </main>
