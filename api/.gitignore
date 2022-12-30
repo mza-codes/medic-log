@@ -16,6 +16,7 @@
 axios-rapidapi-template.txt
 
 # misc
+./test.js
 .DS_Store
 .env.local
 .env.development.local
