@@ -5,12 +5,10 @@ import Router from './router';
 import { Suspense, useEffect } from 'react';
 import { atom } from 'jotai';
 import Loader from './Components/Loader/Loader';
-import { RTFTemplate } from './Assets';
 import ErrorBar from './Components/ErrorBar';
 import { useRef } from 'react';
 import useAuthService from './Services/AuthService';
 
-// export const docAtom = atom({ doc: RTFTemplate, avatar: null });
 export const avatarAtom = atom(null);
 let fetchCompleted = false;
 

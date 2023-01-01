@@ -1,25 +1,42 @@
 import { forwardRef, useRef } from "react";
 import styled from "styled-components";
-import Dropdown from "./Dropdown";
+import SortBy from "./Filters/SortBy";
 import Icon from "./Icon";
 import { SearchBox } from "./TopBar";
 
-const sortBy = ["age", "name", "city", "checkup"];
+const sortValues = ["age", "name", "city", "checkup"];
 
-const RadioButtons = styled.input`
-    accent-color: red;
-    width: 1rem;
-    height: 1rem;
-    font-size: 2rem;
+const StyledSelect = styled.select`
+    outline: none;
+    border: none;
+    appearance: none;
+    text-transform: capitalize;
+    background: linear-gradient(to right, #a9ffff,#f7b4bf);
     cursor: pointer;
+    font-weight: 400;
+    
+    option{
+        text-align: left;
+    }
 `;
 
 const Sidebar = forwardRef((props, ref) => {
 
-    const sortByRef = useRef();
+    const formRef = useRef();
     const closeSideBar = () => {
         ref.current.style.visibility = "hidden";
         return;
+    };
+
+    const handleSearch = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        let data = {};
+        for (const [key, value] of formData) {
+            data[key ?? 0] = value;
+        };
+        console.log("Final", data);
+        // actual query to api
     };
 
     console.count("Rendered Sidebar.jsx");
@@ -31,32 +48,34 @@ const Sidebar = forwardRef((props, ref) => {
                     <h5 className="block text-center w-full uppercase nderline font-bold text-xl">Filters</h5>
                 </div>
                 <hr className="my-1 h-px opacity-60 bg-gray-600 border-0 " />
-                <section className="actions ml-4 flex flex-col p-2 items-start gap-3 font-semibold">
-                    <SearchBox className="w-[98%] font-normal" name="query" placeholder="Search For.." />
+                <form onSubmit={handleSearch} className="actions ml-4 flex flex-col p-2 items-start gap-3 font-semibold" ref={formRef}>
+                    <SearchBox className="w-[98%] font-normal"
+                        name="query"
+                        placeholder="Search For.."
+                        required
+                        minLength={2}
+                        maxLength={200}
+                    />
+
                     <div className="flex items-center gap-1">
                         <span className={`text-black rounded-md p-2 uppercase text-sm`}>
                             Sort By:
                         </span>
-                        <Dropdown options={sortBy} selection={ref} />
+                        <StyledSelect name="sortfield" id="sortField" className="px-3 py-1 rounded-md">
+                            {sortValues.map((value) => (
+                                <option key={value} value={value}>{value}</option>
+                            ))}
+                        </StyledSelect>
                         &nbsp;
-                        <input ref={sortByRef} type="checkbox" id="filter" hidden onChange={e=>console.log(e.target.checked)} />
-                        <label htmlFor="filter">
-                            <Icon icon={sortByRef?.current?.checked ? `ph:sort-ascending-bold` : `ph:sort-descending-bold`} w={28} h={28} />
-                        </label>
+                        <SortBy />
                     </div>
-                    {/* <div className="selections flex gap-1 items-center">
-                        <RadioButtons type="radio" name="filter" id="asc" value="asc" checked />
-                        <label htmlFor="asc">Ascending</label>
-                        &nbsp;
-                        <RadioButtons type="radio" name="filter" id="desc" value="desc" />
-                        <label htmlFor="desc">Descending</label>
-                    </div> */}
-                    <div className="searchBtn flex justify-center w-full mt-4">
-                        <button className="bg-teal-500 hover:bg-emerald-500 rounded-md p-2 text-sm">
+
+                    <div className="searchBtn flex flex-col justify-center items-center w-full mt-4">
+                        <button className="bg-teal-500 hover:bg-emerald-500 rounded-md p-2 text-sm" type="submit">
                             Search
                         </button>
                     </div>
-                </section>
+                </form>
             </div>
 
         </main>

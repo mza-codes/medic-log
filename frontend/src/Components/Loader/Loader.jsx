@@ -1,16 +1,13 @@
-import './Loader.css';
 
-const Loader = ({ inline }) => {
-    return (
-        <main className={inline ? "loaderSm" : `loaderParent`}>
-            <div className="lds-ellipsis ">
-                <div />
-                <div />
-                <div />
-                <div />
-            </div>
-        </main>
-    );
-};
+const Loader = ({ inline, color, tailwindBg }) => (
+    <main className={`flex flex-col items-center justify-center text-center ${inline ? 'loaderSm' : 'loaderLg'}`}>
+        <div className="lds-ellipsis">
+            <div style={{ background: color }} className={tailwindBg ?? "bg-teal-800"} />
+            <div style={{ background: color }} className={tailwindBg ?? "bg-teal-800"} />
+            <div style={{ background: color }} className={tailwindBg ?? "bg-teal-800"} />
+            <div style={{ background: color }} className={tailwindBg ?? "bg-teal-800"} />
+        </div>
+    </main>
+);
 
 export default Loader;
