@@ -5,21 +5,18 @@ import CustomField from "../../Components/Input/CustomField";
 import useAuthService from "../../Services/AuthService";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../Components/Loader/Loader";
 
 const LoginForm = () => {
-
     const submitBtn = useRef();
     const navigate = useNavigate();
     const { isLoading, login, error, errActive, errSource } = useAuthService();
 
-    console.log(error, errActive, errSource);
-
     const handleSubmit = async (values, actions) => {
-        console.log("handling submit", actions);
         submitBtn.current.disabled = true;
         const status = await login(values);
         if (status?.success) return navigate('/dashboard');
-        else console.log("%cRequest Completed", "color:yellow"); return false;
+        else return false;
     };
 
     const schema = Yup.object().shape({
@@ -28,7 +25,6 @@ const LoginForm = () => {
     });
 
     useEffect(() => {
-        console.log("state Change");
         submitBtn.current.disabled = !errActive;
     }, [errActive]);
 
@@ -51,12 +47,7 @@ const LoginForm = () => {
                         {(errActive && errSource === "login") && <span className="err">{error?.message ?? error?.error} !</span>}
                     </div>
                     {(isLoading || props.isSubmitting) &&
-                        <div className="lds-ellipsis ">
-                            <div />
-                            <div />
-                            <div />
-                            <div />
-                        </div>
+                        <Loader />
                     }
                 </Form>
             )}

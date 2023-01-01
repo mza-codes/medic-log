@@ -2,7 +2,6 @@ import express from 'express';
 import { otpAuth, otpVerifyV2, verifySession } from '../controllers/twoFactorAuth.js';
 import {
     checkAuthorization,
-    provideRefreshToken,
     checkValidity,
     checkCookie,
     checkRefreshCookie,
@@ -32,7 +31,7 @@ router.post('/logout', checkAuthorization, logout);
 // router.post('/refresh-token', provideRefreshToken);
 
 // @refreshToken
-router.post('/refresh-session', checkCookie, checkRefreshCookie, refreshSession);
+router.post('/refresh-session', refreshSession);
 
 // @isToken Expired (check if request is valid)
 router.get('/is-valid', checkValidity);

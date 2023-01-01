@@ -21,12 +21,12 @@ export const cookieConfig = {
 };
 
 export const createAccessToken = (data) => {
-    const newToken = jwt.sign(data, process.env.JWT_KEY, { expiresIn: "20m" });
+    const newToken = jwt.sign(data, process.env.JWT_KEY, { expiresIn: "20s" });
     return newToken;
 };
 
 export const createRefreshToken = (data) => {
-    const newToken = jwt.sign(data, process.env.JWT_REFRESH_KEY, { expiresIn: "1d" });
+    const newToken = jwt.sign(data, process.env.JWT_REFRESH_KEY, { expiresIn: "50s" });
     return newToken;
 };
 
