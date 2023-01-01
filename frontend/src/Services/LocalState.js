@@ -1,5 +1,4 @@
 import create from 'zustand';
-import { RTFTemplate } from '../Assets';
 
 const initialState = {
     loading: false,

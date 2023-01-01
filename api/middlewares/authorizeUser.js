@@ -152,19 +152,38 @@ export const checkValidity = async (req, res) => {
 };
 
 export const refreshSession = asyncHandler(async (req, res) => {
-    // const userToken = req.cookies[userCookie];
-    // const refreshToken = req.cookies[refreshCookie];
-    const { newUserToken, newRefreshToken } = tokenGenerator({ userId: req?.userId });
+    const userToken = req.cookies[userCookie];
+    const refreshToken = req.cookies[refreshCookie];
+    if (!userToken || !refreshToken) {
+        return res.status(401).json({
+            success: false,
+            message: "No user session information found on request,Please Login!"
+        });
+    };
 
+    const userData = jwt.verify(userToken, process.env.JWT_KEY, { ignoreExpiration: true });
+    const refreshData = jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY, { ignoreExpiration: true });
+
+    if (!verifyTokens(userData?.userId, userToken, "userToken") ||
+        !verifyTokens(refreshData?.userId, refreshToken, "refreshToken")) {
+        return res.status(401).json({
+            success: false,
+            message: "User session expired, Please Login !"
+        });
+    };
+
+    const { newUserToken, newRefreshToken } = tokenGenerator({ userId: userData?.userId });
+    const expiration = new Date(Date.now() + (1000 * 60) * (60 * 24));
     res.cookie(String(userCookie), newUserToken, {
         ...cookieConfig,
-        expires: new Date(Date.now() + (1000 * 60) * (60 * 24))
+        expires: expiration
     });
     res.cookie(String(refreshCookie), newRefreshToken, {
         ...cookieConfig,
         expires: new Date(Date.now() + (1000 * 60) * (60 * 24))
     });
-    return res.status(200).json({ success: true, message: "User Session Updated!" });
+    await redisClient.set(userData?.userId, JSON.stringify({ userToken: newUserToken, refreshToken: newRefreshToken }));
+    return res.status(200).json({ success: true, message: "User Session Updated!", expiry: expiration });
 });
 
 export const verifyPassword = asyncHandler(async (req, res, next) => {

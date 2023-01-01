@@ -30,8 +30,6 @@ const LandingPage = () => {
     const logoIcon = document.querySelector("#_logo");
 
     useEffect(() => {
-        console.log("Router.js >", userActive, isLoading);
-
         if (!serverConnected && !isLoading) {
             errRef.innerText = contactMsg;
             logoIcon.style.color = "red";
