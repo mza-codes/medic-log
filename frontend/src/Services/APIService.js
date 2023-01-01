@@ -171,11 +171,11 @@ const useApiService = create((set, get) => ({
         return true;
     },
     searchRecords: async (query) => {
-        get().setLoading(true);
-        controller = new AbortController();
-        const signal = controller.signal;
+        // get().setLoading(true);
+        console.log(query);
+        return;
         const data = await fetchData(SecureAPI.get(`/app/search-records/?query=${query}`,
-            { withCredentials: true, signal }
+            { withCredentials: true, signal: genSignal() }
         ));
         get().setLoading(false);
         console.warn("Fetched for Query: ", query, ">>", data);
@@ -188,7 +188,7 @@ const useApiService = create((set, get) => ({
         return data;
     },
     deleteRecordWAuth: async (id) => {
-        console.warn("Delete by id",id);
+        console.warn("Delete by id", id);
         get().setLoading(true);
         const data = await fetchData(SecureAPI.delete(`/app/delete-record/${id}`, {
             withCredentials: true,

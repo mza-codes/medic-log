@@ -1,14 +1,19 @@
+import { useAtom } from 'jotai';
 import { useRef } from 'react';
 import styled from 'styled-components';
 import { hooker } from '../Assets';
+import { sortAtom } from '../Atoms';
 import useApiService from '../Services/APIService';
 import Icon from './Icon';
 
-const SearchBox = styled.input`
+export const SearchBox = styled.input`
     padding: 10px 1rem;
+    padding-right: 2.3rem;
     outline: none;
     border: 1px solid #999;
     border-radius: 6px;
+    overflow: hidden;
+    max-width: 380px;
 `;
 
 const IconButton = styled.button`
@@ -19,9 +24,10 @@ const IconButton = styled.button`
     color: #004b4b;
 `;
 
-const TopBar = ({ filterButton }) => {
+const TopBar = ({ openFilter }) => {
     let controller;
     const searchRef = useRef();
+    const sortBy = useAtom(sortAtom)[0];
     const searchRecords = useApiService(s => s.searchRecords);
     const error = hooker("error", useApiService);
     const getRecords = hooker("getRecords", useApiService);
@@ -34,8 +40,9 @@ const TopBar = ({ filterButton }) => {
 
     const handleSearch = async () => {
         const query = searchRef?.current?.value;
+        console.log("PRinignt sort value", sortBy);
         if (query.length <= 0) return fetchAllRecords();
-        await searchRecords(query);
+        await searchRecords(query, sortBy);
         return controller?.abort();
     };
 
@@ -55,7 +62,7 @@ const TopBar = ({ filterButton }) => {
                         <Icon icon="material-symbols:manage-search-rounded" w={29} h={29} label="Search" color="inherit" />
                     </IconButton>
                 </div>
-                <button title='Under Progress' type='button' onClick={filterButton}
+                <button title='Under Progress' type='button' onClick={openFilter}
                     className='p-2 font-semibold rounded-lg bg-teal-800 hover:bg-teal-700 text-gray-100'>
                     Filter
                 </button>
