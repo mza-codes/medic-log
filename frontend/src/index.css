@@ -17,6 +17,19 @@ body {
     background-color: rgba(147, 255, 223, 0.315);
 }
 
+/* Loader.jsx */
+.loaderLg {
+    padding: 1rem;
+    width: auto;
+    height: auto;
+}
+
+.loaderSm {
+    padding: 1px;
+    width: auto;
+    height: auto;
+}
+
 /* ellipsis animat */
 .lds-ellipsis {
     display: inline-block;
@@ -31,7 +44,7 @@ body {
     width: 13px;
     height: 13px;
     border-radius: 50%;
-    background: teal;
+    /* background: teal; */
     animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 
@@ -140,21 +153,4 @@ body {
 
 #otpField:placeholder-shown {
     border-color: rgb(70, 70, 70);
-}
-
-.filterSidebar {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) 0ms forwards forwards;
-    /* animation: name duration timing-function delay iteration-count direction fill-mode; */
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: .5;
-    }
 }

@@ -43,7 +43,6 @@ const ViewRecords = () => {
         return () => setErrorView(false);
     }, []);
 
-    console.log(sideBarRef);
     console.count("Rendered ViewRecords.jsx");
     return (
         <main className='w-full min-h-[94vh] relative bg-gradient-to-r from-teal-50 via-emerald-100 to-teal-100'>
@@ -57,7 +56,7 @@ const ViewRecords = () => {
                 </h2>
                 {isLoading && <Loader />}
                 <div className="flex flex-wrap items-center justify-center gap-2">
-                    <TopBar filterButton={openSideBar} />
+                    <TopBar openFilter={openSideBar} />
                     {patientRecords?.map((record) => (
                         <div className="bg-white bg-opacity-40 text-gray-800 hover:bg-opacity-100 flex flex-col gap-2 min-h-[250px]
                             sm:min-h-[200px] relative p-4 font-medium min-w-[90vw] rounded-lg" key={record._id}>

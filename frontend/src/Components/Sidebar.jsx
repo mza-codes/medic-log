@@ -1,14 +1,42 @@
-import { forwardRef } from "react";
-import Dropdown from "./Dropdown";
+import { forwardRef, useRef } from "react";
+import styled from "styled-components";
+import SortBy from "./Filters/SortBy";
 import Icon from "./Icon";
+import { SearchBox } from "./TopBar";
 
-const sortBy = ["age", "title", "place", "checkup"];
+const sortValues = ["age", "name", "city", "checkup"];
+
+const StyledSelect = styled.select`
+    outline: none;
+    border: none;
+    appearance: none;
+    text-transform: capitalize;
+    background: linear-gradient(to right, #a9ffff,#f7b4bf);
+    cursor: pointer;
+    font-weight: 400;
+    
+    option{
+        text-align: left;
+    }
+`;
 
 const Sidebar = forwardRef((props, ref) => {
 
+    const formRef = useRef();
     const closeSideBar = () => {
         ref.current.style.visibility = "hidden";
         return;
+    };
+
+    const handleSearch = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        let data = {};
+        for (const [key, value] of formData) {
+            data[key ?? 0] = value;
+        };
+        console.log("Final", data);
+        // actual query to api
     };
 
     console.count("Rendered Sidebar.jsx");
@@ -20,14 +48,34 @@ const Sidebar = forwardRef((props, ref) => {
                     <h5 className="block text-center w-full uppercase nderline font-bold text-xl">Filters</h5>
                 </div>
                 <hr className="my-1 h-px opacity-60 bg-gray-600 border-0 " />
-                <section className="actions ml-4 flex flex-col p-2 items-start gap-2 font-semibold">
+                <form onSubmit={handleSearch} className="actions ml-4 flex flex-col p-2 items-start gap-3 font-semibold" ref={formRef}>
+                    <SearchBox className="w-[98%] font-normal"
+                        name="query"
+                        placeholder="Search For.."
+                        required
+                        minLength={2}
+                        maxLength={200}
+                    />
+
                     <div className="flex items-center gap-1">
-                        <span className={`bg-blak bg-opacity-60 hover:bg-opacity-80 text-black rounded-md p-2 uppercase text-sm`}>
+                        <span className={`text-black rounded-md p-2 uppercase text-sm`}>
                             Sort By:
                         </span>
-                        <Dropdown options={sortBy} selection={ref} />
+                        <StyledSelect name="sortfield" id="sortField" className="px-3 py-1 rounded-md">
+                            {sortValues.map((value) => (
+                                <option key={value} value={value}>{value}</option>
+                            ))}
+                        </StyledSelect>
+                        &nbsp;
+                        <SortBy />
                     </div>
-                </section>
+
+                    <div className="searchBtn flex flex-col justify-center items-center w-full mt-4">
+                        <button className="bg-teal-500 hover:bg-emerald-500 rounded-md p-2 text-sm" type="submit">
+                            Search
+                        </button>
+                    </div>
+                </form>
             </div>
 
         </main>
