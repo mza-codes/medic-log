@@ -50,8 +50,8 @@ const ViewRecords = () => {
             <section className="w-full py-4 bg-black bg-opacity-5 min-h-[94vh]">
                 <h1 className="text-4xl text-black text-center py-3">Patient Records</h1>
                 <h2 className="text-center py-2 font-semibold">
-                    {patientRecords?.length > 0 ? 
-                    `Displaying Total Of ${patientRecords?.length ?? 0} Records from Database`
+                    {patientRecords?.length > 0 ?
+                        `Displaying Total Of ${patientRecords?.length ?? 0} Records from Database`
                         : "No Records Found"}
                 </h2>
                 {isLoading && <Loader />}
@@ -72,8 +72,8 @@ const ViewRecords = () => {
                             <div className="absolute right-2 bottom-2 flex flex-row-reverse flex-wrap gap-2">
                                 <Icon w={36} h={36} color="#006d5b" label="Edit Record" onClick={() => editData(record)}
                                     icon="material-symbols:edit-document-rounded" />
-                                <Icon w={36} h={36} color="#008080" label="Expand View"
-                                    icon="mdi:arrow-expand-all" />
+                                <Icon w={36} h={36} color="#008080" onClick={() => route(`/view-record/${record._id}`)}
+                                    label="Expand View" icon="mdi:arrow-expand-all" />
                                 <Icon w={36} h={36} color="#e40800" label="Deletw Document" icon="mdi:file-document-delete"
                                     onClick={() => {
                                         if (window.confirm("This Record Will be Deleted!, Continue ?")) handleDelete(record);

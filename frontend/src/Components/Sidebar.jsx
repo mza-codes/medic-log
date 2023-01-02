@@ -5,7 +5,7 @@ import SortBy from "./Filters/SortBy";
 import Icon from "./Icon";
 import { SearchBox } from "./TopBar";
 
-const sortValues = ["age", "name", "city", "checkup"];
+const sortValues = ["age", "name", "city", "document", "checkup"];
 
 const StyledSelect = styled.select`
     outline: none;
@@ -40,7 +40,7 @@ const Sidebar = forwardRef((props, ref) => {
             data[key ?? 0] = value;
         };
         const res = await searchV2(data, e.target);
-        console.log("outcome",res);
+        console.log("outcome", res);
         if (res === true) closeSideBar();
         return;
     };

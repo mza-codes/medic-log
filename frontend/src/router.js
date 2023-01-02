@@ -10,6 +10,7 @@ const ViewRecords = lazy(() => import('./Pages/ViewRecords'));
 const EditRecord = lazy(() => import('./Pages/EditRecord'));
 const DeleteRecord = lazy(() => import('./Pages/DeleteRecord'));
 const Page404 = lazy(() => import('./Pages/Page404'));
+const ViewDoc = lazy(() => import('./Pages/ViewDoc'));
 
 const hexPattern = /[0-9a-fA-F]{24}/;
 const Router = () => {
@@ -72,6 +73,14 @@ const Router = () => {
             path: "/view-records",
             element: <ProtectedRoute>
                 <ViewRecords />
+            </ProtectedRoute>
+        },
+        {
+            path: "/view-record/:id",
+            element: <ProtectedRoute>
+                <VerifyId>
+                    <ViewDoc />
+                </VerifyId>
             </ProtectedRoute>
         },
         {
