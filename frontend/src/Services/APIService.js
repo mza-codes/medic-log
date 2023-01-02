@@ -15,6 +15,7 @@ const initialState = {
     success: false,
     // Records
     patientRecords: [],
+    patientRecord: null
 };
 
 export const validateStr = {
@@ -248,6 +249,17 @@ const useApiService = create((set, get) => ({
             return status;
         };
         return;
+    },
+    fetchRecord: async (id, signal) => {
+        get().setLoading(true);
+        const data = await fetchData(SecureAPI.get(`/app/get-record/${id}`, { signal }));
+        get().setLoading(false);
+        if (data?.code) {
+            get().handleError(data?.response?.data ?? data ?? { message: `Could'nt fetch Record with ID ${id}` });
+            return false;
+        };
+        set((s) => ({ ...s, patientRecord: data?.record }));
+        return data;
     },
     testFunc: async () => {
         // const data = await PrivateFetch(get('/api/'))

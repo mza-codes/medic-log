@@ -1,6 +1,4 @@
-import { useAtom } from "jotai";
 import { useRef } from "react";
-import { avatarAtom } from "../../App";
 import { defaultAvatar } from "../../Assets";
 
 const SUPPORTED_FORMATS = [
@@ -17,7 +15,6 @@ const AvatarSection = () => {
 
     const imgRef = useRef();
     const errRef = useRef();
-    const setData = useAtom(avatarAtom)[1];
 
     const handleChange = (e) => {
         const image = e?.target?.files[0];
@@ -29,7 +26,7 @@ const AvatarSection = () => {
         if (!tooBig) return errRef.current.innerText = "Image Too Big!";
 
         imgRef.current.src = URL.createObjectURL(image);
-        setData(image); // image is a blob
+        // setData(image); // image is a blob
         return errRef.current.innerText = "";
     };
 
@@ -51,3 +48,12 @@ const AvatarSection = () => {
 };
 
 export default AvatarSection;
+
+export const AvatarView = ({url}) => (
+    <div className='absolute top-2 right-2'>
+        <div className="relative border-gray-900 border-2">
+            <img src={url ?? defaultAvatar} alt="_person_photo" className='max-w-[100px] max-h-[140px] 
+                    md:max-w-[140px] md:max-h-[200px] aspect-square object-cover' />
+        </div>
+    </div>
+);

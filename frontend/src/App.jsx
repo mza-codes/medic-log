@@ -3,13 +3,11 @@ import { HashRouter } from 'react-router-dom';
 import Header from './Components/Header';
 import Router from './router';
 import { Suspense, useEffect } from 'react';
-import { atom } from 'jotai';
 import Loader from './Components/Loader/Loader';
 import ErrorBar from './Components/ErrorBar';
 import { useRef } from 'react';
 import useAuthService from './Services/AuthService';
 
-export const avatarAtom = atom(null);
 let fetchCompleted = false;
 
 const App = () => {
