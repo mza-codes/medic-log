@@ -114,6 +114,11 @@ body {
     opacity: 1.0;
 }
 
+/* Sidebar.jsx form */
+.errForm input{
+    border: 1.5px solid red;
+}
+
 /* Verify.jsx Input Field */
 #otpField {
     text-align: center;
