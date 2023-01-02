@@ -46,8 +46,6 @@ const TopBar = ({ openFilter }) => {
         return controller?.abort();
     };
 
-    console.log(error);
-    console.count("Rendered TopBar.jsx");
     return (
         <>
             <div className="controls flex flex-wrap gap-2 justify-between items-center w-[90%] ">

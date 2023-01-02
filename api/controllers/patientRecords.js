@@ -14,8 +14,8 @@ import { deleteReqCookie } from "./authControllers.js";
 export const validateStr = {
     isNum: /^\d+\.?\d*$/,
     isWord: /^[a-zA-Z][a-zA-Z ]*$/,
-    isNumDep: /^[0-9][A-Za-z0-9 -]*$/,
-    localPattern: /^[0-9]*$/,
+    // isNumDep: /^[0-9][A-Za-z0-9 -]*$/,
+    // localPattern: /^[0-9]*$/,
 };
 
 export const addPatient = asyncHandler(async (req, res) => {
@@ -96,6 +96,37 @@ export const searchRecords = asyncHandler(async (req, res) => {
     if (records.length <= 0) return res.status(404).json({ success: false, message: `No Results found for Query "${query}"` });
     log.info("REQUEST COMPLETED !!");
     res.status(200).json({ success: true, message: `Results for "${query}"`, records });
+});
+
+export const searchRecordsV2 = asyncHandler(async (req, res) => {
+    const query = req?.query;
+    let qValue = "value";
+    console.log(query);
+
+    if (!query) return res.status(404).json({ success: false, message: "Invalid Query" });
+
+    let records = [];
+
+    if (query?.age) {
+        // const sortOption = query?.sort ? "-age" : "age";
+        qValue = query?.age['$gte' || '$lte'];
+        records = await Patient.find(query).sort(query?.sort);
+    } else {
+        const { field, value } = query;
+        // const sortOption = query?.sort ? `-` + field : field;
+        qValue = value;
+        const q = { $regex: value, $options: "$i" };
+        records = await Patient.find({ [field]: q }).sort(query?.sort);
+    };
+
+    if (records.length <= 0) {
+        return res.status(404).json({
+            success: false,
+            message: `No Results found for Query "${qValue}"`
+        });
+    };
+    log.info("REQUEST COMPLETED !!");
+    res.status(200).json({ success: true, message: `Results for "${qValue}"`, records });
 });
 
 export const deleteRecord = asyncHandler(async (req, res) => {

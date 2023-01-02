@@ -50,8 +50,8 @@ const ViewRecords = () => {
             <section className="w-full py-4 bg-black bg-opacity-5 min-h-[94vh]">
                 <h1 className="text-4xl text-black text-center py-3">Patient Records</h1>
                 <h2 className="text-center py-2 font-semibold">
-                    {patientRecords?.length > 0 ? `
-                    Displaying Total Of ${patientRecords?.length ?? 0} Records from Database`
+                    {patientRecords?.length > 0 ? 
+                    `Displaying Total Of ${patientRecords?.length ?? 0} Records from Database`
                         : "No Records Found"}
                 </h2>
                 {isLoading && <Loader />}

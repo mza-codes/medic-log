@@ -17,6 +17,11 @@ const initialState = {
     patientRecords: [],
 };
 
+export const validateStr = {
+    isNum: /^\d+\.?\d*$/,
+    isWord: /^[a-zA-Z][a-zA-Z ]*$/,
+};
+
 const genSignal = () => {
     controller = new AbortController();
     return controller.signal;
@@ -52,6 +57,7 @@ const useApiService = create((set, get) => ({
             error: {
                 ...s.error,
                 active: bool ?? false,
+                message: ""
             }
         }))
     },
@@ -172,6 +178,42 @@ const useApiService = create((set, get) => ({
         get().setRecords(data);
         get().setErrorView(false);
         return data;
+    },
+    searchRecordsV2: async (q, form) => {
+        get().setLoading(true);
+        form?.classList?.remove("errForm");
+        const asc = q?.sortBy === "on";
+        let data;
+        if (q.sortfield?.toLowerCase() === "age") {
+            const isNum = validateStr.isNum.test(q.query);
+            if (!isNum) {
+                form?.classList?.add("errForm");
+                get().handleError({ message: "Query must be a number for field age!" });
+                return false;
+            };
+            data = await fetchData(SecureAPI.get(
+                `/app/search-records-v2/?${q?.sortfield + `[${asc ? "$lte" : "$gte"}]`}=${q.query}&sort=${asc ? q.sortfield : "-" + q.sortfield}`,
+                { signal: genSignal() }
+            ));
+        } else if (q.sortfield?.toLowerCase() === "checkup") {
+            form?.classList?.add("errForm");
+            get().handleError({ message: "Sort by checkup date is not available!" });
+            return false;
+        } else {
+            data = await fetchData(SecureAPI.get(
+                `/app/search-records-v2/?field=${q?.sortfield}&value=${q.query}&sort=${asc ? q.sortfield : "-" + q.sortfield}`,
+                { signal: genSignal() }
+            ));
+        };
+        get().setLoading(false);
+        if (data?.code) {
+            form?.classList?.add("errForm");
+            get().handleError(data?.response?.data ?? data);
+            return false;
+        };
+        get().setRecords(data);
+        get().setErrorView(false);
+        return true;
     },
     deleteRecordWAuth: async (id) => {
         get().setLoading(true);
