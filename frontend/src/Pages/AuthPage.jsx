@@ -4,6 +4,7 @@ import { bg } from '../Assets';
 import Loader from '../Components/Loader/Loader';
 import useAuthService from '../Services/AuthService';
 import Verify from './AuthSection/Verify';
+import BGPage from './BGPage';
 
 const LoginForm = lazy(() => import('./AuthSection/LoginForm'));
 const SignupForm = lazy(() => import('./AuthSection/SignupForm'));
@@ -15,7 +16,7 @@ const AuthPage = ({ login, signup, verify }) => {
   console.count("Component Rendered");
 
   return (
-    <main style={{ backgroundImage: `url(${bg})` }} className='w-full min-h-[94vh] bg-cover'>
+    <BGPage image={1}>
 
       <section className='w-full min-h-[90vh] flex flex-col items-center justify-center'>
         <h1 className='text-4xl font-semibold underline mb-8'>{login ? "Login" : signup ? "SignUp" : verify && "Verify"}</h1>
@@ -54,7 +55,7 @@ const AuthPage = ({ login, signup, verify }) => {
         </>} */}
       </section>
 
-    </main>
+    </BGPage>
   );
 };
 
