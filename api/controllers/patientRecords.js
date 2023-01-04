@@ -108,12 +108,15 @@ export const searchRecordsV2 = asyncHandler(async (req, res) => {
     let records = [];
 
     if (query?.age) {
-        // const sortOption = query?.sort ? "-age" : "age";
         qValue = query?.age['$gte' || '$lte'];
         records = await Patient.find(query).sort(query?.sort);
+    } else if (query?.lastCheckup) {
+        const { lastCheckup, sort } = query;
+        qValue = query?.lastCheckup;
+        const q = { lastCheckup: { $regex: lastCheckup, $options: "$i" } };
+        records = await Patient.find(q).sort(sort);
     } else {
         const { field, value } = query;
-        // const sortOption = query?.sort ? `-` + field : field;
         qValue = value;
         const q = { $regex: value, $options: "$i" };
         records = await Patient.find({ [field]: q }).sort(query?.sort);

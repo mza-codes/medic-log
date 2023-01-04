@@ -25,8 +25,7 @@ const ViewRecords = () => {
     };
 
     const disableScroll = (value) => {
-        // let style = document.body.style.overflow
-        document.body.style.overflow = (value === true) ? 'hidden' : 'auto'
+        document.body.style.overflow = (value === true) ? 'hidden' : 'auto';
     };
 
     const openSideBar = () => {
@@ -74,11 +73,10 @@ const ViewRecords = () => {
                             {record?.age && <p className="text-xl">Age: {record?.age}</p>}
                             <p className="text-xl capitalize">{record?.city}</p>
                             <p className="text-lg">{new Date(record?.lastCheckup?.[0]).toLocaleDateString()}</p>
-
                             <div className="absolute left-1/3 top-3 overflow-hidden max-h-[180px] hidden md:block">
                                 {parse(record?.document)}
                             </div>
-                            {/* <AvatarSection /> */}
+                            {/* AvatarSection */}
                             <div className="absolute right-2 bottom-2 flex flex-row-reverse flex-wrap gap-2">
                                 <Icon w={36} h={36} color="#006d5b" label="Edit Record" onClick={() => editData(record)}
                                     icon="material-symbols:edit-document-rounded" />

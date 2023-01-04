@@ -5,7 +5,7 @@ import SortBy from "./Filters/SortBy";
 import Icon from "./Icon";
 import { SearchBox } from "./TopBar";
 
-const sortValues = ["age", "name", "city", "document", "checkup"];
+const sortValues = ["age", "name", "city", "document", "lastCheckup"];
 
 const StyledSelect = styled.select`
     outline: none;

@@ -196,10 +196,11 @@ const useApiService = create((set, get) => ({
                 `/app/search-records-v2/?${q?.sortfield + `[${asc ? "$lte" : "$gte"}]`}=${q.query}&sort=${asc ? q.sortfield : "-" + q.sortfield}`,
                 { signal: genSignal() }
             ));
-        } else if (q.sortfield?.toLowerCase() === "checkup") {
-            form?.classList?.add("errForm");
-            get().handleError({ message: "Sort by checkup date is not available!" });
-            return false;
+        } else if (q.sortfield?.toLowerCase() === "lastcheckup") {
+            data = await fetchData(SecureAPI.get(
+                `/app/search-records-v2/?${q?.sortfield}=${q.query}&sort=${asc ? q.sortfield : "-" + q.sortfield}`,
+                { signal: genSignal() }));
+            // return false;
         } else {
             data = await fetchData(SecureAPI.get(
                 `/app/search-records-v2/?field=${q?.sortfield}&value=${q.query}&sort=${asc ? q.sortfield : "-" + q.sortfield}`,
