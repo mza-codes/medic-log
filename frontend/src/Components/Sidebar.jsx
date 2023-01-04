@@ -5,7 +5,7 @@ import SortBy from "./Filters/SortBy";
 import Icon from "./Icon";
 import { SearchBox } from "./TopBar";
 
-const sortValues = ["age", "name", "city", "document", "checkup"];
+const sortValues = ["age", "name", "city", "document", "lastCheckup"];
 
 const StyledSelect = styled.select`
     outline: none;
@@ -21,13 +21,16 @@ const StyledSelect = styled.select`
     }
 `;
 
-const Sidebar = forwardRef((props, ref) => {
+const Sidebar = forwardRef(({ controllers, ...props }, ref) => {
 
+    const { disableScroll } = controllers;
     const formRef = useRef();
     const searchV2 = useApiService(s => s.searchRecordsV2);
     const isLoading = useApiService(s => s.isLoading);
+
     const closeSideBar = () => {
         ref.current.style.visibility = "hidden";
+        disableScroll(false);
         return;
     };
 
@@ -48,7 +51,7 @@ const Sidebar = forwardRef((props, ref) => {
     console.count("Rendered Sidebar.jsx");
     return (
         <main ref={ref} {...props} className="w-full min-h-[100%] absolute right-0 bg-black bg-opacity-40 z-50 hidden sm:block invisible">
-            <div className="rounded-l-lg mt-2 bg-gradient-to-br from-teal-200 to-teal-600 h-[98%] top-0 w-72 absolute right-0 ">
+            <div className="rounded-l-lg mt-2 bg-gradient-to-br from-teal-200 to-teal-600 h-[93vh] top-0 w-72 absolute right-0 ">
                 <div className="relative p-1 flex items-center justify-center">
                     <Icon icon={"mingcute:close-circle-fill"} w="36" h="36" onClick={closeSideBar} label={"Close Sidebar"} />
                     <h5 className="block text-center w-full uppercase nderline font-bold text-xl">Filters</h5>

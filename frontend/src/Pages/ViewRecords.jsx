@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import useLocalState from "../Services/LocalState";
 import TopBar from "../Components/TopBar";
 import Sidebar from "../Components/Sidebar";
+import BGPage from "./BGPage";
 
 const ViewRecords = () => {
     const route = useNavigate();
@@ -23,8 +24,13 @@ const ViewRecords = () => {
         return;
     };
 
+    const disableScroll = (value) => {
+        document.body.style.overflow = (value === true) ? 'hidden' : 'auto';
+    };
+
     const openSideBar = () => {
         sideBarRef.current.style.visibility = "visible";
+        disableScroll(true);
         return;
     };
 
@@ -40,13 +46,16 @@ const ViewRecords = () => {
     }, [getRecords]);
 
     useEffect(() => {
-        return () => setErrorView(false);
+        return () => {
+            disableScroll(false);
+            setErrorView(false);
+        };
     }, []);
 
     console.count("Rendered ViewRecords.jsx");
     return (
-        <main className='w-full min-h-[94vh] relative bg-gradient-to-r from-teal-50 via-emerald-100 to-teal-100'>
-            <Sidebar ref={sideBarRef} />
+        <BGPage image={0}>
+            <Sidebar ref={sideBarRef} controllers={{ disableScroll }} />
             <section className="w-full py-4 bg-black bg-opacity-5 min-h-[94vh]">
                 <h1 className="text-4xl text-black text-center py-3">Patient Records</h1>
                 <h2 className="text-center py-2 font-semibold">
@@ -64,11 +73,10 @@ const ViewRecords = () => {
                             {record?.age && <p className="text-xl">Age: {record?.age}</p>}
                             <p className="text-xl capitalize">{record?.city}</p>
                             <p className="text-lg">{new Date(record?.lastCheckup?.[0]).toLocaleDateString()}</p>
-
                             <div className="absolute left-1/3 top-3 overflow-hidden max-h-[180px] hidden md:block">
                                 {parse(record?.document)}
                             </div>
-                            {/* <AvatarSection /> */}
+                            {/* AvatarSection */}
                             <div className="absolute right-2 bottom-2 flex flex-row-reverse flex-wrap gap-2">
                                 <Icon w={36} h={36} color="#006d5b" label="Edit Record" onClick={() => editData(record)}
                                     icon="material-symbols:edit-document-rounded" />
@@ -84,7 +92,7 @@ const ViewRecords = () => {
                     ))}
                 </div>
             </section>
-        </main>
+        </BGPage>
     );
 };
 
