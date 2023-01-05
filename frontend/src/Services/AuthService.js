@@ -71,6 +71,12 @@ const useAuthService = create((set, get) => ({
         set(state => ({ ...state, isLoading: false, isCancelled: "Request Cancelled !" }));
         return;
     },
+    setLoading: (action) => {
+        set((s) => ({
+            ...s, isLoading: action ?? true,
+        }));
+        return true;
+    },
     refreshSession: async () => {
         if (get().active) {
             const data = await fetchData(SecureAPI.post('/auth/refresh-session', {}, {
@@ -89,9 +95,6 @@ const useAuthService = create((set, get) => ({
         };
         return false;
     },
-    // passwordAuth: async (data) => {
-    //     const data = await fetchData(SecureAPI.post('/delete-record/:id'))
-    // },
     login: async (loginData) => {
         set(state => ({ ...state, isLoading: true, info: {}, errActive: false, isCancelled: "" }));
         controller = new AbortController();
@@ -122,19 +125,17 @@ const useAuthService = create((set, get) => ({
         };
     },
     logout: async () => {
-        const signal = genSignal();
-        const data = await fetchData(SecureAPI.get('/auth/logout', { withCredentials: true, signal }));
-        if (data?.code) return get().handleError(data?.response?.data ?? data);
+        get().setLoading(true);
+        const data = await fetchData(SecureAPI.get('/auth/logout', { withCredentials: true, signal: genSignal() }));
+        if (data?.code) {
+            get().handleError(data?.response?.data ?? data);
+            return false;
+        };
         set((s) => ({
             ...s,
             user: {},
-            active: false
-        }));
-        return true;
-    },
-    setLoading: (action = true) => {
-        set((s) => ({
-            ...s, isLoading: action,
+            active: false,
+            isLoading: false
         }));
         return true;
     },
