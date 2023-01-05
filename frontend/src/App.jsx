@@ -3,10 +3,10 @@ import { HashRouter } from 'react-router-dom';
 import Header from './Components/Header';
 import Router from './router';
 import { Suspense, useEffect } from 'react';
-import Loader from './Components/Loader/Loader';
 import ErrorBar from './Components/ErrorBar';
 import { useRef } from 'react';
 import useAuthService from './Services/AuthService';
+import BrandLoader from './Pages/BrandLoader';
 
 let fetchCompleted = false;
 
@@ -31,12 +31,13 @@ const App = () => {
             <HashRouter hashType="hashbang">
                 <Header />
 
-                <Suspense fallback={<Loader />}>
+                <Suspense fallback={<BrandLoader />}>
                     <Router />
                 </Suspense>
                 <div className="errorBar" ref={errMsg}>
                     <ErrorBar msg='Unable to establish connection with server !' />
                 </div>
+                
             </HashRouter>
         </>
     );

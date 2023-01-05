@@ -31,9 +31,10 @@ const AddDataForm = ({ data, update }) => {
     const RequiredMsg = "Required Field !";
     const formSchema = Yup.object().shape({
         name: Yup.string().required(RequiredMsg).min(3).max(34),
-        age: Yup.number().required(RequiredMsg).min(1, "Minimum Age is 1").max(120, "Invalid Age"),
+        age: Yup.number().required(RequiredMsg).min(1, "Minimum Age is 1").max(120, "Invalid Age")
+            .positive("Must be Greater than 0").integer(),
         city: Yup.string().required(RequiredMsg).min(3).max(70),
-        lastCheckup: Yup.date().required(RequiredMsg).max(new Date(), "Invalid Date !"),
+        lastCheckup: Yup.date().required(RequiredMsg).max(new Date(), "Invalid Date !").min(new Date("1970-01-01T00:00"), "Too Old Date"),
     });
 
     const handleSubmit = async (values, actions) => {
