@@ -17,19 +17,6 @@ body {
     background-color: rgba(147, 255, 223, 0.315);
 }
 
-/* Loader.jsx */
-.loaderLg {
-    padding: 1rem;
-    width: auto;
-    height: auto;
-}
-
-.loaderSm {
-    padding: 1px;
-    width: auto;
-    height: auto;
-}
-
 /* ellipsis animat */
 .lds-ellipsis {
     display: inline-block;

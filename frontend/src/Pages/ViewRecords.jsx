@@ -41,8 +41,8 @@ const ViewRecords = () => {
 
     useEffect(() => {
         const controller = new AbortController();
-        getRecords(controller.signal);
-        return () => controller.abort();
+        if (patientRecords?.length <= 0) getRecords(controller.signal);
+        return () => controller?.abort();
     }, [getRecords]);
 
     useEffect(() => {
@@ -82,7 +82,7 @@ const ViewRecords = () => {
                                     icon="material-symbols:edit-document-rounded" />
                                 <Icon w={36} h={36} color="#008080" onClick={() => route(`/view-record/${record._id}`)}
                                     label="Expand View" icon="mdi:arrow-expand-all" />
-                                <Icon w={36} h={36} color="#e40800" label="Deletw Document" icon="mdi:file-document-delete"
+                                <Icon w={36} h={36} color="#e40800" label="Delete Document" icon="mdi:file-document-delete"
                                     onClick={() => {
                                         if (window.confirm("This Record Will be Deleted!, Continue ?")) handleDelete(record);
                                     }}
