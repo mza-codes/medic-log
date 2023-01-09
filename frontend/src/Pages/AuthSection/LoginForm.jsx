@@ -1,11 +1,11 @@
 import { useRef } from "react";
 import { Form, Formik } from 'formik';
-import * as Yup from 'yup';
 import CustomField from "../../Components/Input/CustomField";
 import useAuthService from "../../Services/AuthService";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../Components/Loader/Loader";
+import { loginSchema } from "../../Schema";
 
 const LoginForm = () => {
     const submitBtn = useRef();
@@ -19,11 +19,6 @@ const LoginForm = () => {
         else return false;
     };
 
-    const schema = Yup.object().shape({
-        email: Yup.string().email().required().min(6).max(46),
-        password: Yup.string().min(6).max(19).required()
-    });
-
     useEffect(() => {
         submitBtn.current.disabled = !errActive;
     }, [errActive]);
@@ -31,7 +26,7 @@ const LoginForm = () => {
     return (
         <Formik validateOnChange
             initialValues={{ email: "", password: "" }}
-            validationSchema={schema}
+            validationSchema={loginSchema}
             validateOnBlur={true}
             onSubmit={handleSubmit}>
             {props => (

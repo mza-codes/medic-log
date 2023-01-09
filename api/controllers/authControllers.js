@@ -102,7 +102,7 @@ export const auth = asyncHandler(async (req, res, next) => {
 });
 
 export const provideUser = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.userId, "-password");
+    const user = await User.findById(req.userId,"-password");
     if (!user) {
         return res.status(500).json({ // prevent failure
             success: false,

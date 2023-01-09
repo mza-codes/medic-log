@@ -62,7 +62,7 @@ const useAuthService = create((set, get) => ({
         set((s) => ({
             ...s,
             errActive: true,
-            ...error,
+            error: { ...error },
         }));
         return true;
     },
@@ -306,6 +306,25 @@ const useAuthService = create((set, get) => ({
                 refreshToken: ""
             }));
             return error;
+        };
+    },
+    updateProfile: async (formData) => {
+        get().setLoading(true);
+        try {
+            const { data } = await SecureAPI.put('/user/update', formData, { signal: genSignal() });
+            console.log("updateProfile Response", data);
+            set(state => ({
+                ...state,
+                user: data?.user,
+                active: true,
+                errActive: false
+            }));
+            return data;
+        } catch (error) {
+            console.log(error);
+            get().handleError(error?.response?.data ?? error);
+        } finally {
+            get().setLoading(false);
         };
     },
 }));
