@@ -46,7 +46,7 @@ const Dashboard = () => {
                     </Link>
 
                     <Link to='/profile' className="bg-lime-800 text-white hover:bg-lime-700 p-2 rounded-lg ">
-                        Profile
+                        Forgot Password
                     </Link>
 
                     <Link to='/masked/dtrgdttre' className="bg-emerald-800 text-white hover:bg-emerald-700 p-2 rounded-lg ">

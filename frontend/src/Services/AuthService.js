@@ -316,7 +316,6 @@ const useAuthService = create((set, get) => ({
             set(state => ({
                 ...state,
                 user: data?.user,
-                active: true,
                 errActive: false
             }));
             return data;

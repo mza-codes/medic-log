@@ -1,6 +1,5 @@
 import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
-import { bg } from '../Assets';
 import Loader from '../Components/Loader/Loader';
 import useAuthService from '../Services/AuthService';
 import Verify from './AuthSection/Verify';
@@ -12,7 +11,7 @@ const SignupForm = lazy(() => import('./AuthSection/SignupForm'));
 const AuthPage = ({ login, signup, verify }) => {
   const cancelReq = useAuthService(state => state.cancelReq);
   const isLoading = useAuthService(state => state.isLoading);
-  // const message = useRef();
+  
   console.count("Component Rendered");
 
   return (
@@ -36,9 +35,10 @@ const AuthPage = ({ login, signup, verify }) => {
           </Suspense>}
 
         {(login ?? signup) && <Link to={login ? "/signup" : signup && "/login"}
-          className='text-emerald-500 hover:text-emerald-800' >
+          className='text-emerald-500 hover:text-emerald-800 font-normal' >
           {login ? "Don't" : signup && "Already"} have an Account ?
         </Link>}
+        {login && <Link to="/forgot-password" className='text-teal-800 hover:text-teal-600 py-2 font-normal' >Forgot Password ?</Link> }
 
       </section>
 
@@ -47,12 +47,7 @@ const AuthPage = ({ login, signup, verify }) => {
           <button type='button' onClick={cancelReq} className='fixed right-1 hover:bg-red-700 text-white rounded-md p-1 bg-teal-700'>
             Cancel
           </button>}
-        {/* {isCancelled.length !==0 && <>
-          <p ref={message} className='text-gray-800 text-center'>{isCancelled}</p>
-          <button type='button' onClick={disableBar} className='fixed left-1 text-red-600 rounded-xl p-2'>
-            <iconify-icon icon="eva:close-circle-fill" width={33} height={33} />
-          </button>
-        </>} */}
+        
       </section>
 
     </BGPage>

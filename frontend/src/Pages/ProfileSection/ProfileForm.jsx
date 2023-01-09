@@ -1,6 +1,6 @@
-import { Loader, LoadingOverlay } from "@mantine/core";
+import { LoadingOverlay } from "@mantine/core";
 import { Form, Formik } from "formik";
-import { useNavigate } from "react-router-dom";
+import Dropdown from "../../Components/Dropdown";
 import CustomField from "../../Components/Input/CustomField";
 import { userSchema } from "../../Schema";
 import useAuthService from "../../Services/AuthService";
@@ -12,13 +12,6 @@ function ProfileForm({ user }) {
     const errActive = useAuthService(s => s.errActive);
     const updateProfile = useAuthService(s => s.updateProfile);
 
-    const handleSubmit = async (values, actions) => {
-        const data = await updateProfile({ name: values.name });
-        data?.sucess && alert("OK");
-        console.log("Request Complete", data);
-        return;
-    };
-
     const initialValues = {
         email: user?.email ?? "",
         password: "",
@@ -26,7 +19,14 @@ function ProfileForm({ user }) {
         name: user?.name ?? ""
     };
 
-    console.log(error);
+    const handleSubmit = async (values, actions) => {
+        if (initialValues.name === values.name) return false;
+        
+        const data = await updateProfile({ name: values.name });
+        data?.success && alert("OK");
+        console.log("Request Complete");
+        return;
+    };
 
     return (
         <Formik validateOnChange={true} enableReinitialize={true}
@@ -36,6 +36,7 @@ function ProfileForm({ user }) {
             onSubmit={handleSubmit}>
             {props => (
                 <Form className="form flex flex-col gap-2 items-center justify-center p-2 mb-10">
+                    <Dropdown options={["name", "password"]} />
                     <CustomField name="name" type="text" placeholder="Organization Name" label="Name" />
                     <CustomField name="email" type="text" placeholder="abc@ttof.com"
                         label="Email" readOnly={true} title="This Field is Read Only" />
@@ -49,9 +50,7 @@ function ProfileForm({ user }) {
                     <div id="errorFeedback" className="text-rose-600">
                         {errActive && <span className="err">{error?.message ?? error?.error} !</span>}
                     </div>
-                    {/* {(isLoading || props.isSubmitting) &&
-                        <Loader size={50} variant="dots" color="#004904" />
-                    } */}
+
                     {isLoading && <LoadingOverlay
                         visible={true}
                         transitionDuration={500}

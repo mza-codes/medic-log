@@ -117,6 +117,15 @@ body {
     color: rgb(65, 64, 64);
 }
 
+#otpField[type="email"] {
+    text-align: left;
+    letter-spacing: 1px;
+    appearance: none;
+    font-weight: 400;
+    font-size: 16px;
+    color: rgb(49, 49, 49);
+}
+
 #otpField::placeholder {
     text-align: start;
     letter-spacing: 0px;
