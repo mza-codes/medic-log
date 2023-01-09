@@ -40,6 +40,14 @@ const Dashboard = () => {
                     <Link to='/view-records' className="bg-teal-800 text-white hover:bg-teal-700 p-2 rounded-lg ">
                         View All Patients Data
                     </Link>
+                    
+                    <Link to='/profile' className="bg-pink-800 text-white hover:bg-pink-700 p-2 rounded-lg ">
+                        Profile
+                    </Link>
+
+                    <Link to='/profile' className="bg-lime-800 text-white hover:bg-lime-700 p-2 rounded-lg ">
+                        Forgot Password
+                    </Link>
 
                     <Link to='/masked/dtrgdttre' className="bg-emerald-800 text-white hover:bg-emerald-700 p-2 rounded-lg ">
                         404

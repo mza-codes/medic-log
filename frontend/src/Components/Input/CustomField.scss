@@ -28,6 +28,12 @@
         // &::placeholder{
         //     text-transform: capitalize;
         // }
+
+        &:read-only{
+            border: var(--inputbox-border) solid rgb(121, 121, 121);
+            pointer-events: none;
+            color: gray;
+        }
     }
 
     .error {

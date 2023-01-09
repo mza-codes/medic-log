@@ -12,6 +12,7 @@ import { testConnection } from './config/nodemailer.js';
 import { connectRedis } from './utils/redisConfig.js';
 import { authRoutes } from './routes/auth.js';
 import recordRoutes from './routes/records.js';
+import userRoutes from './routes/user.js';
 
 // Database Connection
 const connectDB = async () => {
@@ -45,6 +46,7 @@ app.use(helmet());
 // Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/app', recordRoutes);
+app.use('/api/v1/user', userRoutes);
 
 // Error Handler
 app.use(errorHandler);

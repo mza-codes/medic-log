@@ -8,7 +8,6 @@ const ScreenLoader = ({ close }) => {
 
     useEffect(() => {
         const closer = setTimeout(() => {
-            console.warn("Closing Loader");
             close && setOpen(false);
         }, close);
 

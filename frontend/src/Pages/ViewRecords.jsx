@@ -9,7 +9,10 @@ import TopBar from "../Components/TopBar";
 import Sidebar from "../Components/Sidebar";
 import BGPage from "./BGPage";
 
+const scrollState = document?.body?.style?.overflow ?? "";
+
 const ViewRecords = () => {
+    console.log("VALUE OF SCROLLSTATE",scrollState);
     const route = useNavigate();
     const getRecords = useApiService(s => s.getRecords);
     const patientRecords = useApiService(s => s.patientRecords);
@@ -25,7 +28,7 @@ const ViewRecords = () => {
     };
 
     const disableScroll = (value) => {
-        document.body.style.overflow = (value === true) ? 'hidden' : 'auto';
+        document.body.style.overflow = (value === true) ? 'hidden' : scrollState;
     };
 
     const openSideBar = () => {

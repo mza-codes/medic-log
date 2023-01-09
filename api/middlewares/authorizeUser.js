@@ -187,12 +187,13 @@ export const refreshSession = asyncHandler(async (req, res) => {
 });
 
 export const verifyPassword = asyncHandler(async (req, res, next) => {
-    const { body: { password }, params: { id } } = req;
-    console.log(password, id, req.body);
-    if (!password || !id) {
+    const password = req?.body?.password;
+    console.log(password, req.body);
+
+    if (!password) {
         return res.status(400).json({
             success: false,
-            message: `${!password ? "Password Not Found on Request" : "Record ID Not Found"}`
+            message: `Password Not Found on Request!`
         });
     };
 

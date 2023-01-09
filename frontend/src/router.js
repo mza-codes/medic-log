@@ -11,6 +11,8 @@ const EditRecord = lazy(() => import('./Pages/EditRecord'));
 const DeleteRecord = lazy(() => import('./Pages/DeleteRecord'));
 const Page404 = lazy(() => import('./Pages/Page404'));
 const ViewDoc = lazy(() => import('./Pages/ViewDoc'));
+const Profile = lazy(() => import('./Pages/Profile'));
+const ForgotPassword = lazy(() => import('./Pages/ForgotPassword'));
 
 const hexPattern = /[0-9a-fA-F]{24}/;
 const Router = () => {
@@ -62,6 +64,18 @@ const Router = () => {
             element: <ProtectedRoute>
                 <Dashboard />
             </ProtectedRoute>
+        },
+        {
+            path: "/profile",
+            element: <ProtectedRoute>
+                <Profile />
+            </ProtectedRoute>
+        },
+        {
+            path: "/forgot-password",
+            element: <AuthRoute>
+                <ForgotPassword />
+            </AuthRoute>
         },
         {
             path: "/add-record",

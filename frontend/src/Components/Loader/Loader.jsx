@@ -2,7 +2,7 @@ import { Loader as MantineLoader } from "@mantine/core";
 
 const Loader = ({ inline, color, tailwindBg, native }) => {
 
-    if (native) {
+    if (!native) {
         return (
             <main className={`flex flex-col items-center justify-center text-center ${inline ? 'loaderSm' : 'loaderLg'}`}>
                 <div className="lds-ellipsis">
