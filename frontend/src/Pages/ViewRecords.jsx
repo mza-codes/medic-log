@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Loader from "../Components/Loader/Loader";
 import parse from 'html-react-parser';
 import useApiService from "../Services/APIService";
@@ -8,18 +8,17 @@ import useLocalState from "../Services/LocalState";
 import TopBar from "../Components/TopBar";
 import Sidebar from "../Components/Sidebar";
 import BGPage from "./BGPage";
-
-const scrollState = document?.body?.style?.overflow ?? "";
+import FilterModal from "../Components/FilterModal";
 
 const ViewRecords = () => {
-    console.log("VALUE OF SCROLLSTATE",scrollState);
     const route = useNavigate();
+    const [openFilter, setOpenFilter] = useState(false);
     const getRecords = useApiService(s => s.getRecords);
     const patientRecords = useApiService(s => s.patientRecords);
     const isLoading = useApiService(s => s.isLoading);
     const setEditData = useLocalState(s => s.setEditData);
-    const sideBarRef = useRef();
     const setErrorView = useApiService(s => s.setErrorView);
+    const info = useApiService(s => s.info);
 
     const editData = (data) => {
         setEditData(data);
@@ -27,13 +26,8 @@ const ViewRecords = () => {
         return;
     };
 
-    const disableScroll = (value) => {
-        document.body.style.overflow = (value === true) ? 'hidden' : scrollState;
-    };
-
     const openSideBar = () => {
-        sideBarRef.current.style.visibility = "visible";
-        disableScroll(true);
+        setOpenFilter(true);
         return;
     };
 
@@ -49,16 +43,13 @@ const ViewRecords = () => {
     }, [getRecords]);
 
     useEffect(() => {
-        return () => {
-            disableScroll(false);
-            setErrorView(false);
-        };
+        return () => setErrorView(false);
     }, []);
 
     console.count("Rendered ViewRecords.jsx");
     return (
         <BGPage image={0}>
-            <Sidebar ref={sideBarRef} controllers={{ disableScroll }} />
+            <FilterModal controller={{ openFilter, setOpenFilter }} />
             <section className="w-full py-4 bg-black bg-opacity-5 min-h-[94vh]">
                 <h1 className="text-4xl text-black text-center py-3">Patient Records</h1>
                 <h2 className="text-center py-2 font-semibold">
@@ -66,6 +57,7 @@ const ViewRecords = () => {
                         `Displaying Total Of ${patientRecords?.length ?? 0} Records from Database`
                         : "No Records Found"}
                 </h2>
+                {info?.active && <h3 className="text-center py-2 font-semibold">{info?.message}</h3>}
                 {isLoading && <Loader />}
                 <div className="flex flex-wrap items-center justify-center gap-2">
                     <TopBar openFilter={openSideBar} />
