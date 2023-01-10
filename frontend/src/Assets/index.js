@@ -31,7 +31,6 @@ export const resIntercep = SecureAPI.interceptors.response.use(
     },
     async (err) => {
         const controller = new AbortController();
-        console.warn("Retried Status", retried, "Error from useSecApi intercept", err);
         const prevReq = err?.config;
         if (err?.response?.data?.message === "jwt expired" && !retried) {
             retried = true;

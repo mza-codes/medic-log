@@ -13,6 +13,7 @@ const initialState = {
         active: false
     },
     success: false,
+    info: null,
     // Records
     patientRecords: [],
     patientRecord: null
@@ -61,6 +62,13 @@ const useApiService = create((set, get) => ({
                 message: ""
             }
         }))
+    },
+    setInfo: (data) => {
+        set((s) => ({
+            ...s,
+            info: { ...data }
+        }));
+        return true;
     },
     handleError: (err) => {
         if (!err) return false;
@@ -160,7 +168,8 @@ const useApiService = create((set, get) => ({
         set((s) => ({
             ...s,
             patientRecords: data?.records ?? [],
-            isLoading: false
+            isLoading: false,
+            info: { active: false }
         }));
         get().setErrorView(false);
         return true;
@@ -210,10 +219,12 @@ const useApiService = create((set, get) => ({
         get().setLoading(false);
         if (data?.code) {
             form?.classList?.add("errForm");
+            get().setInfo({ active: false });
             get().handleError(data?.response?.data ?? data);
             return false;
         };
         get().setRecords(data);
+        get().setInfo({ message: data?.message ?? "Results Found for Query" + q.query, active: true });
         get().setErrorView(false);
         return true;
     },
