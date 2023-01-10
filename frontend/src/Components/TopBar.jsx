@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { hooker } from '../Assets';
 import { sortAtom } from '../Atoms';
 import useApiService from '../Services/APIService';
+import { filterAtom } from './FilterModal';
 import Icon from './Icon';
 
 export const SearchBox = styled.input`
@@ -24,8 +25,9 @@ const IconButton = styled.button`
     color: #004b4b;
 `;
 
-const TopBar = ({ openFilter }) => {
+const TopBar = () => {
     let controller;
+    const setOpenFilter = useAtom(filterAtom)[1];
     const searchRef = useRef();
     const sortBy = useAtom(sortAtom)[0];
     const searchRecords = useApiService(s => s.searchRecords);
@@ -38,6 +40,10 @@ const TopBar = ({ openFilter }) => {
         return getRecords(controller.signal);
     };
 
+    function openFilter() {
+        setOpenFilter(true);
+    };
+
     const handleSearch = async () => {
         const query = searchRef?.current?.value;
         console.log("PRinignt sort value", sortBy);
@@ -46,6 +52,7 @@ const TopBar = ({ openFilter }) => {
         return controller?.abort();
     };
 
+    console.count("Rendered Topbar.jsx");
     return (
         <>
             <div className="controls flex flex-wrap gap-2 justify-between items-center w-[90%] ">

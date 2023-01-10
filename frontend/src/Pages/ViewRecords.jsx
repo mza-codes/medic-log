@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import Loader from "../Components/Loader/Loader";
 import parse from 'html-react-parser';
 import useApiService from "../Services/APIService";
@@ -6,13 +6,11 @@ import Icon from "../Components/Icon";
 import { useNavigate } from "react-router-dom";
 import useLocalState from "../Services/LocalState";
 import TopBar from "../Components/TopBar";
-import Sidebar from "../Components/Sidebar";
 import BGPage from "./BGPage";
 import FilterModal from "../Components/FilterModal";
 
 const ViewRecords = () => {
     const route = useNavigate();
-    const [openFilter, setOpenFilter] = useState(false);
     const getRecords = useApiService(s => s.getRecords);
     const patientRecords = useApiService(s => s.patientRecords);
     const isLoading = useApiService(s => s.isLoading);
@@ -23,11 +21,6 @@ const ViewRecords = () => {
     const editData = (data) => {
         setEditData(data);
         route('/edit-record');
-        return;
-    };
-
-    const openSideBar = () => {
-        setOpenFilter(true);
         return;
     };
 
@@ -49,7 +42,7 @@ const ViewRecords = () => {
     console.count("Rendered ViewRecords.jsx");
     return (
         <BGPage image={0}>
-            <FilterModal controller={{ openFilter, setOpenFilter }} />
+            <FilterModal />
             <section className="w-full py-4 bg-black bg-opacity-5 min-h-[94vh]">
                 <h1 className="text-4xl text-black text-center py-3">Patient Records</h1>
                 <h2 className="text-center py-2 font-semibold">
@@ -60,7 +53,7 @@ const ViewRecords = () => {
                 {info?.active && <h3 className="text-center py-2 font-semibold">{info?.message}</h3>}
                 {isLoading && <Loader />}
                 <div className="flex flex-wrap items-center justify-center gap-2">
-                    <TopBar openFilter={openSideBar} />
+                    <TopBar />
                     {patientRecords?.map((record) => (
                         <div className="bg-white bg-opacity-40 text-gray-800 hover:bg-opacity-100 flex flex-col gap-2 min-h-[250px]
                             sm:min-h-[200px] relative p-4 font-medium min-w-[90vw] rounded-lg" key={record._id}>

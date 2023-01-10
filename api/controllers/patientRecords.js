@@ -108,7 +108,7 @@ export const searchRecordsV2 = asyncHandler(async (req, res) => {
     let records = [];
 
     if (query?.age) {
-        qValue = query?.age['$gte' ?? '$lte'];
+        qValue = query?.age['$gte'] ?? query?.age['$lte'];
         records = await Patient.find(query).sort(query?.sort);
     } else if (query?.lastCheckup) {
         const { lastCheckup, sort } = query;

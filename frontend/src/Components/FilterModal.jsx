@@ -1,11 +1,13 @@
 import { Backdrop } from '@mui/material';
-import { useRef, useState } from 'react';
+import { atom, useAtom } from 'jotai';
+import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import useApiService from '../Services/APIService';
 import SortBy from './Filters/SortBy';
 import Icon from './Icon';
 import { SearchBox } from './TopBar';
 
+export const filterAtom = atom(false);
 const sortValues = ["age", "name", "city", "document", "lastCheckup"];
 
 const StyledSelect = styled.select`
@@ -22,14 +24,14 @@ const StyledSelect = styled.select`
     }
 `;
 
-const FilterModal = ({ controller }) => {
-    const { openFilter, setOpenFilter } = controller;
-
+const FilterModal = () => {
+    const [openFilter, setOpenFilter] = useAtom(filterAtom);
     const formRef = useRef();
     const searchV2 = useApiService(s => s.searchRecordsV2);
     const isLoading = useApiService(s => s.isLoading);
+    const bgRef = useRef();
 
-    const closeSideBar = () => {
+    function closeSideBar() {
         setOpenFilter(false);
         return;
     };
@@ -48,17 +50,29 @@ const FilterModal = ({ controller }) => {
         return;
     };
 
-    console.count("Rendered Sidebar.jsx");
+    useEffect(() => {
+        const bg = bgRef?.current;
+        bg?.addEventListener('click', (event) => {
+            const self = event.target.closest('.filtersec');
+            if (!self) closeSideBar();
+            else return;
+        });
+        return () => bg?.removeEventListener("click", closeSideBar);
+    }, []);
+
+    console.count("Rendered FilterModal.jsx");
 
     return (
-        <Backdrop open={openFilter} sx={{ zIndex: 1500 }} >
-            <div className="rounded-l-lg mt-2 bg-gradient-to-br from-teal-200 to-teal-600 min-h-[98vh] top-0 w-72 absolute right-0 ">
+        <Backdrop open={openFilter} sx={{ zIndex: 1500 }} ref={bgRef} >
+            <div className="rounded-l-lgx mt-2x bg-gradient-to-br from-teal-200 to-teal-600 filtersec
+                min-h-screen top-0 w-60 min-[350px]:w-80 absolute right-0">
                 <div className="relative p-1 flex items-center justify-center">
                     <Icon icon={"mingcute:close-circle-fill"} size="36" onClick={closeSideBar} label={"Close Sidebar"} />
                     <h5 className="block text-center w-full uppercase nderline font-bold text-xl">Filters</h5>
                 </div>
                 <hr className="my-1 h-px opacity-60 bg-gray-600 border-0 " />
-                <form onSubmit={handleSearch} className="actions ml-4 flex flex-col p-2 items-start gap-3 font-semibold" ref={formRef}>
+                <form onSubmit={handleSearch} className="actions min-[350px]:ml-4 ml-2 flex flex-col p-2 items-start gap-3 font-semibold"
+                    ref={formRef}>
                     <SearchBox className="w-[98%] font-normal"
                         name="query"
                         placeholder="Search For.."
@@ -68,7 +82,7 @@ const FilterModal = ({ controller }) => {
                     />
 
                     <div className="flex items-center gap-1">
-                        <span className={`text-black rounded-md p-2 uppercase text-sm`}>
+                        <span className={`text-black rounded-md min-[350px]:p-2 p-1 uppercase min-[350px]:text-sm text-xs`}>
                             Search In:
                         </span>
                         <StyledSelect name="sortfield" id="sortField" className="px-3 py-1 rounded-md">
