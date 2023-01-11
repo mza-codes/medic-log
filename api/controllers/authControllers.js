@@ -57,7 +57,7 @@ export const createAuth = asyncHandler(async (req, res) => {
 });
 
 export const auth = asyncHandler(async (req, res, next) => {
-    console.log("Authenticating... auth prinitng req.email value:", req?.email);
+    console.log("Authenticating... USER:",req.currentUser);
     const dbUser = req.currentUser;
     const stat = await dbUser.isValidPwd(req?.body?.password);
     if (stat === true) {
