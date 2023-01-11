@@ -326,6 +326,22 @@ const useAuthService = create((set, get) => ({
             get().setLoading(false);
         };
     },
+    forgotPwd: async (formData) => {
+        get().setLoading(true);
+        let status = false;
+        try {
+            const { data } = await SecureAPI.put('/', formData, { signal: genSignal() });
+            console.log("ForgotPwd Req Response: ", data);
+            status = true;
+        } catch (error) {
+            console.log("Error in forgotPwd Req", error);
+            get().handleError(error?.response?.data ?? error);
+            status = false;
+        } finally {
+            get().setLoading(false);
+            return status;
+        };
+    },
 }));
 
 export default useAuthService;

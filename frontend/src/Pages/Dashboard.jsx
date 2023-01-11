@@ -45,7 +45,7 @@ const Dashboard = () => {
                         Profile
                     </Link>
 
-                    <Link to='/profile' className="bg-lime-800 text-white hover:bg-lime-700 p-2 rounded-lg ">
+                    <Link to='/forgot-password' className="bg-lime-800 text-white hover:bg-lime-700 p-2 rounded-lg ">
                         Forgot Password
                     </Link>
 

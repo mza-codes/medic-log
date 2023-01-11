@@ -1,8 +1,9 @@
 import express from 'express';
 import { otpAuth, otpVerifyV2, verifySession } from '../controllers/twoFactorAuth.js';
+import { forgotPassword } from '../controllers/userControllers.js';
+import { isDBUser } from '../middlewares/isDBUser.js';
 import {
     checkAuthorization,
-    checkValidity,
     checkCookie,
     checkRefreshCookie,
     refreshSession,
@@ -17,9 +18,10 @@ import {
     removeAuth,
 } from "../controllers/authControllers.js";
 
+
 const router = express.Router();
 
-// @route - /api/v1/auth/
+/** @route - /api/v1/auth/ */
 router.post('/otpAuth', otpAuth);
 router.post('/otpAuth/otpVerify', otpVerifyV2);
 router.post('/register', verifySession, createAuth);
@@ -30,20 +32,18 @@ router.get('/logout', logout);
 router.post('/logout', checkAuthorization, logout);
 // router.post('/refresh-token', provideRefreshToken);
 
-// @refreshToken
+/** @refreshToken */
 router.post('/refresh-session', refreshSession);
 
-// @isToken Expired (check if request is valid)
-router.get('/is-valid', checkValidity);
-// @get current user via cookie
+/** @isTokenExpired__UNUSED (check if request is valid) */
+// router.get('/is-valid', checkValidity);
+
+/** @get_current_user_via_cookie */
 router.get('/verifyUser', checkCookie, checkRefreshCookie, provideUser);
 
-// test routes !!
-router.get('/test2', checkAuthorization, updateAuth);
+router.put('/forgot-password', isDBUser, forgotPassword)  /** @placed in usercontrollers.js for clean code */
 
-router.get('/test', updateAuth);
-
-// @route - /api/v1/auth/<id>
+/** @route - /api/v1/auth/<id> @SEEMS_UNUSED */
 router.route('/:id')
     .put(checkAuthorization, updateAuth)
     .delete(checkAuthorization, removeAuth);
