@@ -18,7 +18,7 @@ router.get('/search-records/?', searchRecords);
 router.get('/search-records-v2/?', searchRecordsV2);
 
 // @routes related to Deletion
-router.post('/delete-record/:id/authenticate', genDelTokenByPwd);
+router.put('/delete-record/:id/authenticate', genDelTokenByPwd);
 router.delete('/delete-record/:id', verifyDelToken, deleteRecord);
 
 // @Override

@@ -8,33 +8,21 @@ import { verifiedCookie } from './twoFactorAuth.js';
 import { log } from '../utils/logger.js';
 import { redisClient } from '../utils/redisConfig.js';
 import Patient from '../models/Patient.js';
-
-export const userCookie = "_ga_medic_log_sess";
-export const refreshCookie = `_ga_medic_log_refresh`;
-export const deleteReqCookie = `_sa_medic_log_important`;
-export const cookieConfig = {
-    path: "/",
-    expires: new Date(Date.now() + (1000 * 60) * 12),
-    // expiry:
-    httpOnly: true,
-    sameSite: "lax"
-};
-
-export const createAccessToken = (data) => {
-    const newToken = jwt.sign(data, process.env.JWT_KEY, { expiresIn: "5m" });
-    return newToken;
-};
-
-export const createRefreshToken = (data) => {
-    const newToken = jwt.sign(data, process.env.JWT_REFRESH_KEY, { expiresIn: "4h" });
-    return newToken;
-};
+import genRes from '../utils/JSONResponse.js';
+import {
+    userCookie,
+    refreshCookie,
+    deleteReqCookie,
+    cookieConfig,
+    createAccessToken,
+    createRefreshToken,
+} from '../utils/authUtils.js';
 
 export const createAuth = asyncHandler(async (req, res) => {
-    const duplicateUser = await User.findOne({ email: req.body.email });
 
-    if (duplicateUser || duplicateUser !== null) {
-        return res.status(406).json({ success: false, message: 'User Already Exists' });
+    if (req?.email) {
+        console.log("Duplicate USER: ", req.email);
+        return genRes(res, 406, false, "User Already Exist!");
     };
 
     req.body.password = await bcrypt.hash(req.body?.password, 15);
@@ -60,7 +48,8 @@ export const createAuth = asyncHandler(async (req, res) => {
     res.cookie(String(refreshCookie), refreshToken, {
         ...cookieConfig,
         expires: cookieExpiration
-        // expires: new Date(Date.now() + (1000 * 60) * 12) //  commenting expires default to session cookie
+        // expires: new Date(Date.now() + (1000 * 60) * 12) 
+        // commenting -> expires default afer session
     });
     await redisClient.set(String(other._id), JSON.stringify({ userToken: token, refreshToken }));
     log.info("New User Created: ", newUser?.name);
@@ -68,13 +57,9 @@ export const createAuth = asyncHandler(async (req, res) => {
 });
 
 export const auth = asyncHandler(async (req, res, next) => {
-    const dbUser = await User.findOne({ email: req.body.email });
-
-    if (!dbUser || dbUser == null) {
-        return res.status(404).json({ success: false, message: 'User Does not Exist' });
-    };
-
-    const stat = await bcrypt.compare(req.body.password, dbUser.password);
+    console.log("Authenticating... auth prinitng req.email value:", req?.email);
+    const dbUser = req.currentUser;
+    const stat = await dbUser.isValidPwd(req?.body?.password);
     if (stat === true) {
         const { password, ...other } = dbUser._doc; // _doc is specified to get the actual JSON data
 
@@ -92,7 +77,8 @@ export const auth = asyncHandler(async (req, res, next) => {
         res.cookie(String(refreshCookie), refreshToken, {
             ...cookieConfig,
             expires: cookieExpiration
-            // expires: new Date(Date.now() + (1000 * 60) * 12) //  commenting expires default to session cookie
+            // expires: new Date(Date.now() + (1000 * 60) * 12) 
+            // commenting -> expires default after session cookie
         });
         await redisClient.set(String(other._id), JSON.stringify({ userToken: token, refreshToken }));
         return res.status(200).json({ success: true, user: other, expiry: exp });
@@ -102,7 +88,7 @@ export const auth = asyncHandler(async (req, res, next) => {
 });
 
 export const provideUser = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.userId,"-password");
+    const user = await User.findById(req.userId, "-password");
     if (!user) {
         return res.status(500).json({ // prevent failure
             success: false,

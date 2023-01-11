@@ -4,10 +4,12 @@ import asyncHandler from "./asyncHandler.js";
 
 export const isDBUser = asyncHandler(async (req, res, next) => {
     const email = req?.body?.email;
-    if (!email) return genRes(res, 400, false, "Email Must Be Provided in Request Body!");
+    if (!email) return genRes(res, 400, false, "Email Must Be Provided on Request!");
     const dbUser = await User.findOne({ email });
-    if (dbUser !== (null || undefined || {})) {
+
+    if (dbUser) {
         req.email = email;
+        req.currentUser = dbUser;
         next();
     } else {
         return genRes(res, 404, false,

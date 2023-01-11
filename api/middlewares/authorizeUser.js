@@ -4,13 +4,12 @@ import bcrypt from "bcrypt";
 
 import asyncHandler from "./asyncHandler.js";
 import {
+    userCookie,
+    refreshCookie,
+    cookieConfig,
     createAccessToken,
     createRefreshToken,
-    userCookie,
-    cookieConfig,
-    refreshCookie,
-}
-    from '../controllers/authControllers.js';
+} from '../utils/authUtils.js';
 import { log } from '../utils/logger.js';
 import { redisClient } from '../utils/redisConfig.js';
 import User from '../models/User.js';

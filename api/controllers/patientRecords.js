@@ -1,8 +1,8 @@
 import asyncHandler from "../middlewares/asyncHandler.js";
 import Patient from "../models/Patient.js";
+import { deleteReqCookie } from "../utils/authUtils.js";
 import { log } from "../utils/logger.js";
 import { redisClient } from "../utils/redisConfig.js";
-import { deleteReqCookie } from "./authControllers.js";
 
 // function* generateId() {
 //     let i = 0;
