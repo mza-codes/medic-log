@@ -10,7 +10,7 @@ import { loginSchema } from "../../Schema";
 const LoginForm = () => {
     const submitBtn = useRef();
     const navigate = useNavigate();
-    const { isLoading, login, error, errActive, errSource } = useAuthService();
+    const { isLoading, login, error, errActive, errSource,info } = useAuthService();
 
     const handleSubmit = async (values, actions) => {
         submitBtn.current.disabled = true;
@@ -39,8 +39,9 @@ const LoginForm = () => {
                         {props.isSubmitting ? "Loading" : "Submit"}
                     </button>
                     <div className="errorFeedback text-rose-600">
-                        {(errActive && errSource === "login") && <span className="err">{error?.message ?? error?.error} !</span>}
+                        {(errActive && errSource === "login") && <span className="err">{error?.message ?? error?.error} </span>}
                     </div>
+                    <span className="text-green-900 font-semibold">{info?.message}</span>
                     {(isLoading || props.isSubmitting) &&
                         <Loader />
                     }

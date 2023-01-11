@@ -50,9 +50,9 @@ function ChangePwd() {
     return (
         <BGPage center={1} image={1}>
             <section className='bg-white rounded-lg flex flex-col items-center p-8 bg-opacity-50'>
-                <h1 className='text-3xl mb-8 font-semibold'>Enter Your Email</h1>
+                <h1 className='text-3xl mb-8 font-semibold'>Set New Password</h1>
                 <VerifyFormik controllers={prop} />
-                <p className="text-teal-900 mt-4">{info?.message}</p>
+                <p className="text-emerald-900 mt-4 font-semibold">{info?.message}</p>
                 <Link to="/signup" className="text-teal-600 capitalize py-1 hover:text-green-700">Signup Instead ?</Link>
             </section>
         </BGPage>

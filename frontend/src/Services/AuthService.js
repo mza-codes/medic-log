@@ -82,6 +82,14 @@ const useAuthService = create((set, get) => ({
         }));
         return true;
     },
+    setInfo: (data) => {
+        set((s) => ({
+            ...s,
+            info: data,
+            error: {}
+        }));
+        return true;
+    },
     refreshSession: async () => {
         if (get().active) {
             const data = await fetchData(SecureAPI.post('/auth/refresh-session', {}, {
@@ -359,11 +367,7 @@ const useAuthService = create((set, get) => ({
         try {
             const { data } = await API.put('/auth/verify-otp', { ...formData, email: get().email }, { signal: genSignal() });
             console.log("verifyOTPforPwd Req Response: ", data);
-            set((s) => ({
-                ...s,
-                info: data,
-                error: {}
-            }));
+            get().setInfo(data);
             response = true;
         } catch (error) {
             get().handleError(error?.response?.data ?? error);
@@ -378,11 +382,7 @@ const useAuthService = create((set, get) => ({
         try {
             const { data } = await API.put('/auth/update-password', { ...formData, email: get().email }, { signal: genSignal() });
             console.log("updatePassword Req Response: ", data);
-            set((s) => ({
-                ...s,
-                info: data,
-                error: {}
-            }));
+            get().setInfo(data);
             response = true;
         } catch (error) {
             get().handleError(error?.response?.data ?? error);

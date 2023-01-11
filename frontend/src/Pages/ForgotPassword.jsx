@@ -6,7 +6,6 @@ import useAuthService from '../Services/AuthService';
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 import Icon from '../Components/Icon';
 import { useState } from 'react';
-import SubmitBtn from '../Components/Button';
 
 function ForgotPassword() {
     const route = useNavigate();
@@ -16,6 +15,8 @@ function ForgotPassword() {
     const forgotPwd = useAuthService(s => s.forgotPwd);
     const verifyOTPforPwd = useAuthService(s => s.verifyOTPforPwd);
     const [open, setOpen] = useState(false);
+
+    const isNum = /^\d+\.?\d*$/;
 
     const handleEmailSubmit = async (values, actions) => {
         console.log("Submiting Data", values);
@@ -31,7 +32,7 @@ function ForgotPassword() {
     });
 
     const otpSchema = Yup.object().shape({
-        otp: Yup.string().min(4).max(7).required()
+        otp: Yup.string().min(4).max(7).required().test('isNumber', v => isNum.test(v))
     });
 
     const prop = {
@@ -49,22 +50,25 @@ function ForgotPassword() {
     };
 
     function handleClose() {
-        if (window.confirm("Changes May Not be saved!")) {
+        if (window.confirm("OTP Required to Change Password!\nChanges May not be saved!")) {
             return setOpen(false);
         };
     };
 
     async function handleOTPSubmit(values, actions) {
         const result = await verifyOTPforPwd(values);
-        if (result) route('/change-password', { state: "change-pwd" });
-        return;
+        if (result) {
+            setOpen(false);
+            route('/change-password', { state: "change-pwd" });
+        }; return;
     };
 
     const otpProp = {
-        handleSubmit:handleOTPSubmit,
+        handleSubmit: handleOTPSubmit,
         fields: [{
             label: "OTP",
-            type: "number",
+            type: "tel",
+            inputMode: "numeric",
             name: "otp",
             placeholder: "OTP",
             style: {
@@ -90,13 +94,12 @@ function ForgotPassword() {
                 <VerifyFormik controllers={prop} />
                 <p className="text-teal-900 mt-4">{info?.message}</p>
                 <Link to="/signup" className="text-teal-600 capitalize py-1 hover:text-green-700">Signup Instead ?</Link>
-                <SubmitBtn label={"DEV"} onClick={e => setOpen(true)}></SubmitBtn>
             </section>
             <Dialog open={open}>
                 <DialogTitle align='center' className='relative'>
                     <span className='text-3xl mb-8 font-semibold text-center font-poppins'>Enter OTP</span>
                     <Icon icon='eva:close-square-fill' classes='absolute right-2 top-2'
-                    size={28} color="red" label="Close Dialog" onClick={handleClose} />
+                        size={28} color="red" label="Close Dialog" onClick={handleClose} />
                 </DialogTitle>
 
                 <DialogContent>

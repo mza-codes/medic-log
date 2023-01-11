@@ -8,6 +8,7 @@ import { useRef } from 'react';
 import useAuthService from './Services/AuthService';
 import BrandLoader from './Pages/BrandLoader';
 import { resIntercep, SecureAPI } from './Assets';
+import CancelButton from './Components/CancelButton';
 
 let fetchCompleted = false;
 
@@ -42,6 +43,7 @@ const App = () => {
                 <div className="errorBar" ref={errMsg}>
                     <ErrorBar msg='Unable to establish connection with server !' />
                 </div>
+                <CancelButton />
 
             </HashRouter>
         </>

@@ -70,9 +70,18 @@ export const updatePwd = asyncHandler(async (req, res) => {
             : "Not Authorized to Update Password!"}`;
         return genRes(res, 400, false, msg);
     };
-    const payload = jwt.verify(authToken, process.env.JWT_REFRESH_KEY);
+    try {
+        const payload = jwt.verify(authToken, process.env.JWT_REFRESH_KEY);
+    } catch (error) {
+        return genRes(res, 401, false, "User Not Authorized or Session Expired");
+    };
+
+    console.log("Verified Token");
     const dbUser = req.currentUser;
-    dbUser.password = await bcrypt.hash(password, 15);
+    const status = await dbUser.isValidPwd(password);
+    if (status) return genRes(res, 406, false, "New Password Cannot be Old Password");
+
+    dbUser.password = password;
     await dbUser.save();
     res.clearCookie(changePwdCookie);
     req.cookies[changePwdCookie] = "";
