@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { Navigate, useRoutes } from 'react-router-dom';
+import { Navigate, useLocation, useRoutes } from 'react-router-dom';
 import useAuthService from './Services/AuthService';
 
 const LandingPage = lazy(() => import('./Pages/LandingPage'));
@@ -13,6 +13,7 @@ const Page404 = lazy(() => import('./Pages/Page404'));
 const ViewDoc = lazy(() => import('./Pages/ViewDoc'));
 const Profile = lazy(() => import('./Pages/Profile'));
 const ForgotPassword = lazy(() => import('./Pages/ForgotPassword'));
+const ChangePwd = lazy(() => import('./Pages/ChangePwd'));
 
 const hexPattern = /[0-9a-fA-F]{24}/;
 const Router = () => {
@@ -34,6 +35,13 @@ const Router = () => {
         const isHex = hexPattern.test(window.location.href?.split("/")?.at(-1));
         if (isHex) return children;
         else return <Page404 />
+    };
+
+    const VerifyPwdRoute = ({ children }) => {
+        const { state } = useLocation();
+        console.log("verify window", state);
+        if (state === "change-pwd") return children;
+        else return <Navigate to="/forgot-password" />;
     };
 
     return useRoutes([
@@ -75,6 +83,14 @@ const Router = () => {
             path: "/forgot-password",
             element: <AuthRoute>
                 <ForgotPassword />
+            </AuthRoute>
+        },
+        {
+            path: "/change-password",
+            element: <AuthRoute>
+                <VerifyPwdRoute>
+                    <ChangePwd />
+                </VerifyPwdRoute>
             </AuthRoute>
         },
         {

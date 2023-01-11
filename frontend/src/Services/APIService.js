@@ -247,7 +247,7 @@ const useApiService = create((set, get) => ({
     deleteRecord: async (id, password) => {
         if (!id || !password) return get().handleError({ message: "Record ID & Password required to proceed!" });
         get().setLoading(true);
-        const data = await fetchData(SecureAPI.post(`/app/delete-record/${id}/authenticate`, { password }, {
+        const data = await fetchData(SecureAPI.put(`/app/delete-record/${id}/authenticate`, { password }, {
             signal: genSignal()
         }));
 

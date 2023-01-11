@@ -1,4 +1,4 @@
-export const genBody = (status, msg, payload) => {
+export const genBody = (status, msg, payload = {}) => {
     return {
         success: status ?? false,
         message: msg ?? "",

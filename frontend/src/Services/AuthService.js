@@ -17,6 +17,7 @@ const initialState = {
     userToken: "",
     refreshToken: "",
     serverConnected: false,
+    email: ""
 };
 
 const genSignal = () => {
@@ -62,7 +63,11 @@ const useAuthService = create((set, get) => ({
         set((s) => ({
             ...s,
             errActive: true,
-            error: { ...error },
+            error: {
+                active: true,
+                ...error
+            },
+            info: null
         }));
         return true;
     },
@@ -324,6 +329,66 @@ const useAuthService = create((set, get) => ({
             get().handleError(error?.response?.data ?? error);
         } finally {
             get().setLoading(false);
+        };
+    },
+    forgotPwd: async (formData) => {
+        get().setLoading(true);
+        let status = false;
+        try {
+            const { data } = await API.put('/auth/forgot-password', formData, { signal: genSignal() });
+            console.log("ForgotPwd Req Response: ", data);
+            set((s) => ({
+                ...s,
+                info: data,
+                email: formData.email,
+                error: {}
+            }));
+            status = true;
+        } catch (error) {
+            console.log("Error in forgotPwd Req", error);
+            get().handleError(error?.response?.data ?? error);
+            status = false;
+        } finally {
+            get().setLoading(false);
+            return status;
+        };
+    },
+    verifyOTPforPwd: async (formData) => {
+        get().setLoading(true);
+        let response = false;
+        try {
+            const { data } = await API.put('/auth/verify-otp', { ...formData, email: get().email }, { signal: genSignal() });
+            console.log("verifyOTPforPwd Req Response: ", data);
+            set((s) => ({
+                ...s,
+                info: data,
+                error: {}
+            }));
+            response = true;
+        } catch (error) {
+            get().handleError(error?.response?.data ?? error);
+        } finally {
+            get().setLoading(false);
+            return response;
+        };
+    },
+    updatePassword: async (formData) => {
+        get().setLoading(true);
+        let response = false;
+        try {
+            const { data } = await API.put('/auth/update-password', { ...formData, email: get().email }, { signal: genSignal() });
+            console.log("updatePassword Req Response: ", data);
+            set((s) => ({
+                ...s,
+                info: data,
+                error: {}
+            }));
+            response = true;
+        } catch (error) {
+            get().handleError(error?.response?.data ?? error);
+        } finally {
+            get().setLoading(false);
+            return response;
         };
     },
 }));

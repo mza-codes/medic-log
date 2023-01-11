@@ -1,42 +1,115 @@
-import { Loader } from '@mantine/core';
-import { Link } from 'react-router-dom';
+import VerifyFormik from './AuthSection/VerifyFormik';
 import BGPage from './BGPage';
+import * as Yup from "yup";
+import { Link, useNavigate } from "react-router-dom";
+import useAuthService from '../Services/AuthService';
+import { Dialog, DialogContent, DialogTitle } from '@mui/material';
+import Icon from '../Components/Icon';
+import { useState } from 'react';
+import SubmitBtn from '../Components/Button';
 
 function ForgotPassword() {
+    const route = useNavigate();
+    const error = useAuthService(s => s.error);
+    const loading = useAuthService(s => s.isLoading);
+    const info = useAuthService(s => s.info);
+    const forgotPwd = useAuthService(s => s.forgotPwd);
+    const verifyOTPforPwd = useAuthService(s => s.verifyOTPforPwd);
+    const [open, setOpen] = useState(false);
 
-    const isLoading = false;
-    const errActive = true;
-    const error = {};
-    const info = {};
-
-    const handleSubmit = () => {
-        return true;
+    const handleEmailSubmit = async (values, actions) => {
+        console.log("Submiting Data", values);
+        const res = await forgotPwd(values);
+        if (res) {
+            setOpen(true);
+            // route('/change-password', { state: "change-pwd" });
+        }; return;
     };
 
+    const schema = Yup.object().shape({
+        email: Yup.string().email("Invalid Email Address").min(6).max(30).required()
+    });
+
+    const otpSchema = Yup.object().shape({
+        otp: Yup.string().min(4).max(7).required()
+    });
+
+    const prop = {
+        handleSubmit: handleEmailSubmit,
+        fields: [{
+            label: "Email",
+            type: "email",
+            name: "email",
+            placeholder: "Enter Email ID"
+        }],
+        schema,
+        initialValues: { email: "" },
+        error,
+        loading
+    };
+
+    function handleClose() {
+        if (window.confirm("Changes May Not be saved!")) {
+            return setOpen(false);
+        };
+    };
+
+    async function handleOTPSubmit(values, actions) {
+        const result = await verifyOTPforPwd(values);
+        if (result) route('/change-password', { state: "change-pwd" });
+        return;
+    };
+
+    const otpProp = {
+        handleSubmit:handleOTPSubmit,
+        fields: [{
+            label: "OTP",
+            type: "number",
+            name: "otp",
+            placeholder: "OTP",
+            style: {
+                letterSpacing: "1.2rem",
+                fontSize: "1.3rem",
+                textAlign: "center",
+                appearance: "none !important",
+                WebkitAppearance: "none !important",
+                fontWeight: 700
+            }
+        }],
+        schema: otpSchema,
+        initialValues: { otp: "" },
+        error,
+        loading
+    };
+
+    console.count("Rendered FGPass.jsx");
     return (
         <BGPage center={1} image={1}>
-            <form className="min-w-[280px] sm:min-w-[340px] max-w-[500px] bg-white  rounded-xl
-                flex flex-col text-start gap-3 py-4 px-6 mb-40" onSubmit={handleSubmit}>
-                <h3 className="text-2xl font-medium py-2 text-emerald-900">Enter Email ID</h3>
+            <section className='bg-white rounded-lg flex flex-col items-center p-8 bg-opacity-50'>
+                <h1 className='text-3xl mb-8 font-semibold'>Enter Your Email</h1>
+                <VerifyFormik controllers={prop} />
+                <p className="text-teal-900 mt-4">{info?.message}</p>
+                <Link to="/signup" className="text-teal-600 capitalize py-1 hover:text-green-700">Signup Instead ?</Link>
+                <SubmitBtn label={"DEV"} onClick={e => setOpen(true)}></SubmitBtn>
+            </section>
+            <Dialog open={open}>
+                <DialogTitle align='center' className='relative'>
+                    <span className='text-3xl mb-8 font-semibold text-center font-poppins'>Enter OTP</span>
+                    <Icon icon='eva:close-square-fill' classes='absolute right-2 top-2'
+                    size={28} color="red" label="Close Dialog" onClick={handleClose} />
+                </DialogTitle>
 
-                <input type="email" placeholder="Enter Email" id="otpField" required minLength={4} maxLength={26}
-                    className="p-2 rounded-md outline-none border-2 border-slate-400 focus:border-slate-700 appearance-none" />
-
-                <button type="submit" className="bg-emerald-800 hover:bg-emerald-700 text-white
-                 disabled:bg-slate-400 disabled:hover:bg-slate-400 disabled:text-slate-800 p-2 w-fit rounded-sm"
-                    disabled={isLoading} >
-                    {isLoading ? "Loading" : "Submit"}
-                </button>
-
-                <p className="text-teal-600 capitalize">{info?.message}</p>
-                {errActive && <p className="text-rose-500 capitalize">{error?.message ?? error?.error}</p>}
-
-                <Link to="/login" state={{ disableError: true }} className=' text-emerald-500 hover:text-emerald-800 mb-2'>
-                    Proceed to Login
-                </Link>
-                {isLoading && <Loader size={40} color="teal" />}
-                
-            </form>
+                <DialogContent>
+                    <section className='bg-white rounded-lg flex flex-col items-center p-8 bg-opacity-50'>
+                        <VerifyFormik controllers={otpProp} />
+                        <p className="text-teal-900 mt-4">{info?.message}</p>
+                        <button type="button" onClick={handleClose}
+                            className="text-teal-600 capitalize py-2 my-1 hover:text-green-700">
+                            Resend OTP ?
+                        </button>
+                    </section>
+                </DialogContent>
+            </Dialog>
         </BGPage>
     );
 };

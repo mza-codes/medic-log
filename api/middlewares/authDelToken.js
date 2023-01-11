@@ -1,5 +1,6 @@
-import jwt from "jsonwebtoken";
-import { deleteReqCookie } from "../controllers/authControllers.js";
+import jwt from "jsonwebtoken"; 
+
+import { deleteReqCookie } from "../utils/authUtils.js";
 import asyncHandler from "./asyncHandler.js";
 
 export const verifyDelToken = asyncHandler(async (req, res, next) => {
