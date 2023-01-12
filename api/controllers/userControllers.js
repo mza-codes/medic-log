@@ -26,9 +26,10 @@ export const updateUser = asyncHandler(async (req, res) => {
             message: "No Data Provided to Update!"
         });
 
-    const newData = await User.findByIdAndUpdate(req.userId, req.body, { new: true });
+    const newData = await User.findByIdAndUpdate(req.userId, { ...req.body, $inc: { "changeCount.name": 1 } }, { new: true });
     const { password, createdAt, updatedAt, __v, ...user } = newData._doc;
-    return genRes(res, 200, true, "User Name Updated", { user });
+    console.log(newData);
+    return genRes(res, 200, true, "User Name Updated!", { user });
 });
 
 export const forgotPassword = asyncHandler(async (req, res) => {

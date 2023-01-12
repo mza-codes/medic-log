@@ -323,20 +323,25 @@ const useAuthService = create((set, get) => ({
     },
     updateProfile: async (formData) => {
         get().setLoading(true);
+        let response = false;
         try {
             const { data } = await SecureAPI.put('/user/update', formData, { signal: genSignal() });
             console.log("updateProfile Response", data);
             set(state => ({
                 ...state,
                 user: data?.user,
-                errActive: false
+                errActive: false,
+                info: data,
+                error: null
             }));
-            return data;
+            response = true;
         } catch (error) {
             console.log(error);
             get().handleError(error?.response?.data ?? error);
+            response = false;
         } finally {
             get().setLoading(false);
+            return response;
         };
     },
     forgotPwd: async (formData) => {

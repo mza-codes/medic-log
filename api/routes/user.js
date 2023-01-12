@@ -8,6 +8,7 @@ router.use(checkCookie);
 /** @route - /api/v1/user */
 router.get("/check", updateUser);
 router.put("/update", updateUser);
+router.put("/update-password", )
 
 const userRoutes = router;
 export default userRoutes;

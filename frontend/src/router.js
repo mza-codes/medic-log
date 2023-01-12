@@ -39,8 +39,7 @@ const Router = () => {
 
     const VerifyPwdRoute = ({ children }) => {
         const { state } = useLocation();
-        console.log("verify window", state);
-        if (state === "change-pwd") return children;
+        if (state === "change-pwd" && !userActive) return children;
         else return <Navigate to="/forgot-password" />;
     };
 
@@ -87,11 +86,10 @@ const Router = () => {
         },
         {
             path: "/change-password",
-            element: <AuthRoute>
+            element:
                 <VerifyPwdRoute>
                     <ChangePwd />
                 </VerifyPwdRoute>
-            </AuthRoute>
         },
         {
             path: "/add-record",

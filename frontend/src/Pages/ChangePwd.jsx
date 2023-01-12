@@ -15,7 +15,6 @@ function ChangePwd() {
     async function handleSubmit(values, actions) {
         const res = await updatePassword(values);
         if (res) {
-
             route('/login', { replace: true });
         }; return;
     };
