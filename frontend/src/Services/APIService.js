@@ -66,7 +66,10 @@ const useApiService = create((set, get) => ({
     setInfo: (data) => {
         set((s) => ({
             ...s,
-            info: { ...data }
+            info: {
+                active: true,
+                ...data
+            }
         }));
         return true;
     },
@@ -176,17 +179,18 @@ const useApiService = create((set, get) => ({
     },
     searchRecords: async (query) => {
         get().setLoading(true);
-        // return;
         const data = await fetchData(SecureAPI.get(`/app/search-records/?query=${query}`,
             { signal: genSignal() }
         ));
-        get().setLoading(false);
         if (data?.code) {
             get().handleError(data?.response?.data ?? data);
             return false;
+        } else {
+            get().setRecords(data);
+            get().setInfo(data);
+            get().setErrorView(false);
         };
-        get().setRecords(data);
-        get().setErrorView(false);
+        get().setLoading(false);
         return data;
     },
     searchRecordsV2: async (q, form) => {

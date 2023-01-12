@@ -36,17 +36,17 @@ function UpdatePwdWAuth({ actions }) {
             label: "Current Password",
             type: "password",
             name: "currentPassword",
-            placeholder: "Enter Current Password"
+            placeholder: "Current Password"
         }, {
             label: "Password",
             type: "password",
             name: "password",
-            placeholder: "Enter password"
+            placeholder: "New Password"
         }, {
             label: "Confirm Password",
             type: "password",
             name: "confirmPassword",
-            placeholder: "Enter Confirm Password"
+            placeholder: "Confirm Password"
         }],
         schema,
         initialValues: {

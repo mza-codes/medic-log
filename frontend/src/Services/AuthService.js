@@ -146,7 +146,7 @@ const useAuthService = create((set, get) => ({
     },
     logout: async () => {
         get().setLoading(true);
-        const data = await fetchData(SecureAPI.get('/auth/logout', { withCredentials: true, signal: genSignal() }));
+        const data = await fetchData(SecureAPI.get('/auth/logout', { signal: genSignal() }));
         if (data?.code) {
             get().handleError(data?.response?.data ?? data);
             return false;

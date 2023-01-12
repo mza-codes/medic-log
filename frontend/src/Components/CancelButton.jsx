@@ -8,7 +8,7 @@ function CancelButton() {
     if (!isLoading) return null;
     return (
         <button type='button' onClick={cancelReq}
-            className='fixed right-1 bottom-2 hover:bg-red-700 text-white rounded-sm p-1 bg-teal-700'>
+            className='fixed right-1 bottom-2 text-sm hover:bg-red-700 text-white rounded-sm py-1 px-3 bg-teal-700'>
             Cancel
         </button>
     );
