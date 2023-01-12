@@ -40,20 +40,16 @@ const Dashboard = () => {
                     <Link to='/view-records' className="bg-teal-800 text-white hover:bg-teal-700 p-2 rounded-lg ">
                         View All Patients Data
                     </Link>
-                    
-                    <Link to='/profile' className="bg-pink-800 text-white hover:bg-pink-700 p-2 rounded-lg ">
-                        Profile
-                    </Link>
 
-                    <Link to='/forgot-password' className="bg-lime-800 text-white hover:bg-lime-700 p-2 rounded-lg ">
-                        Forgot Password
+                    <Link to='/profile' className="bg-pink-800 text-white hover:bg-pink-700 p-2 rounded-lg ">
+                        Edit Profile
                     </Link>
 
                     <Link to='/masked/dtrgdttre' className="bg-emerald-800 text-white hover:bg-emerald-700 p-2 rounded-lg ">
                         404
                     </Link>
 
-                    <button type="button" onClick={() => logout()} disabled={loading}
+                    <button type="button" onClick={logout} disabled={loading}
                         className="my-3 bg-red-800 text-white hover:bg-red-700 p-2 rounded-lg
                          disabled:bg-gray-400 disabled:hover:bg-gray-400">
                         Log Out

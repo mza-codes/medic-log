@@ -59,7 +59,7 @@ export const createAuth = asyncHandler(async (req, res) => {
 export const auth = asyncHandler(async (req, res, next) => {
     console.log("Authenticating... USER:",req.currentUser);
     const dbUser = req.currentUser;
-    const stat = await dbUser.isValidPwd(req?.body?.password);
+    const stat = await dbUser.comparePwd(req?.body?.password);
     if (stat === true) {
         const { password, ...other } = dbUser._doc; // _doc is specified to get the actual JSON data
 

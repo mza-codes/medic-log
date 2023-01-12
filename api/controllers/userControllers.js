@@ -26,9 +26,10 @@ export const updateUser = asyncHandler(async (req, res) => {
             message: "No Data Provided to Update!"
         });
 
-    const newData = await User.findByIdAndUpdate(req.userId, req.body, { new: true });
+    const newData = await User.findByIdAndUpdate(req.userId, { ...req.body, $inc: { "changeCount.name": 1 } }, { new: true });
     const { password, createdAt, updatedAt, __v, ...user } = newData._doc;
-    return genRes(res, 200, true, "User Name Updated", { user });
+    console.log(newData);
+    return genRes(res, 200, true, "User Name Updated!", { user });
 });
 
 export const forgotPassword = asyncHandler(async (req, res) => {
@@ -78,7 +79,7 @@ export const updatePwd = asyncHandler(async (req, res) => {
 
     console.log("Verified Token");
     const dbUser = req.currentUser;
-    const status = await dbUser.isValidPwd(password);
+    const status = await dbUser.comparePwd(password);
     if (status) return genRes(res, 406, false, "New Password Cannot be Old Password");
 
     dbUser.password = password;
@@ -86,4 +87,15 @@ export const updatePwd = asyncHandler(async (req, res) => {
     res.clearCookie(changePwdCookie);
     req.cookies[changePwdCookie] = "";
     return genRes(res, 200, true, "Password Updated!");
+});
+
+export const updatePwdWAuth = asyncHandler(async (req, res) => {
+    const { password } = req?.body;
+    if (!password) return genRes(res, 400, false, "New Password not found on request!");
+    const user = req.currentUser;
+    const status = await user.comparePwd(password);
+    if (status) return genRes(res, 406, false, "New Password Cannot be Old Password");
+    user.password = password;
+    await user.save();
+    return genRes(res, 200, true, "Password Updated Successfully!");
 });

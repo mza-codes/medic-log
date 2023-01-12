@@ -51,6 +51,13 @@ const useAuthService = create((set, get) => ({
         }));
         return;
     },
+    resetState: () => {
+        set(s=> ({
+            ...initialState,
+            serverConnected:s.serverConnected,
+        }));
+        return;
+    },
     setUser: (userData) => {
         set((s) => ({
             ...s,
@@ -139,17 +146,12 @@ const useAuthService = create((set, get) => ({
     },
     logout: async () => {
         get().setLoading(true);
-        const data = await fetchData(SecureAPI.get('/auth/logout', { withCredentials: true, signal: genSignal() }));
+        const data = await fetchData(SecureAPI.get('/auth/logout', { signal: genSignal() }));
         if (data?.code) {
             get().handleError(data?.response?.data ?? data);
             return false;
         };
-        set((s) => ({
-            ...s,
-            user: {},
-            active: false,
-            isLoading: false
-        }));
+        get().resetState();
         return true;
     },
     verifySession: async (signal, errMsg) => {
@@ -323,20 +325,25 @@ const useAuthService = create((set, get) => ({
     },
     updateProfile: async (formData) => {
         get().setLoading(true);
+        let response = false;
         try {
             const { data } = await SecureAPI.put('/user/update', formData, { signal: genSignal() });
             console.log("updateProfile Response", data);
             set(state => ({
                 ...state,
                 user: data?.user,
-                errActive: false
+                errActive: false,
+                info: data,
+                error: null
             }));
-            return data;
+            response = true;
         } catch (error) {
             console.log(error);
             get().handleError(error?.response?.data ?? error);
+            response = false;
         } finally {
             get().setLoading(false);
+            return response;
         };
     },
     forgotPwd: async (formData) => {
@@ -386,6 +393,21 @@ const useAuthService = create((set, get) => ({
             response = true;
         } catch (error) {
             get().handleError(error?.response?.data ?? error);
+        } finally {
+            get().setLoading(false);
+            return response;
+        };
+    },
+    updatePwdWAuth: async (formData) => {
+        get().setLoading(true);
+        let response = false;
+        try {
+            const { data } = await SecureAPI.put('/user/update-password', formData, { signal: genSignal() });
+            get().setInfo(data);
+            response = true;
+        } catch (error) {
+            get().handleError(error?.response?.data ?? error);
+            response = false;
         } finally {
             get().setLoading(false);
             return response;

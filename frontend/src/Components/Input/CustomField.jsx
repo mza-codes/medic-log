@@ -18,10 +18,11 @@ export default function CustomField({ label, type, ...props }) {
                     {...field} {...props}
                     type={showPassword ? "text" : type} />
 
-                {(label?.toLowerCase() === "password" || label?.toLowerCase() === "confirm password") &&
+                {label?.toLowerCase()?.includes("password")
+                    // (label?.toLowerCase() === "password" || label?.toLowerCase() === "confirm password") 
+                    &&
                     <span onClick={e => setShowPassword(prev => !prev)}
                         className="text-teal-800 absolute right-2 bottom-2.5 cursor-pointer hover:text-opacity-100 text-opacity-50">
-                        {/* <iconify-icon icon="bxs:show" width={33} height={33} /> */}
                         {!showPassword ? showPwd : hidePwd}
                     </span>
                 }

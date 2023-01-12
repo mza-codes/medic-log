@@ -1,13 +1,14 @@
 import express from 'express';
 import { checkCookie } from '../middlewares/authorizeUser.js';
-import { updateUser } from '../controllers/userControllers.js';
+import { updatePwdWAuth, updateUser } from '../controllers/userControllers.js';
+import { verifyPwd } from '../middlewares/isDBUser.js';
 
 const router = express.Router();
 router.use(checkCookie);
 
 /** @route - /api/v1/user */
-router.get("/check", updateUser);
 router.put("/update", updateUser);
+router.put("/update-password", verifyPwd, updatePwdWAuth);
 
 const userRoutes = router;
 export default userRoutes;

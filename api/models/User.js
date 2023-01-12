@@ -6,7 +6,8 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: [true, "Password Required "] },
     name: { type: String, required: [true, "Name Required"] },
     verified: { type: Boolean, default: false },
-    pwdChangeCount: { type: Number, default: 0 }
+    pwdChangeCount: { type: Number, default: 0 },
+    changeCount: { type: Object, default: { password: 0, email: 0, name: 0 } }
     // country: { type: String, required: [true, "Required"] },
     // age: { type: Number, required: [true, "Required"] }
 }, { timestamps: true });
@@ -17,10 +18,11 @@ userSchema.pre("save", async function (next) {
     if (!this.isModified('password')) return next();
     this.password = await bcrypt.hash(this.password, 15);
     this.pwdChangeCount += 1;
+    this.changeCount.password += 1;
     next();
 });
 
-userSchema.methods.isValidPwd = async function (password) {
+userSchema.methods.comparePwd = async function (password) {
     return await bcrypt.compare(password, this.password);
 };
 

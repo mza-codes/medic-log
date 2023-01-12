@@ -1,3 +1,4 @@
+import { Tooltip } from '@mantine/core';
 import { useAtom } from 'jotai';
 import { useRef } from 'react';
 import styled from 'styled-components';
@@ -64,13 +65,19 @@ const TopBar = () => {
                     <IconButton className="absolute right-1 top-2 cursor-pointer"
                         onClick={handleSearch}
                         disabled={isLoading}>
-                        <Icon icon="material-symbols:manage-search-rounded" w={29} h={29} label="Search" color="inherit" />
+                        <Icon icon="material-symbols:manage-search-rounded" size={29} label="Search" color="rgb(17 94 89)" />
                     </IconButton>
                 </div>
-                <button title='Under Progress' type='button' onClick={openFilter}
-                    className='p-2 font-semibold rounded-lg bg-teal-800 hover:bg-teal-700 text-gray-100'>
-                    Filter
-                </button>
+                <Tooltip
+                    label={"Filter Search"}
+                    color={"rgb(15 118 110)"}
+                    withArrow
+                >
+                    <button title='Filter Search' type='button' onClick={openFilter}
+                        className='p-2 font-semibold rounded-lg bg-teal-800 hover:bg-teal-700 text-gray-100'>
+                        Filter
+                    </button>
+                </Tooltip>
             </div>
 
             <div className="err flex items-center justify-center p-2 text-center w-[90%]">
