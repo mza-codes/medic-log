@@ -1,12 +1,14 @@
 import * as Yup from "yup";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useAuthService from "../Services/AuthService";
 import BGPage from "./BGPage";
 import VerifyFormik from "./AuthSection/VerifyFormik";
+import UpdatePwdWAuth from "./AuthSection/UpdatePwdWAuth";
+import { useState } from "react";
 
 function Profile() {
-
     const route = useNavigate();
+    const [open, setOpen] = useState(false);
     const user = useAuthService(s => s.user);
     const error = useAuthService(s => s.error);
     const loading = useAuthService(s => s.isLoading);
@@ -19,15 +21,13 @@ function Profile() {
             actions.setErrors({ name: "Name is Already Same" });
             return false;
         };
-
         const data = await updateProfile({ name: values.name });
-        data?.success && alert("OK");
-        console.log("Request Complete");
+        data &&  route('/dashboard', { replace: true });
         return;
     };
 
-    function handlePwdChange(e){
-        console.log(e);
+    function openDialog() {
+        return setOpen(true);
     };
 
     const initialValues = {
@@ -67,8 +67,12 @@ function Profile() {
                 <h1 className='text-3xl mb-8 font-semibold'>Update Profile</h1>
                 <VerifyFormik controllers={prop} />
                 <p className="text-emerald-900 mt-4 font-semibold">{info?.message}</p>
-                <button type="button" onClick={handlePwdChange}
-                    className="text-teal-600 capitalize py-1 hover:text-green-700">Change Password ?</button>
+                <button type="button" onClick={openDialog}
+                    className="text-teal-600 capitalize py-1 hover:text-green-700">Change Password ?
+                </button>
+                <main className="dialogPwd hidden">
+                    <UpdatePwdWAuth actions={{ open, setOpen }} />
+                </main>
             </section>
         </BGPage>
     );

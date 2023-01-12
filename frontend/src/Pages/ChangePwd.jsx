@@ -32,7 +32,7 @@ function ChangePwd() {
             name: "password",
             placeholder: "Enter password"
         }, {
-            label: "Password",
+            label: "Confirm Password",
             type: "password",
             name: "confirmPassword",
             placeholder: "Enter Confirm Password"

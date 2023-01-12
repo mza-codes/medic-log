@@ -16,3 +16,15 @@ export const isDBUser = asyncHandler(async (req, res, next) => {
             `User With Email ${req?.body?.email} not found!`);
     };
 });
+
+export const verifyPwd = asyncHandler(async (req, res, next) => {
+    const { currentPassword } = req?.body;
+    if (!currentPassword) return genRes(res, 400, false, "Current Password not found on Request");
+    const user = await User.findById(req.userId);
+    const status = await user.comparePwd(currentPassword);
+    if (status === true) {
+        req.currentUser = user;
+        return next();
+    };
+    return genRes(res, 401, false, "Current Password is Incorrect!");
+});
