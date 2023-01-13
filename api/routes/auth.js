@@ -24,7 +24,7 @@ const router = express.Router();
 /** @route - /api/v1/auth/ */
 router.post('/otpAuth', otpAuth);
 router.post('/otpAuth/otpVerify', otpVerifyV2);
-router.post('/register', verifySession, isDBUser, createAuth);
+router.post('/register', verifySession, createAuth);
 
 router.post('/login', isDBUser, auth);
 router.get('/logout', logout);
