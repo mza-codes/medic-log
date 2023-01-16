@@ -20,19 +20,14 @@ import {
 
 export const createAuth = asyncHandler(async (req, res) => {
 
-    if (req?.email) {
-        console.log("Duplicate USER: ", req.email);
-        return genRes(res, 406, false, "User Already Exist!");
-    };
-
     req.body.password = await bcrypt.hash(req.body?.password, 15);
     req.body.verified = false; //make it true using otpAuth
     const newUser = await User.create(req.body);
     const { password, ...other } = newUser._doc; // _doc is specified to get the actual JSON data
 
     const token = createAccessToken({ userId: other?._id });
-    const { exp } = jwt.verify(token, process.env.JWT_KEY);
     const refreshToken = createRefreshToken({ userId: other?._id });
+    const { exp } = jwt.verify(token, process.env.JWT_KEY);
     // clear verified cookies
     res.clearCookie(verifiedCookie);
     req.cookies[verifiedCookie] = "";

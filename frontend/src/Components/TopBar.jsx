@@ -47,8 +47,7 @@ const TopBar = () => {
 
     const handleSearch = async () => {
         const query = searchRef?.current?.value;
-        console.log("PRinignt sort value", sortBy);
-        if (query.length <= 0) return fetchAllRecords();
+        if (query.length <= 0) return;
         await searchRecords(query, sortBy);
         return controller?.abort();
     };
@@ -57,17 +56,24 @@ const TopBar = () => {
     return (
         <>
             <div className="controls flex flex-wrap gap-2 justify-between items-center w-[90%] ">
-                <div className="searchBox relative">
-                    <SearchBox ref={searchRef} placeholder="Search.."
-                        onKeyPress={e => {
-                            if (e.key === "Enter") return handleSearch();
-                        }} />
-                    <IconButton className="absolute right-1 top-2 cursor-pointer"
-                        onClick={handleSearch}
+                <section className='flex gap-2 items-center'>
+                    <div className="searchBox relative flexx gap-2x">
+                        <SearchBox ref={searchRef} placeholder="Search.."
+                            onKeyPress={e => {
+                                if (e.key === "Enter") return handleSearch();
+                            }} />
+                        <IconButton className="absolute right-1 top-2 cursor-pointer"
+                            onClick={handleSearch}
+                            disabled={isLoading}>
+                            <Icon icon="material-symbols:manage-search-rounded" size={29} label="Search" color="rgb(17 94 89)" />
+                        </IconButton>
+                    </div>
+                    <IconButton className=""
+                        onClick={fetchAllRecords}
                         disabled={isLoading}>
-                        <Icon icon="material-symbols:manage-search-rounded" size={29} label="Search" color="rgb(17 94 89)" />
+                        <Icon icon="ic:sharp-cloud-sync" size={36} label="Synchronize" color="#005215" />
                     </IconButton>
-                </div>
+                </section>
                 <Tooltip
                     label={"Filter Search"}
                     color={"rgb(15 118 110)"}

@@ -59,11 +59,10 @@ export const getAllRecords = asyncHandler(async (req, res) => {
     let data;
     if (!data) {
         log.warn("Fetching ALL RECORDS from SERVER");
-        data = await Patient.find({});
+        data = await Patient.find({}).sort({"createdAt": -1});
         redisClient.set("all-records", JSON.stringify(data));
     };
     // data = JSON.parse(data);
-    data && log.info("fetched from Cache");
     return res.status(200).json({ success: true, records: data });
 });
 
