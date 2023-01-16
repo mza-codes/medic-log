@@ -28,3 +28,19 @@ export const verifyPwd = asyncHandler(async (req, res, next) => {
     };
     return genRes(res, 401, false, "Current Password is Incorrect!");
 });
+
+export const chekUserStat = asyncHandler(async (req, res, next) => {
+    const email = req?.body?.email;
+    if (!email) return genRes(res, 400, false, "Email Must Be Provided on Request!");
+    const dbUser = await User.findOne({ email });
+    if (dbUser) {
+        req.email = email;
+        req.userStat = true;
+        req.currentUser = dbUser;
+    } else {
+        req.userStat = false;
+        req.email = email;
+        req.currentUser = dbUser;
+    };
+    next();
+});

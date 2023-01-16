@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 /** @Arrow_Functions does not have (this) property. */
-// Not working
+
 userSchema.pre("save", async function (next) {
     if (!this.isModified('password')) return next();
     this.password = await bcrypt.hash(this.password, 15);

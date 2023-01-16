@@ -1,7 +1,7 @@
 import express from 'express';
 import { otpAuth, otpVerifyV2, verifySession } from '../controllers/twoFactorAuth.js';
 import { forgotPassword, updatePwd, verifyOTPforPwd } from '../controllers/userControllers.js';
-import { isDBUser } from '../middlewares/isDBUser.js';
+import { chekUserStat, isDBUser } from '../middlewares/isDBUser.js';
 import {
     checkAuthorization,
     checkCookie,
@@ -18,11 +18,10 @@ import {
     removeAuth,
 } from "../controllers/authControllers.js";
 
-
 const router = express.Router();
 
 /** @route - /api/v1/auth/ */
-router.post('/otpAuth', otpAuth);
+router.post('/otpAuth', chekUserStat, otpAuth);
 router.post('/otpAuth/otpVerify', otpVerifyV2);
 router.post('/register', verifySession, createAuth);
 
@@ -42,8 +41,8 @@ router.post('/refresh-session', refreshSession);
 router.get('/verifyUser', checkCookie, checkRefreshCookie, provideUser);
 
 router.put('/forgot-password', isDBUser, forgotPassword);  /** @placed in usercontrollers.js for clean code */
-router.put('/verify-otp',isDBUser, verifyOTPforPwd);
-router.put('/update-password',isDBUser, updatePwd);
+router.put('/verify-otp', isDBUser, verifyOTPforPwd);
+router.put('/update-password', isDBUser, updatePwd);
 
 /** @route - /api/v1/auth/<id> @SEEMS_UNUSED */
 router.route('/:id')

@@ -240,7 +240,7 @@ const useAuthService = create((set, get) => ({
         } catch (error) {
             set((state) => ({
                 ...state,
-                errSource: "signup",
+                errSource: "verify",
                 error: { ...error?.response?.data ?? error },
                 isLoading: false,
                 errActive: true,
