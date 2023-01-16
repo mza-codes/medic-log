@@ -1,23 +1,36 @@
 import { lazy, Suspense } from 'react';
-import { Link } from 'react-router-dom';
-import { bg } from '../Assets';
+import { Link, useNavigate } from 'react-router-dom';
+import Icon from '../Components/Icon';
 import Loader from '../Components/Loader/Loader';
 import useAuthService from '../Services/AuthService';
-import Verify from './AuthSection/Verify';
+import BGPage from './BGPage';
 
 const LoginForm = lazy(() => import('./AuthSection/LoginForm'));
 const SignupForm = lazy(() => import('./AuthSection/SignupForm'));
+const Verify = lazy(() => import('./AuthSection/Verify'));
 
-const AuthPage = ({ login, signup, verify }) => {
-  const cancelReq = useAuthService(state => state.cancelReq);
-  const isLoading = useAuthService(state => state.isLoading);
-  // const message = useRef();
+function AuthPage({ login, signup, verify }) {
+  const route = useNavigate();
+  const loginUser = useAuthService(s => s.login);
+
+  async function handleDemoView() {
+    if (process.env.REACT_APP_DEMO_USER
+      && process.env.REACT_APP_DEMO_PWD) {
+      const status = await loginUser({
+        email: process.env.REACT_APP_DEMO_USER,
+        password: process.env.REACT_APP_DEMO_PWD
+      });
+      status?.success && route('/dashboard', { replace: true });
+      return;
+    };
+    return alert("Unavailable");
+  };
+
   console.count("Component Rendered");
-
   return (
-    <main style={{ backgroundImage: `url(${bg})` }} className='w-full min-h-[94vh] bg-cover'>
+    <BGPage image={1}>
 
-      <section className='w-full min-h-[90vh] flex flex-col items-center justify-center'>
+      <section className='w-full min-h-[90vh] flex flex-col items-center justify-center relative'>
         <h1 className='text-4xl font-semibold underline mb-8'>{login ? "Login" : signup ? "SignUp" : verify && "Verify"}</h1>
         {login &&
           <Suspense fallback={<Loader />}>
@@ -35,26 +48,18 @@ const AuthPage = ({ login, signup, verify }) => {
           </Suspense>}
 
         {(login ?? signup) && <Link to={login ? "/signup" : signup && "/login"}
-          className='text-emerald-500 hover:text-emerald-800' >
+          className='text-emerald-500 hover:text-emerald-800 font-normal' >
           {login ? "Don't" : signup && "Already"} have an Account ?
         </Link>}
+        {login && <Link to="/forgot-password" className='text-teal-800 hover:text-teal-600 py-2 font-normal' >Forgot Password ?</Link>}
+
+        {login && <Icon onClick={handleDemoView}
+          icon="ri:admin-fill" color="#00583b" size={36}
+          label="Browse as Guest" classes='absolute right-2 top-2' />}
 
       </section>
 
-      <section className='w-full absolute bottom-1 h-[50px] flex items-center justify-center'>
-        {isLoading &&
-          <button type='button' onClick={cancelReq} className='fixed right-1 hover:bg-red-700 text-white rounded-md p-1 bg-teal-700'>
-            Cancel
-          </button>}
-        {/* {isCancelled.length !==0 && <>
-          <p ref={message} className='text-gray-800 text-center'>{isCancelled}</p>
-          <button type='button' onClick={disableBar} className='fixed left-1 text-red-600 rounded-xl p-2'>
-            <iconify-icon icon="eva:close-circle-fill" width={33} height={33} />
-          </button>
-        </>} */}
-      </section>
-
-    </main>
+    </BGPage>
   );
 };
 

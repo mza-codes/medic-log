@@ -14,6 +14,7 @@ font-family: 'Righteous', cursive; */
 body {
     margin: 0;
     font-family: 'Poppins', cursive;
+    background-color: rgba(147, 255, 223, 0.315);
 }
 
 /* ellipsis animat */
@@ -30,7 +31,7 @@ body {
     width: 13px;
     height: 13px;
     border-radius: 50%;
-    background: teal;
+    /* background: teal; */
     animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 
@@ -84,18 +85,47 @@ body {
     }
 }
 
-/* Veridy.jsx Input Field */
-#otpField{
+/* App.jsx */
+.errorBar {
+    visibility: hidden;
+}
+
+/* ErrorBar */
+.hoverEffects {
+    transition: all 900ms ease;
+    opacity: 0;
+    cursor: default;
+}
+
+.hoverEffects:hover {
+    opacity: 1.0;
+}
+
+/* Sidebar.jsx form */
+.errForm input{
+    border: 1.5px solid red;
+}
+
+/* Verify.jsx Input Field */
+#otpField {
     text-align: center;
     letter-spacing: 1.2rem;
     appearance: none;
-    
     font-size: 1.3rem;
     font-weight: 700;
     color: rgb(65, 64, 64);
 }
 
-#otpField::placeholder{
+#otpField[type="email"] {
+    text-align: left;
+    letter-spacing: 1px;
+    appearance: none;
+    font-weight: 400;
+    font-size: 16px;
+    color: rgb(49, 49, 49);
+}
+
+#otpField::placeholder {
     text-align: start;
     letter-spacing: 0px;
     font-size: 1rem;
@@ -104,23 +134,23 @@ body {
 
 #otpField::-webkit-outer-spin-button,
 #otpField::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* Firefox */
 #otpField[type=number] {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
 #otpField:invalid {
     border-color: rgb(248, 143, 143);
 }
 
-#otpField:valid{
+#otpField:valid {
     caret-color: transparent;
 }
 
-#otpField:placeholder-shown{
+#otpField:placeholder-shown {
     border-color: rgb(70, 70, 70);
 }

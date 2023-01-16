@@ -1,8 +1,8 @@
 import create from 'zustand';
-import axios from 'axios';
+import { API, SecureAPI } from '../Assets';
 
-axios.defaults.withCredentials = true;
 let controller;
+let errToast;
 
 const initialState = {
     user: {},
@@ -15,28 +15,29 @@ const initialState = {
     isCancelled: "",
     userData: {},
     userToken: "",
-    refreshToken: ""
+    refreshToken: "",
+    serverConnected: false,
+    email: ""
 };
 
-//30 seconds timeout set
-const API = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
-    timeout: 1000 * 30
-});
+const genSignal = () => {
+    controller = new AbortController();
+    return controller.signal;
+};
 
-// const secureAPI = axios.create({
-//     baseURL: process.env.REACT_APP_API_URL,
-//     headers: {
-//         authorization: `Bearer ${"sessionTokens?.userToken"}`
-//     }
-// });
-
-const fetchData = async (request) => {
+export const fetchData = async (request) => {
     try {
         const { data } = await request;
         return data;
     } catch (error) {
-        // console.error("Catched Error", error);
+        if (error.code === "ECONNABORTED") {
+            console.warn("Timeout");
+            errToast.current.style.visibility = "visible";
+        };
+        if (error?.response?.data?.message === "jwt expired") {
+            error.expired = true;
+            error.response.data.message = "Session Expired,Please Login!";
+        };
         return error;
     };
 };
@@ -50,21 +51,76 @@ const useAuthService = create((set, get) => ({
         }));
         return;
     },
+    resetState: () => {
+        set(s=> ({
+            ...initialState,
+            serverConnected:s.serverConnected,
+        }));
+        return;
+    },
+    setUser: (userData) => {
+        set((s) => ({
+            ...s,
+            user: userData,
+            active: true
+        }));
+        return true;
+    },
+    handleError: (error) => {
+        set((s) => ({
+            ...s,
+            errActive: true,
+            error: {
+                active: true,
+                ...error
+            },
+            info: null
+        }));
+        return true;
+    },
     cancelReq: () => {
-        console.log("Cancel Req called from hook,Prinitng controller: ", controller);
         controller?.abort("User Cancelled Request using hook");
         set(state => ({ ...state, isLoading: false, isCancelled: "Request Cancelled !" }));
         return;
     },
+    setLoading: (action) => {
+        set((s) => ({
+            ...s, isLoading: action ?? true,
+        }));
+        return true;
+    },
+    setInfo: (data) => {
+        set((s) => ({
+            ...s,
+            info: data,
+            error: {}
+        }));
+        return true;
+    },
+    refreshSession: async () => {
+        if (get().active) {
+            const data = await fetchData(SecureAPI.post('/auth/refresh-session', {}, {
+                withCredentials: true, signal: genSignal()
+            }));
+            if (data?.code) {
+                set(s => ({
+                    ...s,
+                    active: false,
+                    user: {},
+                    errActive: false
+                }));
+                return false;
+            };
+            return true;
+        };
+        return false;
+    },
     login: async (loginData) => {
-        console.log("data Loading");
         set(state => ({ ...state, isLoading: true, info: {}, errActive: false, isCancelled: "" }));
         controller = new AbortController();
         try {
-            const { data, headers } = await API.post('/auth/login', loginData, { signal: controller.signal });
-            const { user_token } = headers;
-            console.log("logging data", data, "<<<DATA || HEADERS >>>", user_token);
-
+            const { data, headers: { user_token } } = await API.post('/auth/login', loginData, { signal: controller.signal });
+            localStorage.setItem("expiration", data?.expiry);
             set(state => ({
                 ...state,
                 user: data?.user,
@@ -72,7 +128,7 @@ const useAuthService = create((set, get) => ({
                 isLoading: false,
                 errActive: false,
                 userToken: user_token,
-                refreshToken: data.refreshToken
+                refreshToken: data?.refreshToken,
             }));
             return data;
         } catch (error) {
@@ -89,7 +145,36 @@ const useAuthService = create((set, get) => ({
         };
     },
     logout: async () => {
-        // Case
+        get().setLoading(true);
+        const data = await fetchData(SecureAPI.get('/auth/logout', { signal: genSignal() }));
+        if (data?.code) {
+            get().handleError(data?.response?.data ?? data);
+            return false;
+        };
+        get().resetState();
+        return true;
+    },
+    verifySession: async (signal, errMsg) => {
+        errToast = errMsg;
+        const setUser = get().setUser;
+        const setLoading = get().setLoading;
+
+        setLoading(true);
+        await API.get('/auth/verifyUser', {
+            withCredentials: true, signal
+        }).then((res) => {
+            setLoading(false);
+            setUser(res?.data?.user);
+            return set((s) => ({ ...s, serverConnected: true }));
+        }).catch((err) => {
+            setLoading(false);
+            if (err.code === "ECONNABORTED") {
+                errMsg.current.style.visibility = "visible";
+                return set((s) => ({ ...s, serverConnected: false }));
+            };
+            return set((s) => ({ ...s, serverConnected: true }));
+        });
+        return;
     },
     updateSession: async (tokens) => {
         try {
@@ -107,7 +192,6 @@ const useAuthService = create((set, get) => ({
             }));
             return data;
         } catch (error) {
-            console.warn(error);
             set((state) => ({
                 ...state,
                 error: { ...error?.response?.data ?? error },
@@ -123,10 +207,8 @@ const useAuthService = create((set, get) => ({
         controller = new AbortController();
         set(state => ({ ...state, isLoading: true, info: {}, errActive: false, isCancelled: "" }));
         const { userData: signupData } = get();
-        console.log("Printing SignupData: >> from Register req", signupData);
         if (!signupData?.email) {
             //Case here add error
-            console.log("No userData found");
             set(state => ({
                 ...state,
                 isLoading: false,
@@ -142,8 +224,8 @@ const useAuthService = create((set, get) => ({
             const { data, headers } = await API.post('/auth/register', signupData, {
                 signal: controller.signal, withCredentials: true
             });
+            localStorage.setItem("expiration", data?.expiry);
             const { user_token } = headers;
-            console.log("logging data", data, "<<<DATA || HEADERS >>>", user_token);
 
             set(state => ({
                 ...state,
@@ -156,7 +238,6 @@ const useAuthService = create((set, get) => ({
             }));
             return data;
         } catch (error) {
-            console.warn(error);
             set((state) => ({
                 ...state,
                 errSource: "signup",
@@ -186,7 +267,6 @@ const useAuthService = create((set, get) => ({
             return data;
         } else {
             let error = data;
-            console.warn(error);
             set((state) => ({
                 ...state,
                 errSource: "signup",
@@ -200,7 +280,6 @@ const useAuthService = create((set, get) => ({
         };
     },
     validateOtp: async ({ otp }) => {
-        console.warn("Verifying Entered OTP:", otp);
         set(state => ({ ...state, isLoading: true, info: {}, errActive: false, isCancelled: "" }));
 
         controller = new AbortController();
@@ -212,7 +291,6 @@ const useAuthService = create((set, get) => ({
             const { userData } = get();
             if (!userData?.email) {
                 //Case here add error
-                console.warn("No userData found");
                 set(state => ({
                     ...state,
                     isLoading: false,
@@ -233,7 +311,6 @@ const useAuthService = create((set, get) => ({
             return data;
         } else {
             let error = data;
-            console.warn(error);
             set((state) => ({
                 ...state,
                 errSource: "verify",
@@ -244,6 +321,96 @@ const useAuthService = create((set, get) => ({
                 refreshToken: ""
             }));
             return error;
+        };
+    },
+    updateProfile: async (formData) => {
+        get().setLoading(true);
+        let response = false;
+        try {
+            const { data } = await SecureAPI.put('/user/update', formData, { signal: genSignal() });
+            console.log("updateProfile Response", data);
+            set(state => ({
+                ...state,
+                user: data?.user,
+                errActive: false,
+                info: data,
+                error: null
+            }));
+            response = true;
+        } catch (error) {
+            console.log(error);
+            get().handleError(error?.response?.data ?? error);
+            response = false;
+        } finally {
+            get().setLoading(false);
+            return response;
+        };
+    },
+    forgotPwd: async (formData) => {
+        get().setLoading(true);
+        let status = false;
+        try {
+            const { data } = await API.put('/auth/forgot-password', formData, { signal: genSignal() });
+            console.log("ForgotPwd Req Response: ", data);
+            set((s) => ({
+                ...s,
+                info: data,
+                email: formData.email,
+                error: {}
+            }));
+            status = true;
+        } catch (error) {
+            console.log("Error in forgotPwd Req", error);
+            get().handleError(error?.response?.data ?? error);
+            status = false;
+        } finally {
+            get().setLoading(false);
+            return status;
+        };
+    },
+    verifyOTPforPwd: async (formData) => {
+        get().setLoading(true);
+        let response = false;
+        try {
+            const { data } = await API.put('/auth/verify-otp', { ...formData, email: get().email }, { signal: genSignal() });
+            console.log("verifyOTPforPwd Req Response: ", data);
+            get().setInfo(data);
+            response = true;
+        } catch (error) {
+            get().handleError(error?.response?.data ?? error);
+        } finally {
+            get().setLoading(false);
+            return response;
+        };
+    },
+    updatePassword: async (formData) => {
+        get().setLoading(true);
+        let response = false;
+        try {
+            const { data } = await API.put('/auth/update-password', { ...formData, email: get().email }, { signal: genSignal() });
+            console.log("updatePassword Req Response: ", data);
+            get().setInfo(data);
+            response = true;
+        } catch (error) {
+            get().handleError(error?.response?.data ?? error);
+        } finally {
+            get().setLoading(false);
+            return response;
+        };
+    },
+    updatePwdWAuth: async (formData) => {
+        get().setLoading(true);
+        let response = false;
+        try {
+            const { data } = await SecureAPI.put('/user/update-password', formData, { signal: genSignal() });
+            get().setInfo(data);
+            response = true;
+        } catch (error) {
+            get().handleError(error?.response?.data ?? error);
+            response = false;
+        } finally {
+            get().setLoading(false);
+            return response;
         };
     },
 }));

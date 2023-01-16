@@ -1,5 +1,2 @@
-const bunyan = require("bunyan");
-
-const log = bunyan.createLogger({ name: 'express-backend' });
-
-module.exports = { log };
+import bunyan from "bunyan";
+export const log = bunyan.createLogger({ name: 'medic-log' });

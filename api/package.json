@@ -6,6 +6,7 @@
   "repository": "https://github.com/mza-codes/mern-mFlux.git",
   "author": "muzammil",
   "license": "MIT",
+  "type": "module",
   "private": true,
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -16,7 +17,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "helmet": "^6.0.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "loadsh": "^0.0.4",
     "mongoose": "^6.6.7",
     "nodemailer": "^6.8.0",

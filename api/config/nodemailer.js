@@ -1,10 +1,10 @@
-require("dotenv").config();
-const nodemailer = require("nodemailer");
-const { log } = require("../utils/logger");
+import {} from 'dotenv/config';
+import nodemailer from "nodemailer";
+import { log } from "../utils/logger.js";
 
 const sender = process.env.NODEMAILER;
 
-const transporter = nodemailer.createTransport({
+export const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
         user: sender,
@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // disabled while testing  
-const testConnection = () => {
+export const testConnection = () => {
     transporter.verify((err, success) => {
         if (err) { log.error("Error Connecting Mailer", err); process.exit(0); }
         if (success) {
@@ -35,7 +35,7 @@ const testConnection = () => {
 //     html: "<b>Hello world?</b>", // html body
 // };
 
-const sendEmail = async (to, subject, body) => {
+export const sendEmail = async (to, subject, body) => {
 
     try {
         const mail = {
@@ -53,5 +53,3 @@ const sendEmail = async (to, subject, body) => {
         return process.exit();
     };
 };
-
-module.exports = { transporter, sendEmail, testConnection };

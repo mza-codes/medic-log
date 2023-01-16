@@ -1,41 +1,32 @@
 import { useRef } from "react";
 import { Form, Formik } from 'formik';
-import * as Yup from 'yup';
 import CustomField from "../../Components/Input/CustomField";
 import useAuthService from "../../Services/AuthService";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import Loader from "../../Components/Loader/Loader";
+import { loginSchema } from "../../Schema";
 
 const LoginForm = () => {
-
     const submitBtn = useRef();
     const navigate = useNavigate();
-    const { isLoading, login, error, errActive, errSource } = useAuthService();
-
-    console.log(error, errActive, errSource);
+    const { isLoading, login, error, errActive, errSource,info } = useAuthService();
 
     const handleSubmit = async (values, actions) => {
-        console.log("handling submit", actions);
         submitBtn.current.disabled = true;
         const status = await login(values);
         if (status?.success) return navigate('/dashboard');
-        else console.log("%cRequest Completed", "color:yellow"); return false;
+        else return false;
     };
 
-    const schema = Yup.object().shape({
-        email: Yup.string().email().required().min(6).max(46),
-        password: Yup.string().min(6).max(19).required()
-    });
-
     useEffect(() => {
-        console.log("state Change");
         submitBtn.current.disabled = !errActive;
     }, [errActive]);
 
     return (
         <Formik validateOnChange
             initialValues={{ email: "", password: "" }}
-            validationSchema={schema}
+            validationSchema={loginSchema}
             validateOnBlur={true}
             onSubmit={handleSubmit}>
             {props => (
@@ -48,15 +39,11 @@ const LoginForm = () => {
                         {props.isSubmitting ? "Loading" : "Submit"}
                     </button>
                     <div className="errorFeedback text-rose-600">
-                        {(errActive && errSource === "login") && <span className="err">{error?.message ?? error?.error} !</span>}
+                        {(errActive && errSource === "login") && <span className="err">{error?.message ?? error?.error} </span>}
                     </div>
+                    <span className="text-green-900 font-semibold">{info?.message}</span>
                     {(isLoading || props.isSubmitting) &&
-                        <div className="lds-ellipsis ">
-                            <div />
-                            <div />
-                            <div />
-                            <div />
-                        </div>
+                        <Loader />
                     }
                 </Form>
             )}

@@ -1,23 +1,53 @@
-const express = require('express');
-const authControllers = require('../controllers/authControllers');
-const { otpAuth, otpVerify, otpVerifyV2, verifySession } = require('../controllers/twoFactorAuth');
-const router = express.Router();
-const jwtAuth = require('../middlewares/authorizeUser');
+import express from 'express';
+import { otpAuth, otpVerifyV2, verifySession } from '../controllers/twoFactorAuth.js';
+import { forgotPassword, updatePwd, verifyOTPforPwd } from '../controllers/userControllers.js';
+import { isDBUser } from '../middlewares/isDBUser.js';
+import {
+    checkAuthorization,
+    checkCookie,
+    checkRefreshCookie,
+    refreshSession,
+} from '../middlewares/authorizeUser.js';
 
-// @route - /api/v1/auth/
+import {
+    createAuth,
+    auth,
+    logout,
+    provideUser,
+    updateAuth,
+    removeAuth,
+} from "../controllers/authControllers.js";
+
+
+const router = express.Router();
+
+/** @route - /api/v1/auth/ */
 router.post('/otpAuth', otpAuth);
 router.post('/otpAuth/otpVerify', otpVerifyV2);
-router.route('/register').post(verifySession, authControllers.createAuth);
-router.route('/login').post(authControllers.auth);
-router.post('/logout', jwtAuth.checkAuthorization, authControllers.logout);
-router.post('/refresh-token', jwtAuth.refreshToken);
+router.post('/register', verifySession, isDBUser, createAuth);
 
-router.route('/test2').get(jwtAuth.checkAuthorization, authControllers.updateAuth);
-router.get('/test', authControllers.updateAuth);
+router.post('/login', isDBUser, auth);
+router.get('/logout', logout);
 
-// @route - /api/v1/auth/<id>
+router.post('/logout', checkAuthorization, logout);
+// router.post('/refresh-token', provideRefreshToken);
+
+/** @refreshToken */
+router.post('/refresh-session', refreshSession);
+
+/** @isTokenExpired__UNUSED (check if request is valid) */
+// router.get('/is-valid', checkValidity);
+
+/** @get_current_user_via_cookie */
+router.get('/verifyUser', checkCookie, checkRefreshCookie, provideUser);
+
+router.put('/forgot-password', isDBUser, forgotPassword);  /** @placed in usercontrollers.js for clean code */
+router.put('/verify-otp',isDBUser, verifyOTPforPwd);
+router.put('/update-password',isDBUser, updatePwd);
+
+/** @route - /api/v1/auth/<id> @SEEMS_UNUSED */
 router.route('/:id')
-    .put(jwtAuth.checkAuthorization, authControllers.updateAuth)
-    .delete(jwtAuth.checkAuthorization, authControllers.removeAuth);
+    .put(checkAuthorization, updateAuth)
+    .delete(checkAuthorization, removeAuth);
 
-module.exports = router;
+export { router as authRoutes };

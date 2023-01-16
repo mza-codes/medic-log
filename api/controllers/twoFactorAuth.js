@@ -1,17 +1,19 @@
-require("dotenv").config();
-const { sendEmail } = require("../config/nodemailer");
-const colors = require("colors");
-const asyncHandler = require("../middlewares/asyncHandler");
-const User = require("../models/User");
-const Otp = require("../models/OTP");
-const { log } = require("../utils/logger");
-const { generate } = require("../utils/otpGenerator");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const otpCookie = "OTP_Session";
-const verifiedCookie = "isVerified";
+import { } from 'dotenv/config';
+import bcrypt from "bcrypt";
+import colors from "colors";
+import jwt from "jsonwebtoken";
 
-const otpAuth = asyncHandler(async (req, res, next) => {
+import { sendEmail } from "../config/nodemailer.js";
+import asyncHandler from "../middlewares/asyncHandler.js";
+import User from "../models/User.js";
+import Otp from "../models/OTP.js";
+import { log } from "../utils/logger.js";
+import otpGenerator from "../utils/otpGenerator.js";
+
+export const otpCookie = "OTP_Session";
+export const verifiedCookie = "isVerified";
+
+export const otpAuth = asyncHandler(async (req, res, next) => {
     const email = req.body.email;
     if (!email) return res.status(406).json({ success: false, message: 'Invalid Email' });
 
@@ -22,7 +24,7 @@ const otpAuth = asyncHandler(async (req, res, next) => {
 
     const currentDate = new Date();
     const expiry = new Date(currentDate.getTime() + 5 * 60000);
-    const otp = generate(6, { digits: true });
+    const otp = otpGenerator.generate(6, { digits: true });
     const encoded = await bcrypt.hash(otp, 15);
     const content = `Your OTP for Registration is ${otp}. This OTP will Expire in 5 Minutes`;
     const otpStatus = await Otp.create({ value: encoded, expiredAt: expiry });
@@ -36,16 +38,16 @@ const otpAuth = asyncHandler(async (req, res, next) => {
     };
     res.cookie(String(otpCookie), token, {
         path: "/",
-        expiry: new Date(Date.now() + (1000 * 60) * 5),
+        expires: new Date(Date.now() + (1000 * 60) * 5),
         httpOnly: true,
         sameSite: "lax"
     });
     log.warn(colors.green("Exposing OTP: ", otp));
-    // await sendEmail(email, `OTP Verification from ${process.env.Brand ?? "mza_Node Server"}`, content);
+    // await sendEmail(email, `OTP Verification from ${process.env.BRAND ?? "mza_Node Server"}`, content);
     return res.status(200).json({ success: true, message: `OTP has Successfully sent to ${email}` });
 });
 
-const otpVerify = asyncHandler(async (req, res, next) => {
+export const otpVerify = asyncHandler(async (req, res, next) => {
     const otp = req.body?.otp;
     if (!otp) return res.status(406).json({ success: false, message: 'Invalid OTP' });
     const cookie = req.headers.cookie;
@@ -70,7 +72,7 @@ const otpVerify = asyncHandler(async (req, res, next) => {
     return res.status(401).json({ success: false, message: "Incorrect OTP" });
 });
 
-const otpVerifyV2 = asyncHandler(async (req, res, next) => {
+export const otpVerifyV2 = asyncHandler(async (req, res, next) => {
     const otp = req.body?.otp;
     if (!otp) return res.status(406).json({ success: false, message: 'Invalid OTP' });
 
@@ -93,7 +95,7 @@ const otpVerifyV2 = asyncHandler(async (req, res, next) => {
         log.info("OTP Updated to verified");
         res.cookie(String(verifiedCookie), newToken, {
             path: "/",
-            expiry: new Date(Date.now() + (1000 * 60) * 4),
+            expires: new Date(Date.now() + (1000 * 60) * 4),
             httpOnly: true,
             sameSite: "lax"
         });
@@ -102,7 +104,7 @@ const otpVerifyV2 = asyncHandler(async (req, res, next) => {
     return res.status(401).json({ success: false, message: "Incorrect OTP" });
 });
 
-const verifySession = asyncHandler(async (req, res, next) => {
+export const verifySession = asyncHandler(async (req, res, next) => {
     log.warn("Verifiying USER Session 2FA");
     const token = req.cookies[verifiedCookie];
     if (!token) return res.status(401).json({ success: false, message: 'Unable to verify user session,Invalid Token/No Cookies Found' });
@@ -119,7 +121,6 @@ const verifySession = asyncHandler(async (req, res, next) => {
         next();
         return;
     };
-    return res.status(500).json({ success: false, message: "OTP Re Verification Error !" });
+    return res.status(500).json({ success: false, message: "OTP ReVerification Error !" });
 });
 
-module.exports = { verifySession, otpVerifyV2, otpAuth, verifiedCookie };

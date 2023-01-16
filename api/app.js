@@ -1,14 +1,18 @@
-require('dotenv').config();
+import { } from 'dotenv/config';
 
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const errorHandler = require('./middlewares/errorHandler');
-const helmet = require('helmet');
-const { log } = require('./utils/logger');
-const { sendEmail, testConnection } = require('./config/nodemailer');
-const cookieParser = require('cookie-parser');
-const { urlencoded } = require('express');
+import express, { urlencoded } from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
+
+import errorHandler from './middlewares/errorHandler.js';
+import { log } from './utils/logger.js';
+import { testConnection } from './config/nodemailer.js';
+import { connectRedis } from './utils/redisConfig.js';
+import { authRoutes } from './routes/auth.js';
+import recordRoutes from './routes/records.js';
+import userRoutes from './routes/user.js';
 
 // Database Connection
 const connectDB = async () => {
@@ -28,20 +32,21 @@ const connectDB = async () => {
 
 const app = express();
 
-
 // Middleware
 app.use(cors({
     exposedHeaders: ["user_token"],
     credentials: true,
     origin: "http://localhost:3000"
 }));
-app.use(urlencoded({ extended: true}));
+app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
 app.use(helmet());
 
 // Routes
-app.use('/api/v1/auth', require('./routes/auth'));
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/app', recordRoutes);
+app.use('/api/v1/user', userRoutes);
 
 // Error Handler
 app.use(errorHandler);
@@ -49,8 +54,8 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     connectDB();
-    testConnection();
-    // connectRedis();
+    // testConnection();
+    connectRedis();
     log.info(`Node Server Started On PORT: ${PORT}`);
 });
 
