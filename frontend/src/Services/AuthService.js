@@ -164,8 +164,10 @@ const useAuthService = create((set, get) => ({
             get().handleError(data?.response?.data ?? data);
             return false;
         };
+        // setTimeout(() => {
         get().resetState();
         return true;
+        // }, 6 * 1000);
     },
     verifySession: async (signal, errMsg) => {
         errToast = errMsg;

@@ -1,3 +1,4 @@
+import { Tooltip } from "@mantine/core";
 import { Form, Formik } from "formik";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -34,13 +35,13 @@ const AddDataForm = ({ data, update }) => {
         age: Yup.number().required(RequiredMsg).min(1, "Minimum Age is 1").max(120, "Invalid Age")
             .positive("Must be Greater than 0").integer(),
         city: Yup.string().required(RequiredMsg).min(3).max(70),
-        lastCheckup: Yup.date().required(RequiredMsg).max(new Date(), "Invalid Date !").min(new Date("1970-01-01T00:00"), "Too Old Date"),
+        lastCheckup: Yup.date().required(RequiredMsg).max(new Date(), "Invalid Date !")
+            .min(new Date("1970-01-01T00:00"), "Too Old Date"),
     });
 
     const handleSubmit = async (values, actions) => {
         const isValid = await setPayload(values);
         if (isValid) {
-
             let status;
             if (update === 1) status = await handleSubmission(update, data?._id);
             else status = await handleSubmission();
@@ -99,20 +100,23 @@ const AddDataForm = ({ data, update }) => {
                     </Stack>
 
                     <Stack>
-                        <button type="button" onClick={e => clearForm(props.resetForm)} title="Reset Form"
-                            className="bg-rose-400 hover:bg-rose-700 text-white rounded-md p-1">
-                            <iconify-icon icon="pajamas:clear-all" width="auto" height="auto" />
-                        </button>
-
+                        <Tooltip label={"Reset Form"} color={"#ff633c"} withArrow={true} >
+                            <button type="button" onClick={e => clearForm(props.resetForm)} title="Reset Form"
+                                className="bg-rose-400 hover:bg-rose-700 text-white rounded-md py-1 px-2">
+                                <iconify-icon icon="pajamas:clear-all" width="auto" height="auto" />
+                            </button>
+                        </Tooltip>
                         <button type="submit" title="Submit Form" disabled={!props.isValid || props.isSubmitting || isLoading}
-                            className="bg-teal-700 hover:bg-teal-400 p-2 text-white rounded-md disabled:bg-slate-600">
+                            className="bg-teal-700 hover:bg-teal-600 p-2 text-white rounded-md disabled:bg-slate-600">
                             {(props.isSubmitting || isLoading) ? "Loading" : "Submit"}
                         </button>
 
-                        <button type="button" onClick={e => fillDoc(props.values)} title="Pass Form Data to Document (Beta)"
-                            className="bg-amber-400 hover:bg-amber-700 text-white rounded-md p-1">
-                            <iconify-icon icon="fluent:form-28-filled" width="auto" height="auto" />
-                        </button>
+                        <Tooltip label={"Fill Document With FormData"} color={"#00b16d"} withArrow={true} >
+                            <button type="button" onClick={e => fillDoc(props.values)} title="Pass Form Data to Document (Beta)"
+                                className="bg-amber-400 hover:bg-amber-700 text-white rounded-md py-1 px-2">
+                                <iconify-icon icon="fluent:form-28-filled" width="auto" height="auto" />
+                            </button>
+                        </Tooltip>
                     </Stack>
                     {(props.isSubmitting || isLoading) && <Loader inline={1} />}
                     {error?.active && <p className="text-red-500 text-center max-w-[600px]">{error?.message || error?.code}</p>}

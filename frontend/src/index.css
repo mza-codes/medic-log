@@ -102,7 +102,7 @@ body {
 }
 
 /* Sidebar.jsx form */
-.errForm input{
+.errForm input {
     border: 1.5px solid red;
 }
 
@@ -153,4 +153,84 @@ body {
 
 #otpField:placeholder-shown {
     border-color: rgb(70, 70, 70);
+}
+
+@keyframes loadHoriz {
+    0% {
+        width: 0%;
+    }
+
+    25% {
+        width: 50%;
+    }
+
+    50% {
+        width: 100%;
+    }
+
+    75% {
+        width: 50%;
+    }
+
+    100% {
+        width: 0%;
+    }
+}
+
+@keyframes loadHoriz2 {
+    0% {
+        width: 0%;
+    }
+
+    50% {
+        width: 50%;
+    }
+
+    60% {
+        width: 60%;
+    }
+
+    74% {
+        width: 74%;
+    }
+
+    88% {
+        width: 88%;
+    }
+
+    94% {
+        width: 94%;
+    }
+
+    100% {
+        width: 100%;
+    }
+}
+
+.bar {
+    position: fixed;
+    top: 1;
+    z-index: 1502;
+    width: 0%;
+    height: 2px;
+    margin: 0 auto;
+    animation: loadHoriz2 15s linear 1s infinite alternate;
+}
+
+.horizontal-bar-wrap {
+    position: fixed;
+    top: 1;
+    z-index: 1502;
+    height: 4px;
+    width: 100%;
+}
+
+.bar1 {
+    animation-delay: 0s;
+    /* background: #000000; */
+    background: linear-gradient(to right, #ffffff54, #00ff6a, #fff, #f9fc56);
+    /* border-right: 5px solid red; */
+    border-radius: 6px;
+    top: 0;
+    z-index: 1;
 }
