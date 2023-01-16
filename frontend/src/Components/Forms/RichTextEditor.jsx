@@ -6,14 +6,14 @@ import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
-import { hooker, RTFTemplate } from '../../Assets';
+import { RTFTemplate } from '../../Assets';
 import useApiService from '../../Services/APIService';
 import useLocalState from '../../Services/LocalState';
 import { useState } from 'react';
 
 const RTF = ({ record }) => {
     console.count("RTF rendered");
-    const setDocument = hooker("setDocument", useApiService);
+    const setDocument = useApiService(s => s.setDocument);
     const personData = useLocalState(s => s.personData);
     const setPersonData = useLocalState(s => s.setPersonData);
     const [data, setData] = useState(RTFTemplate);

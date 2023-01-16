@@ -1,16 +1,13 @@
 import axios from 'axios';
 import background from './bg-small.jpg';
 import avatar from './avatar.jpg';
+import { errToast } from '../Services/AuthService';
 
 axios.defaults.withCredentials = true;
 let retried = false;
 
 export const bg = background;
 export const defaultAvatar = avatar;
-
-export const hooker = (field, hook) => {
-    return hook((state) => state[field]);
-};
 
 // 30 seconds timeout set
 export const API = axios.create({
@@ -30,9 +27,13 @@ export const resIntercep = SecureAPI.interceptors.response.use(
         return response;
     },
     async (err) => {
-        const controller = new AbortController();
-        const prevReq = err?.config;
+        if (err?.code === "ECONNABORTED") {
+            console.warn("Server Timeout!");
+            errToast.current.style.visibility = "visible";
+        };
         if (err?.response?.data?.message === "jwt expired" && !retried) {
+            const controller = new AbortController();
+            const prevReq = err?.config;
             retried = true;
             try {
                 const resp = await SecureAPI.post('/auth/refresh-session', {}, {

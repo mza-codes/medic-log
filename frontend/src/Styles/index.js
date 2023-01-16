@@ -1,1 +1,0 @@
-export const flexCol = `flex flex-col`;

@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import shallow  from "zustand/shallow";
 import { Link, useNavigate } from "react-router-dom";
 import Loader from '../../Components/Loader/Loader';
 import useAuthService from "../../Services/AuthService";
@@ -11,7 +12,8 @@ const Verify = () => {
     const validateOtp = useAuthService((state) => state.validateOtp);
     const isLoading = useAuthService((state) => state.isLoading);
     const register = useAuthService((state) => state.register);
-    const { errActive, error, errSource } = useAuthService();
+    const resendOtp = useAuthService(s => s.resendOtp);
+    const [errActive, error, errSource] = useAuthService(s => ([s.errAcrive, s.error, s.errSource]), shallow);
 
     const handleVerification = async (e) => {
         e.preventDefault();
@@ -49,9 +51,10 @@ const Verify = () => {
                 <p className="text-rose-500 capitalize">{error?.message ?? error?.error}</p>
             }
 
-            <Link to="/" state={{ disableError: true }} className=' text-emerald-500 hover:text-emerald-800 mb-2'>
+            <button type="button" onClick={resendOtp} className=' text-emerald-500 text-start hover:text-emerald-800 mb-2'>
                 Have'nt Receieved Verification Code ?
-            </Link>
+            </button>
+            <Link to="/signup" className=' text-green-600 hover:text-emerald-800' >Signup ?</Link>
             {isLoading && <Loader inline={0} />}
         </form>
     );

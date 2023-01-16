@@ -3,9 +3,9 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 import * as Yup from 'yup';
-import { hooker } from "../../Assets";
 import useApiService, { controller } from "../../Services/APIService";
 import useLocalState from "../../Services/LocalState";
+import { hook } from "../../Utils";
 import CustomField from "../Input/CustomField";
 import Loader from "../Loader/Loader";
 
@@ -21,10 +21,10 @@ const Stack = styled.div`
 
 const AddDataForm = ({ data, update }) => {
     const navigate = useNavigate();
-    const setPayload = hooker("setPayload", useApiService);
-    const error = hooker("error", useApiService);
-    const isLoading = hooker("isLoading", useApiService);
-    const handleSubmission = hooker("handleSubmission", useApiService);
+    const setPayload = hook("setPayload", useApiService);
+    const error = hook("error", useApiService);
+    const isLoading = hook("isLoading", useApiService);
+    const handleSubmission = hook("handleSubmission", useApiService);
     const setState = useLocalState(s => s.setPersonData);
     const setDocument = useApiService(s => s.setDocument);
 

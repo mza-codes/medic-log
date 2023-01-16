@@ -2,9 +2,9 @@ import { Tooltip } from '@mantine/core';
 import { useAtom } from 'jotai';
 import { useRef } from 'react';
 import styled from 'styled-components';
-import { hooker } from '../Assets';
 import { sortAtom } from '../Atoms';
 import useApiService from '../Services/APIService';
+import { hook } from '../Utils';
 import { filterAtom } from './FilterModal';
 import Icon from './Icon';
 
@@ -32,9 +32,9 @@ const TopBar = () => {
     const searchRef = useRef();
     const sortBy = useAtom(sortAtom)[0];
     const searchRecords = useApiService(s => s.searchRecords);
-    const error = hooker("error", useApiService);
-    const getRecords = hooker("getRecords", useApiService);
-    const isLoading = hooker("isLoading", useApiService);
+    const error = hook("error", useApiService);
+    const getRecords = hook("getRecords", useApiService);
+    const isLoading = hook("isLoading", useApiService);
 
     const fetchAllRecords = () => {
         controller = new AbortController();

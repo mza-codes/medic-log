@@ -49,7 +49,7 @@ export const otpVerifyV2 = asyncHandler(async (req, res, next) => {
     if (!otp) return res.status(406).json({ success: false, message: 'Invalid OTP' });
 
     const token = req.cookies[otpCookie];
-    if (!token) return res.status(401).json({ success: false, message: 'Unable to verify request,Invalid Cookie' });
+    if (!token) return res.status(401).json({ success: false, message: 'Unable to verify request,Invalid Session' });
 
     let data = jwt.verify(token, process.env.JWT_KEY);
     const otpData = await Otp.findOne({ _id: data.otpId }); /** @failure_Prevention */
@@ -97,6 +97,11 @@ export const verifySession = asyncHandler(async (req, res, next) => {
         return;
     };
     return res.status(500).json({ success: false, message: "OTP ReVerification Error !" });
+});
+
+export const resendOTP = asyncHandler(async (req, res) => {
+    const token = req.cookies[otpCookie];
+    if (!token) return genRes(res, 401, false, 'Unable to verify request,Invalid Cookie');
 });
 
 /** @UNUSED_FUNC 
