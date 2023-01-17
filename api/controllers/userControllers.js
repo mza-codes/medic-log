@@ -1,6 +1,5 @@
 import { } from "dotenv/config";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
 
 import { sendEmail } from "../config/nodemailer.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
