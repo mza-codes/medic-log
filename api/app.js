@@ -5,6 +5,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import path from "path";
 
 import errorHandler from './middlewares/errorHandler.js';
 import { log } from './utils/logger.js';
@@ -14,6 +15,7 @@ import { authRoutes } from './routes/auth.js';
 import recordRoutes from './routes/records.js';
 import userRoutes from './routes/user.js';
 
+const __dirname = path.resolve();
 // Database Connection
 const connectDB = async () => {
     await mongoose.connect(process.env.NEWDB, {
@@ -47,6 +49,11 @@ app.use(helmet());
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/app', recordRoutes);
 app.use('/api/v1/user', userRoutes);
+
+app.get("*", (req, res) => {
+    log.warn("SENDING HTML FILE * ROUTE");
+    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+});
 
 // Error Handler
 app.use(errorHandler);
