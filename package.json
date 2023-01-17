@@ -3,12 +3,9 @@
   "version": "2.1.0",
   "private": true,
   "scripts": {
-    "start": "react-scripts start",
+    "start": "cd api/ && yarn start",
     "build": "react-scripts build",
     "devx": "bash ./dev.sh",
     "deployment": "bash ./deploy.sh"
-  },
-  "dependencies": {
-    "concurrently": "^7.6.0"
   }
 }
