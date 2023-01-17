@@ -22,13 +22,11 @@ const Router = () => {
     const ProtectedRoute = ({ children }) => {
         if (userActive) return children;
         else return <Navigate to="/login" />;
-        // return children;
     };
 
     const AuthRoute = ({ children }) => {
         if (!userActive) return children;
         else return <Navigate to="/dashboard" />;
-        // return children;
     };
 
     const VerifyId = ({ children }) => {

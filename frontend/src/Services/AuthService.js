@@ -2,7 +2,7 @@ import create from 'zustand';
 import { API, SecureAPI } from '../Assets';
 
 let controller;
-let errToast;
+export let errToast;
 
 const initialState = {
     user: {},
@@ -52,9 +52,9 @@ const useAuthService = create((set, get) => ({
         return;
     },
     resetState: () => {
-        set(s=> ({
+        set(s => ({
             ...initialState,
-            serverConnected:s.serverConnected,
+            serverConnected: s.serverConnected,
         }));
         return;
     },
@@ -65,6 +65,19 @@ const useAuthService = create((set, get) => ({
             active: true
         }));
         return true;
+    },
+    handleAuthError: (source = "", error) => {
+        set((s) => ({
+            ...s,
+            errActive: true,
+            errSource: source,
+            error: {
+                active: true,
+                ...error
+            },
+            info: null
+        }));
+        return false;
     },
     handleError: (error) => {
         set((s) => ({
@@ -151,8 +164,10 @@ const useAuthService = create((set, get) => ({
             get().handleError(data?.response?.data ?? data);
             return false;
         };
+        // setTimeout(() => {
         get().resetState();
         return true;
+        // }, 6 * 1000);
     },
     verifySession: async (signal, errMsg) => {
         errToast = errMsg;
@@ -204,7 +219,6 @@ const useAuthService = create((set, get) => ({
         };
     },
     register: async () => {
-        controller = new AbortController();
         set(state => ({ ...state, isLoading: true, info: {}, errActive: false, isCancelled: "" }));
         const { userData: signupData } = get();
         if (!signupData?.email) {
@@ -221,12 +235,10 @@ const useAuthService = create((set, get) => ({
             return false;
         };
         try {
-            const { data, headers } = await API.post('/auth/register', signupData, {
-                signal: controller.signal, withCredentials: true
+            const { data, headers: { user_token } } = await API.post('/auth/register', signupData, {
+                signal: genSignal(), withCredentials: true
             });
             localStorage.setItem("expiration", data?.expiry);
-            const { user_token } = headers;
-
             set(state => ({
                 ...state,
                 user: data?.user,
@@ -234,7 +246,7 @@ const useAuthService = create((set, get) => ({
                 isLoading: false,
                 errActive: false,
                 userToken: user_token,
-                refreshToken: data.refreshToken
+                refreshToken: data?.refreshToken
             }));
             return data;
         } catch (error) {
@@ -256,7 +268,7 @@ const useAuthService = create((set, get) => ({
         const signal = controller.signal;
         set(state => ({ ...state, isLoading: true, info: {}, userData: formData }));
 
-        const data = await fetchData(API.post('/auth/otpAuth', { email }, { signal }));
+        const data = await fetchData(API.put('/auth/otpAuth', { email }, { signal }));
         if (data?.success) {
             set((state) => ({
                 ...state,
@@ -412,6 +424,25 @@ const useAuthService = create((set, get) => ({
             get().setLoading(false);
             return response;
         };
+    },
+    resendOtp: async () => {
+        const email = get()?.userData?.email;
+        if (!email)
+            return get().handleAuthError("verify", { message: "User's Email not found,Please Try Signing Up!" });
+        get().setLoading(true);
+        let response = false;
+        try {
+            const { data } = await API.put('/auth/otpAuth', { email }, { signal: genSignal() });
+            const msg = data?.message?.replace("sent", "Resent");
+            get().setInfo({ ...data, message: msg });
+            response = true;
+        } catch (error) {
+            get().handleAuthError("verify", error?.response?.data ?? error);
+            response = false;
+        } finally {
+            get().setLoading(false);
+        };
+        return response;
     },
 }));
 

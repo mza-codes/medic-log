@@ -21,9 +21,10 @@ import {
 const router = express.Router();
 
 /** @route - /api/v1/auth/ */
-router.post('/otpAuth', chekUserStat, otpAuth);
+router.put('/otpAuth', chekUserStat, otpAuth);
 router.post('/otpAuth/otpVerify', otpVerifyV2);
 router.post('/register', verifySession, createAuth);
+router.put("/otpAuth/resend-otp",chekUserStat,)
 
 router.post('/login', isDBUser, auth);
 router.get('/logout', logout);

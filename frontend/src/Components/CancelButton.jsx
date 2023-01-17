@@ -7,7 +7,7 @@ function CancelButton() {
 
     if (!isLoading) return null;
     return (
-        <button type='button' onClick={cancelReq}
+        <button type='button' onClick={cancelReq} style={{ zIndex: 1501 }}
             className='fixed right-1 bottom-2 text-sm hover:bg-red-700 text-white rounded-sm py-1 px-3 bg-teal-700'>
             Cancel
         </button>

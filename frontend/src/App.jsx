@@ -9,6 +9,7 @@ import useAuthService from './Services/AuthService';
 import BrandLoader from './Pages/BrandLoader';
 import { resIntercep, SecureAPI } from './Assets';
 import CancelButton from './Components/CancelButton';
+import LoadBar from './Components/LoadBar';
 
 let fetchCompleted = false;
 
@@ -35,6 +36,7 @@ const App = () => {
     return (
         <>
             <HashRouter hashType="hashbang">
+                <LoadBar />
                 <Header />
 
                 <Suspense fallback={<BrandLoader />}>

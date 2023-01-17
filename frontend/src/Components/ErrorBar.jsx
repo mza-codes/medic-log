@@ -13,7 +13,8 @@ const ErrorBar = ({ msg = `Unable to connect with server!`, color }) => {
     }, []);
 
     return (
-        <center style={{ color }} id="errBox" className='bg-black text-[#ff3d3d] p-3 w-fit fixed bottom-1 left-1 flex items-center '>
+        <center style={{ zIndex: 1501, color }} id="errBox"
+            className='bg-black text-[#ff3d3d] p-3 w-fit fixed bottom-1 left-1 flex items-center'>
             {msg} &nbsp;
             <iconify-icon icon="material-symbols:error-circle-rounded" width={36} height={36} />
         </center>
