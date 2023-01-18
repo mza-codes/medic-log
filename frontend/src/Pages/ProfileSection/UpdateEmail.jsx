@@ -19,10 +19,14 @@ function UpdateEmail({ controls }) {
         };
     };
 
+    function enterOTP() {
+        return route("/enter-otp", { state: "email-update" });
+    };
+
     async function handleEmailSubmit(values, actions) {
         const result = await generateOtp(values);
         if (result?.success) {
-            route("/enter-otp", { state: "email-update" });
+            enterOTP();
         }; return;
     };
 
@@ -55,8 +59,8 @@ function UpdateEmail({ controls }) {
                 <section className='bg-white rounded-lg flex flex-col items-center p-8 bg-opacity-50'>
                     <VerifyFormik controllers={emailProp} />
                     <p className="text-teal-900 mt-4">{info?.message}</p>
-                    <span onClick={() => { }}
-                        className="text-lime-500 hover:text-lime-800 font-medium">
+                    <span onClick={enterOTP}
+                        className="text-lime-500 hover:text-lime-800 font-medium cursor-pointer">
                         Already have OTP ?
                     </span>
                 </section>

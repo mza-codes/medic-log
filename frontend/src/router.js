@@ -30,15 +30,9 @@ const Router = () => {
         else return <Navigate to="/dashboard" />;
     };
 
-    const VerifyId = ({ children }) => {
-        const isHex = hexPattern.test(window.location.href?.split("/")?.at(-1));
-        if (isHex) return children;
-        else return <Page404 />
-    };
-
-    const VerifyPwdRoute = ({ children }) => {
+    const VerifyState = ({ children, value }) => {
         const { state } = useLocation();
-        if (state === "change-pwd" && !userActive) return children;
+        if (state === value) return children;
         else return <Navigate to="/forgot-password" />;
     };
 
@@ -80,7 +74,9 @@ const Router = () => {
         {
             path: "/enter-otp",
             element: <ProtectedRoute>
-                <EnterOTP />
+                <VerifyState value="email-update">
+                    <EnterOTP />
+                </VerifyState>
             </ProtectedRoute>
         },
         {
@@ -92,9 +88,11 @@ const Router = () => {
         {
             path: "/change-password",
             element:
-                <VerifyPwdRoute>
-                    <ChangePwd />
-                </VerifyPwdRoute>
+                <AuthRoute>
+                    <VerifyState value="change-pwd" >
+                        <ChangePwd />
+                    </VerifyState>
+                </AuthRoute>
         },
         {
             path: "/add-record",
@@ -142,3 +140,9 @@ const Router = () => {
 };
 
 export default Router;
+
+function VerifyId({ children }) {
+    const isHex = hexPattern.test(window.location.href?.split("/")?.at(-1));
+    if (isHex) return children;
+    else return <Page404 />
+};

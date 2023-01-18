@@ -75,10 +75,8 @@ function Profile() {
                 <button type="button" onClick={() => setOpenMail(true)}
                     className="text-green-600 capitalize py-1 hover:text-emerald-700">Change E Mail ?
                 </button>
-                <main className="dialogPwd hidden">
-                    <UpdatePwdWAuth actions={{ open, setOpen }} />
-                    <UpdateEmail controls={[openMail, setOpenMail]} />
-                </main>
+                <UpdatePwdWAuth actions={{ open, setOpen }} />
+                <UpdateEmail controls={[openMail, setOpenMail]} />
             </section>
         </BGPage>
     );

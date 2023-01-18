@@ -430,7 +430,7 @@ const useAuthService = create((set, get) => ({
     resendOtp: async () => {
         const email = get()?.userData?.email;
         if (!email)
-            return get().handleAuthError("verify", { message: "User's Email not found,Please Try Signing Up!" });
+            return get().handleAuthError("verify", { message: "User's Email not found!" });
         get().setLoading(true);
         let response = false;
         try {

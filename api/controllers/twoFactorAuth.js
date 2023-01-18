@@ -16,7 +16,7 @@ export const verifiedCookie = "isVerified";
 export const otpAuth = asyncHandler(async (req, res, next) => {
     const email = req.email;
     if (req.userStat) {
-        return genRes(res, 406, false, "User Already Exists, Please Login");
+        return genRes(res, 406, false, "User Already Exists");
     };
 
     const currentDate = new Date();
