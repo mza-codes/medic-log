@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import useAuthService from "../Services/AuthService";
 import BGPage from "./BGPage";
 import VerifyFormik from "./AuthSection/VerifyFormik";
-import UpdatePwdWAuth from "./AuthSection/UpdatePwdWAuth";
+import UpdatePwdWAuth from "./ProfileSection/UpdatePwdWAuth";
 import { useState } from "react";
+import UpdateEmail from "./ProfileSection/UpdateEmail";
 
 function Profile() {
     const route = useNavigate();
     const [open, setOpen] = useState(false);
+    const [openMail, setOpenMail] = useState(false);
     const user = useAuthService(s => s.user);
     const error = useAuthService(s => s.error);
     const loading = useAuthService(s => s.isLoading);
@@ -22,7 +24,7 @@ function Profile() {
             return false;
         };
         const data = await updateProfile({ name: values.name });
-        data &&  route('/dashboard', { replace: true });
+        data && route('/dashboard', { replace: true });
         return;
     };
 
@@ -70,9 +72,11 @@ function Profile() {
                 <button type="button" onClick={openDialog}
                     className="text-teal-600 capitalize py-1 hover:text-green-700">Change Password ?
                 </button>
-                <main className="dialogPwd hidden">
-                    <UpdatePwdWAuth actions={{ open, setOpen }} />
-                </main>
+                <button type="button" onClick={() => setOpenMail(true)}
+                    className="text-green-600 capitalize py-1 hover:text-emerald-700">Change E Mail ?
+                </button>
+                <UpdatePwdWAuth actions={{ open, setOpen }} />
+                <UpdateEmail controls={[openMail, setOpenMail]} />
             </section>
         </BGPage>
     );

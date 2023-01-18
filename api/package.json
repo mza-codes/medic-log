@@ -1,7 +1,7 @@
 {
-  "name": "mflux_backend",
-  "version": "1.1",
-  "description": "mFlux WebApp Backend Implementation",
+  "name": "medic-log-api",
+  "version": "2.0.1",
+  "description": "Generated from mza-codes mern template",
   "main": "app.js",
   "repository": "https://github.com/mza-codes/mern-mFlux.git",
   "author": "muzammil",

@@ -14,6 +14,7 @@ const ViewDoc = lazy(() => import('./Pages/ViewDoc'));
 const Profile = lazy(() => import('./Pages/Profile'));
 const ForgotPassword = lazy(() => import('./Pages/ForgotPassword'));
 const ChangePwd = lazy(() => import('./Pages/ChangePwd'));
+const EnterOTP = lazy(() => import('./Pages/ProfileSection/EnterOTP'));
 
 const hexPattern = /[0-9a-fA-F]{24}/;
 const Router = () => {
@@ -29,15 +30,9 @@ const Router = () => {
         else return <Navigate to="/dashboard" />;
     };
 
-    const VerifyId = ({ children }) => {
-        const isHex = hexPattern.test(window.location.href?.split("/")?.at(-1));
-        if (isHex) return children;
-        else return <Page404 />
-    };
-
-    const VerifyPwdRoute = ({ children }) => {
+    const VerifyState = ({ children, value }) => {
         const { state } = useLocation();
-        if (state === "change-pwd" && !userActive) return children;
+        if (state === value) return children;
         else return <Navigate to="/forgot-password" />;
     };
 
@@ -77,6 +72,14 @@ const Router = () => {
             </ProtectedRoute>
         },
         {
+            path: "/enter-otp",
+            element: <ProtectedRoute>
+                <VerifyState value="email-update">
+                    <EnterOTP />
+                </VerifyState>
+            </ProtectedRoute>
+        },
+        {
             path: "/forgot-password",
             element: <AuthRoute>
                 <ForgotPassword />
@@ -85,9 +88,11 @@ const Router = () => {
         {
             path: "/change-password",
             element:
-                <VerifyPwdRoute>
-                    <ChangePwd />
-                </VerifyPwdRoute>
+                <AuthRoute>
+                    <VerifyState value="change-pwd" >
+                        <ChangePwd />
+                    </VerifyState>
+                </AuthRoute>
         },
         {
             path: "/add-record",
@@ -135,3 +140,9 @@ const Router = () => {
 };
 
 export default Router;
+
+function VerifyId({ children }) {
+    const isHex = hexPattern.test(window.location.href?.split("/")?.at(-1));
+    if (isHex) return children;
+    else return <Page404 />
+};

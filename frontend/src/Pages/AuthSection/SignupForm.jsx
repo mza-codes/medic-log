@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import shallow from "zustand/shallow";
 import { Form, Formik } from 'formik';
 import CustomField from "../../Components/Input/CustomField";
 import useAuthService from "../../Services/AuthService";
@@ -10,7 +11,14 @@ import { userSchema } from "../../Schema";
 const SignupForm = () => {
     const navigate = useNavigate();
     const submitBtn = useRef();
-    const { isLoading, generateOtp, error, errActive, errSource } = useAuthService();
+    const [isLoading, error, errActive, errSource] =
+        useAuthService(s => ([
+            s.isLoading,
+            s.error,
+            s.errActive,
+            s.errSource]), shallow);
+
+    const generateOtp = useAuthService(s => s.generateOtp);
 
     const handleSubmit = async (values, actions) => {
         submitBtn.current.disabled = true;

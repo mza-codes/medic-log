@@ -274,7 +274,8 @@ const useAuthService = create((set, get) => ({
                 ...state,
                 info: data,
                 isLoading: false,
-                errActive: false
+                errActive: false,
+                error: null
             }));
             return data;
         } else {
@@ -282,7 +283,7 @@ const useAuthService = create((set, get) => ({
             set((state) => ({
                 ...state,
                 errSource: "signup",
-                error: { ...error?.response?.data ?? error },
+                error: { ...error?.response?.data ?? error, active: true },
                 isLoading: false,
                 errActive: true,
                 userToken: "",
@@ -317,6 +318,7 @@ const useAuthService = create((set, get) => ({
             set((state) => ({
                 ...state,
                 info: data,
+                error: null,
                 isLoading: false,
                 errActive: false
             }));
@@ -326,7 +328,7 @@ const useAuthService = create((set, get) => ({
             set((state) => ({
                 ...state,
                 errSource: "verify",
-                error: { ...error?.response?.data ?? error },
+                error: { ...error?.response?.data ?? error, active: true },
                 isLoading: false,
                 errActive: true,
                 userToken: "",
@@ -428,7 +430,7 @@ const useAuthService = create((set, get) => ({
     resendOtp: async () => {
         const email = get()?.userData?.email;
         if (!email)
-            return get().handleAuthError("verify", { message: "User's Email not found,Please Try Signing Up!" });
+            return get().handleAuthError("verify", { message: "User's Email not found!" });
         get().setLoading(true);
         let response = false;
         try {

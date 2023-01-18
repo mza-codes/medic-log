@@ -25,10 +25,17 @@ export const updateUser = asyncHandler(async (req, res) => {
             message: "No Data Provided to Update!"
         });
 
-    const newData = await User.findByIdAndUpdate(req.userId, { ...req.body, $inc: { "changeCount.name": 1 } }, { new: true });
+    let field = "name";
+    for (const key in req.body) field = key;
+
+    const newData = await User.findByIdAndUpdate(req.userId, { ...req.body, $inc: { [`changeCount.${field}`]: 1 } }, { new: true });
     const { password, createdAt, updatedAt, __v, ...user } = newData._doc;
     console.log(newData);
-    return genRes(res, 200, true, "User Name Updated!", { user });
+    if (req.cookies["isVerified"]) {
+        req.cookies["isVerified"] = "";
+        res.clearCookie("isVerified");
+    };
+    return genRes(res, 200, true, `User ${field} Updated!`, { user });
 });
 
 export const forgotPassword = asyncHandler(async (req, res) => {
