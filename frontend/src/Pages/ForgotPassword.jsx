@@ -1,11 +1,11 @@
 import VerifyFormik from './AuthSection/VerifyFormik';
 import BGPage from './BGPage';
-import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthService from '../Services/AuthService';
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 import Icon from '../Components/Icon';
 import { useState } from 'react';
+import { emailSchema, otpSchema } from '../Schema';
 
 function ForgotPassword() {
     const route = useNavigate();
@@ -16,8 +16,6 @@ function ForgotPassword() {
     const verifyOTPforPwd = useAuthService(s => s.verifyOTPforPwd);
     const [open, setOpen] = useState(false);
 
-    const isNum = /^\d+\.?\d*$/;
-
     const handleEmailSubmit = async (values, actions) => {
         console.log("Submiting Data", values);
         const res = await forgotPwd(values);
@@ -27,14 +25,6 @@ function ForgotPassword() {
         }; return;
     };
 
-    const schema = Yup.object().shape({
-        email: Yup.string().email("Invalid Email Address").min(6).max(30).required()
-    });
-
-    const otpSchema = Yup.object().shape({
-        otp: Yup.string().min(4).max(7).required().test('isNumber', v => isNum.test(v))
-    });
-
     const prop = {
         handleSubmit: handleEmailSubmit,
         fields: [{
@@ -43,7 +33,7 @@ function ForgotPassword() {
             name: "email",
             placeholder: "Enter Email ID"
         }],
-        schema,
+        schema: emailSchema,
         initialValues: { email: "" },
         error,
         loading

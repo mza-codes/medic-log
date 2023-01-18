@@ -17,6 +17,10 @@ body {
     background-color: rgba(147, 255, 223, 0.315);
 }
 
+button{
+    outline: none;
+}
+
 /* ellipsis animat */
 .lds-ellipsis {
     display: inline-block;

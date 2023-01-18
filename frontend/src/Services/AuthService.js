@@ -274,7 +274,8 @@ const useAuthService = create((set, get) => ({
                 ...state,
                 info: data,
                 isLoading: false,
-                errActive: false
+                errActive: false,
+                error: null
             }));
             return data;
         } else {
@@ -282,7 +283,7 @@ const useAuthService = create((set, get) => ({
             set((state) => ({
                 ...state,
                 errSource: "signup",
-                error: { ...error?.response?.data ?? error },
+                error: { ...error?.response?.data ?? error, active: true },
                 isLoading: false,
                 errActive: true,
                 userToken: "",
@@ -317,6 +318,7 @@ const useAuthService = create((set, get) => ({
             set((state) => ({
                 ...state,
                 info: data,
+                error: null,
                 isLoading: false,
                 errActive: false
             }));
@@ -326,7 +328,7 @@ const useAuthService = create((set, get) => ({
             set((state) => ({
                 ...state,
                 errSource: "verify",
-                error: { ...error?.response?.data ?? error },
+                error: { ...error?.response?.data ?? error, active: true },
                 isLoading: false,
                 errActive: true,
                 userToken: "",

@@ -14,6 +14,7 @@ const ViewDoc = lazy(() => import('./Pages/ViewDoc'));
 const Profile = lazy(() => import('./Pages/Profile'));
 const ForgotPassword = lazy(() => import('./Pages/ForgotPassword'));
 const ChangePwd = lazy(() => import('./Pages/ChangePwd'));
+const EnterOTP = lazy(() => import('./Pages/ProfileSection/EnterOTP'));
 
 const hexPattern = /[0-9a-fA-F]{24}/;
 const Router = () => {
@@ -74,6 +75,12 @@ const Router = () => {
             path: "/profile",
             element: <ProtectedRoute>
                 <Profile />
+            </ProtectedRoute>
+        },
+        {
+            path: "/enter-otp",
+            element: <ProtectedRoute>
+                <EnterOTP />
             </ProtectedRoute>
         },
         {

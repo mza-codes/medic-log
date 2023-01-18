@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 import useAuthService from "../../Services/AuthService";
-import VerifyFormik from './VerifyFormik';
+import VerifyFormik from '../AuthSection/VerifyFormik';
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 import Icon from '../../Components/Icon';
 
