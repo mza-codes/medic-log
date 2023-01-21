@@ -38,12 +38,20 @@ const app = express();
 app.use(cors({
     exposedHeaders: ["user_token"],
     credentials: true,
-    origin: "http://localhost:3000"
+    // origin: "http://localhost:3000"
+    origin: "https://medic-log.onrender.com"
 }));
 app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
-app.use(helmet());
+// contentSecurityPolicy: false
+app.use(helmet({
+    contentSecurityPolicy: {
+        useDefaults: true,
+        directives: { 'script-src': ["'self'", "https://whitelisted-domain.com"] }
+    }
+},
+));
 
 // Routes
 app.use('/api/v1/auth', authRoutes);
@@ -51,7 +59,6 @@ app.use('/api/v1/app', recordRoutes);
 app.use('/api/v1/user', userRoutes);
 
 app.get("*", (req, res) => {
-    log.warn("SENDING HTML FILE * ROUTE");
     res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
