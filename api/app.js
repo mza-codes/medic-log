@@ -10,7 +10,7 @@ import path from "path";
 import errorHandler from './middlewares/errorHandler.js';
 import { log } from './utils/logger.js';
 import { testConnection } from './config/nodemailer.js';
-import { connectRedis } from './utils/redisConfig.js';
+// import { connectRedis } from './utils/redisConfig.js';
 import { authRoutes } from './routes/auth.js';
 import recordRoutes from './routes/records.js';
 import userRoutes from './routes/user.js';
@@ -62,7 +62,7 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     connectDB();
     // testConnection();
-    connectRedis();
+    // connectRedis();
     log.info(`Node Server Started On PORT: ${PORT}`);
 });
 

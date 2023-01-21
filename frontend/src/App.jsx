@@ -10,17 +10,19 @@ import BrandLoader from './Pages/BrandLoader';
 import { resIntercep, SecureAPI } from './Assets';
 import CancelButton from './Components/CancelButton';
 import LoadBar from './Components/LoadBar';
-
-let fetchCompleted = false;
+// let fetchCompleted = false;
 
 const App = () => {
     const errMsg = useRef();
     const verifySession = useAuthService(s => s.verifySession);
-
+    const fetchStatus = useRef(false);
+    
     useEffect(() => {
+        let fetchCompleted = fetchStatus.current;
         const controller = new AbortController();
 
         if (!fetchCompleted) {
+            console.warn("VERIFIY SESSION CALL >>>");
             verifySession(controller.signal, errMsg);
             fetchCompleted = true;
         };
