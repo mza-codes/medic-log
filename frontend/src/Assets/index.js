@@ -1,7 +1,7 @@
 import axios from 'axios';
 import background from './bg-small.jpg';
 import avatar from './avatar.jpg';
-import { errToast } from '../Services/AuthService';
+import useAuthService, { errToast } from '../Services/AuthService';
 
 axios.defaults.withCredentials = true;
 let retried = false;
@@ -23,10 +23,12 @@ export const SecureAPI = axios.create({
 
 export const resIntercep = SecureAPI.interceptors.response.use(
     response => {
+        getVal();
         retried = false;
         return response;
     },
     async (err) => {
+        getVal();
         if (err?.code === "ECONNABORTED") {
             console.warn("Server Timeout!");
             errToast.current.style.visibility = "visible";
@@ -49,6 +51,10 @@ export const resIntercep = SecureAPI.interceptors.response.use(
         };
         return Promise.reject(err);
     });
+
+function getVal() {
+    console.log("GetState method", useAuthService.getState().user);
+};
 
 // This code works before request & there can be minor change in expiration time and not recommended!
 
