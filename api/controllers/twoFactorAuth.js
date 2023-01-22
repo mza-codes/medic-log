@@ -9,6 +9,7 @@ import Otp from "../models/OTP.js";
 import { log } from "../utils/logger.js";
 import otpGenerator from "../utils/otpGenerator.js";
 import genRes from '../utils/JSONResponse.js';
+import { cookieConfig } from '../utils/authUtils.js';
 
 export const otpCookie = "OTP_Session";
 export const verifiedCookie = "isVerified";
@@ -34,10 +35,8 @@ export const otpAuth = asyncHandler(async (req, res, next) => {
         req.cookies[otpCookie] = "";
     };
     res.cookie(String(otpCookie), token, {
-        path: "/",
+        ...cookieConfig,
         expires: new Date(Date.now() + (1000 * 60) * 5),
-        httpOnly: true,
-        sameSite: "lax"
     });
     log.warn(colors.green("Exposing OTP: ", otp));
     // await sendEmail(email, `OTP Verification from ${process.env.BRAND ?? "mza_Node Server"}`, content);
@@ -66,10 +65,8 @@ export const otpVerifyV2 = asyncHandler(async (req, res, next) => {
         await Otp.findByIdAndUpdate(otpData._id, { verified: true });
         log.info("OTP Updated to verified");
         res.cookie(String(verifiedCookie), newToken, {
-            path: "/",
+            ...cookieConfig,
             expires: new Date(Date.now() + (1000 * 60) * 4),
-            httpOnly: true,
-            sameSite: "lax"
         });
         return res.status(200).json({ success: true, message: "OTP Verification Success" });
     };

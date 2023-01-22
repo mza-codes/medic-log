@@ -4,13 +4,13 @@ import jwt from "jsonwebtoken";
 export const userCookie = "_ga_medic_log_sess";
 export const refreshCookie = `_ga_medic_log_refresh`;
 export const deleteReqCookie = `_sa_medic_log_important`;
-// export const
 
 export const cookieConfig = {
     path: "/",
     expires: new Date(Date.now() + (1000 * 60) * 12),
     httpOnly: true,
-    sameSite: "lax"
+    sameSite: "none",
+    secure: true
 };
 
 export const createAccessToken = (data) => {
@@ -22,10 +22,7 @@ export const createRefreshToken = (data) => {
     const newToken = jwt.sign(data, process.env.JWT_REFRESH_KEY, { expiresIn: "4h" });
     return newToken;
 };
-// res.cookie(deleteReqCookie, token, {
-//     ...cookieConfig,
-//     expires: new Date(Date.now() + (1000 * 60) * 5)
-// });
+
 export const genCookie = (res, name, token, options = {}) => {
     if (!res) throw new Error("res must be passed with genCookie!");
     return res.cookie(String(name), token, { ...cookieConfig, ...options });
