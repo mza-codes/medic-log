@@ -18,7 +18,7 @@ log.warn("ENVIRONMENT: ",process.env.NODE_ENV);
 
 if (process.env.NODE_ENV === "production") {
     log.warn("PRODUCTION MODE", process.env.NODE_ENV);
-    domain = `https://medic-log.onrender.com`;
+    domain = `https://medic-log.netlify.app`;
 };
 
 // Database Connection
