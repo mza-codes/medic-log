@@ -5,17 +5,22 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
-import path from "path";
 
 import errorHandler from './middlewares/errorHandler.js';
 import { log } from './utils/logger.js';
 import { testConnection } from './config/nodemailer.js';
-// import { connectRedis } from './utils/redisConfig.js';
 import { authRoutes } from './routes/auth.js';
 import recordRoutes from './routes/records.js';
 import userRoutes from './routes/user.js';
 
-const __dirname = path.resolve();
+let domain = `http://localhost:3000`;
+log.warn("ENVIRONMENT: ",process.env.NODE_ENV);
+
+if (process.env.NODE_ENV === "production") {
+    log.warn("PRODUCTION MODE", process.env.NODE_ENV);
+    domain = `https://medic-log.onrender.com`;
+};
+
 // Database Connection
 const connectDB = async () => {
     await mongoose.connect(process.env.NEWDB, {
@@ -37,30 +42,26 @@ const app = express();
 // Middleware
 app.use(cors({
     exposedHeaders: ["user_token"],
-    credentials: true,
-    // origin: "http://localhost:3000"
-    origin: "https://medic-log.onrender.com"
+    origin: domain, 
+    credentials: true
+    // methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+    // allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
 }));
 app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
-// contentSecurityPolicy: false
-app.use(helmet({
-    contentSecurityPolicy: {
-        useDefaults: true,
-        directives: { 'script-src': ["'self'", "https://whitelisted-domain.com"] }
-    }
-},
-));
+
+app.use(helmet());
 
 // Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/app', recordRoutes);
 app.use('/api/v1/user', userRoutes);
 
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
-});
+// app.get("*", (req, res) => {
+//     log.warn("Accessing via *");
+//     res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+// });
 
 // Error Handler
 app.use(errorHandler);
@@ -72,6 +73,3 @@ app.listen(PORT, () => {
     // connectRedis();
     log.info(`Node Server Started On PORT: ${PORT}`);
 });
-
-
-// app.use('/', (req, res) => { res.send('Working Done !') });
