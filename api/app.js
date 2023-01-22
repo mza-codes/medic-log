@@ -13,10 +13,12 @@ import { authRoutes } from './routes/auth.js';
 import recordRoutes from './routes/records.js';
 import userRoutes from './routes/user.js';
 
-let domain = `http://localhost:3000`;
+export let domain = `http://localhost:3000`;
+export const env = process.env.NODE_ENV === "production";
+
 log.warn("ENVIRONMENT: ", process.env.NODE_ENV);
 
-if (process.env.NODE_ENV === "production") {
+if (env) {
     log.warn("PRODUCTION MODE", process.env.NODE_ENV);
     domain = `https://medic-log.netlify.app`;
 };
