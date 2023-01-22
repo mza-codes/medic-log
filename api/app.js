@@ -14,11 +14,11 @@ import recordRoutes from './routes/records.js';
 import userRoutes from './routes/user.js';
 
 let domain = `http://localhost:3000`;
-log.warn("ENVIRONMENT: ",process.env.NODE_ENV);
+log.warn("ENVIRONMENT: ", process.env.NODE_ENV);
 
 if (process.env.NODE_ENV === "production") {
     log.warn("PRODUCTION MODE", process.env.NODE_ENV);
-    domain = `https://medic-log.onrender.com`;
+    domain = `https://medic-log.netlify.app`;
 };
 
 // Database Connection
@@ -42,7 +42,7 @@ const app = express();
 // Middleware
 app.use(cors({
     exposedHeaders: ["user_token"],
-    origin: domain, 
+    origin: domain,
     credentials: true
     // methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
     // allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
@@ -62,6 +62,11 @@ app.use('/api/v1/user', userRoutes);
 //     log.warn("Accessing via *");
 //     res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 // });
+app.get('/', (req, res) => {
+    res.writeHead(301, {
+        Location: domain
+    }).end();
+});
 
 // Error Handler
 app.use(errorHandler);
