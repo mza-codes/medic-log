@@ -7,7 +7,7 @@ import ErrorBar from './Components/ErrorBar';
 import { useRef } from 'react';
 import useAuthService from './Services/AuthService';
 import BrandLoader from './Pages/BrandLoader';
-import { resIntercep, SecureAPI } from './Assets';
+import { b64Enc_1, b64Enc_2, resIntercep, SecureAPI } from './Assets';
 import CancelButton from './Components/CancelButton';
 import LoadBar from './Components/LoadBar';
 // let fetchCompleted = false;
@@ -16,7 +16,7 @@ const App = () => {
     const errMsg = useRef();
     const verifySession = useAuthService(s => s.verifySession);
     const fetchStatus = useRef(false);
-    
+
     useEffect(() => {
         let fetchCompleted = fetchStatus.current;
         const controller = new AbortController();
@@ -27,11 +27,15 @@ const App = () => {
             fetchCompleted = true;
         };
         return () => controller.abort();
-
+        // eslint-disable-next-line
     }, []);
 
     useEffect(() => {
-        return () => SecureAPI.interceptors.response.eject(resIntercep);
+        return () => {
+            SecureAPI.interceptors.response.eject(resIntercep);
+            SecureAPI.interceptors.response.eject(b64Enc_1);
+            SecureAPI.interceptors.response.eject(b64Enc_2);
+        };
     }, []);
 
     console.count("Rendered App.JSX");

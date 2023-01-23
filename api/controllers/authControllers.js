@@ -29,7 +29,7 @@ export const createAuth = asyncHandler(async (req, res) => {
     const refreshToken = createRefreshToken({ userId: other?._id });
     const { exp } = jwt.verify(token, process.env.JWT_KEY);
     // clear verified cookies
-    res.clearCookie(verifiedCookie);
+    res.clearCookie(verifiedCookie, cookieConfig);
     req.cookies[verifiedCookie] = "";
     // add native cookies for better management
     res.setHeader('user_token', token);
@@ -52,7 +52,7 @@ export const createAuth = asyncHandler(async (req, res) => {
 });
 
 export const auth = asyncHandler(async (req, res, next) => {
-    console.log("Authenticating... USER:",req.currentUser);
+    console.log("Authenticating... USER:", req.currentUser);
     const dbUser = req.currentUser;
     const stat = await dbUser.comparePwd(req?.body?.password);
     if (stat === true) {
@@ -97,8 +97,8 @@ export const provideUser = asyncHandler(async (req, res) => {
 // Under Development
 export const logout = asyncHandler(async (req, res) => {
 
-    res.clearCookie(userCookie);
-    res.clearCookie(refreshCookie);
+    res.clearCookie(userCookie, cookieConfig);
+    res.clearCookie(refreshCookie, cookieConfig);
     req.cookies[userCookie] = "";
     req.cookies[refreshCookie] = "";
 

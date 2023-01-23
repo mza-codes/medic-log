@@ -1,6 +1,6 @@
 import asyncHandler from "../middlewares/asyncHandler.js";
 import Patient from "../models/Patient.js";
-import { deleteReqCookie } from "../utils/authUtils.js";
+import { cookieConfig, deleteReqCookie } from "../utils/authUtils.js";
 import { log } from "../utils/logger.js";
 import { redisClient } from "../utils/redisConfig.js";
 
@@ -135,7 +135,7 @@ export const deleteRecord = asyncHandler(async (req, res) => {
     let { id } = req.params;
     const status = await Patient.findByIdAndDelete(id);
     console.warn("Record WITH ID: ", id, " Deleted SUCCESSFULLY", status);
-    res.clearCookie(deleteReqCookie);
+    res.clearCookie(deleteReqCookie,cookieConfig);
     req.cookies[deleteReqCookie] = "";
     res.status(200).json({ success: true, message: `Deleted Patient with ID: ${id}`, status });
 });

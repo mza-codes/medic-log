@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import { sendEmail } from "../config/nodemailer.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
 import User from "../models/User.js";
-import { genCookie } from "../utils/authUtils.js";
+import { cookieConfig, genCookie } from "../utils/authUtils.js";
 import genRes from "../utils/JSONResponse.js";
 import { log } from "../utils/logger.js";
 import otpGenerator from "../utils/otpGenerator.js";
@@ -33,7 +33,7 @@ export const updateUser = asyncHandler(async (req, res) => {
     console.log(newData);
     if (req.cookies["isVerified"]) {
         req.cookies["isVerified"] = "";
-        res.clearCookie("isVerified");
+        res.clearCookie("isVerified", cookieConfig);
     };
     return genRes(res, 200, true, `User ${field} Updated!`, { user });
 });
@@ -90,7 +90,7 @@ export const updatePwd = asyncHandler(async (req, res) => {
 
     dbUser.password = password;
     await dbUser.save();
-    res.clearCookie(changePwdCookie);
+    res.clearCookie(changePwdCookie, cookieConfig);
     req.cookies[changePwdCookie] = "";
     return genRes(res, 200, true, "Password Updated!");
 });

@@ -21,6 +21,26 @@ export const SecureAPI = axios.create({
     withCredentials: true
 });
 
+export const b64Enc_1 = SecureAPI.interceptors.request.use((config) => {
+    const payload = config.data;
+    if (!payload) return config;
+
+    for (let x in payload) {
+        payload[x] = btoa(payload[x]);
+    };
+    return config;
+});
+
+export const b64Enc_2 = API.interceptors.request.use((config) => {
+    const payload = config.data;
+    if (!payload) return config;
+
+    for (let x in payload) {
+        payload[x] = btoa(payload[x]);
+    };
+    return config;
+});
+
 export const resIntercep = SecureAPI.interceptors.response.use(
     response => {
         getVal();

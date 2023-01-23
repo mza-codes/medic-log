@@ -5,6 +5,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
+import path from "path";
 
 import errorHandler from './middlewares/errorHandler.js';
 import { log } from './utils/logger.js';
@@ -12,14 +13,16 @@ import { testConnection } from './config/nodemailer.js';
 import { authRoutes } from './routes/auth.js';
 import recordRoutes from './routes/records.js';
 import userRoutes from './routes/user.js';
+import { decodeBody } from './middlewares/decodeBody.js';
 
+const __dirname = path.resolve();
 export let domain = `http://localhost:3000`;
 export const env = process.env.NODE_ENV === "production";
 
 log.warn("ENVIRONMENT: ", process.env.NODE_ENV);
 
 if (env) {
-    log.warn("PRODUCTION MODE", process.env.NODE_ENV);
+    log.warn("PRODUCTION MODE ENTERED: ", process.env.NODE_ENV);
     domain = `https://medic-log.netlify.app`;
 };
 
@@ -53,17 +56,20 @@ app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
 
+app.use(express.static('build'));
 app.use(helmet());
 
 // Routes
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/app', recordRoutes);
-app.use('/api/v1/user', userRoutes);
+app.use('/api/v1/auth', decodeBody, authRoutes);
+app.use('/api/v1/app', decodeBody, recordRoutes);
+app.use('/api/v1/user', decodeBody, userRoutes);
 
-// app.get("*", (req, res) => {
+// app.get("/", (req, res) => {
 //     log.warn("Accessing via *");
-//     res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+//     // res.sendFile(path.join(__dirname, './build', 'index.html'));
+//     res.sendFile(`${__dirname}/build/index.html`);
 // });
+
 app.get('/', (req, res) => {
     res.writeHead(301, {
         Location: domain
