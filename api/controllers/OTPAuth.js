@@ -32,7 +32,7 @@ const otpAuth = asyncHandler(async (req, res, next) => {
     const token = jwt.sign({ otpKey: redisKey, email }, process.env.JWT_KEY, { expiresIn: "5m" });
     if (req.cookies) {
         log.warn("OLD COOKIE Found!");
-        res.clearCookie(otpCookie);
+        res.clearCookie(otpCookie, cookieConfig);
         req.cookies[otpCookie] = "";
     };
     res.cookie(String(otpCookie), token, {
@@ -60,7 +60,7 @@ const otpVerifyV2 = asyncHandler(async (req, res, next) => {
     const status = await bcrypt.compare(String(otp), otpData);
     if (status === true) {
         // clear previous cookies
-        res.clearCookie(otpCookie);
+        res.clearCookie(otpCookie, cookieConfig);
         req.cookies[otpCookie] = "";
 
         // issues new token for re verification
@@ -119,7 +119,7 @@ const verifySession = asyncHandler(async (req, res, next) => {
 
     const status = await bcrypt.compare(String(otp), otpData.value);
     if (status === true) {
-        res.clearCookie(otpCookie);
+        res.clearCookie(otpCookie, cookieConfig);
         req.cookies[otpCookie] = "";
         return res.status(200).json({ success: true, message: "OTP Verification Success" });
     };

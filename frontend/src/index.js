@@ -1,5 +1,12 @@
-import {createRoot} from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import App from './App';
+
+if (process.env.NODE_ENV === 'production') {
+  console.log = () => false;
+  console.error = () => false;
+  console.warn = () => false;
+  console.debug = () => false;
+};
 
 const root = createRoot(document.getElementById('root'));
 root.render(
