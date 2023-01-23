@@ -1,2 +1,0 @@
-build command:
-npx tailwindcss build src/index.css -o build.css && yarn build

@@ -1,11 +1,17 @@
 {
-  "name": "medic-log",
-  "version": "2.1.0",
-  "private": true,
+  "name": "serve-mza",
+  "version": "3.1.1",
+  "description": "Server Module",
+  "main": "app.js",
+  "repository": "NIL",
+  "author": "muzammil",
+  "type": "module",
+  "license": "MIT",
   "scripts": {
-    "start": "cd api/ && yarn start",
-    "devx": "bash ./dev.sh",
-    "deployment": "bash ./deploy.sh"
+    "dev": "node app.js",
+    "start": "node app.js"
   },
-  "dependencies": {}
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
