@@ -15,6 +15,7 @@ import { authRoutes } from './routes/auth.js';
 import recordRoutes from './routes/records.js';
 import userRoutes from './routes/user.js';
 import { decodeBody } from './middlewares/decodeBody.js';
+import ErrorResponse from './utils/errorResponse.js';
 
 const __dirname = path.resolve();
 export let domain = `http://localhost:3000`;
@@ -75,6 +76,10 @@ app.get("*", (req, res) => {
 //     res.writeHead(301, {
 //         Location: domain
 //     }).end();
+// });
+
+// app.use((req, res, next) => {
+//     next(new ErrorResponse("Route not Found!",404));
 // });
 
 // Error Handler

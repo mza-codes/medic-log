@@ -28,9 +28,9 @@ const errorHandler = (err, req, res, next) => {
     // invalid token invalid signature jwt malformed
     // add more Cases! this is just basics!
 
-    return res.status(err.statusCode || 500).json({
+    return res.status(err?.statusCode ?? 500).json({
         success: false,
-        message: error.message || 'Server Error'
+        message: error?.message ?? 'Server Error'
     });
 };
 
