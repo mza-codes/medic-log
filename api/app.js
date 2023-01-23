@@ -1,4 +1,4 @@
-import { } from 'dotenv/config';
+import 'dotenv/config';
 
 import express, { urlencoded } from 'express';
 import cors from 'cors';
@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import path from "path";
 
+import ENV from "./utils/validateEnv.js";
 import errorHandler from './middlewares/errorHandler.js';
 import { log } from './utils/logger.js';
 import { testConnection } from './config/nodemailer.js';
@@ -17,21 +18,17 @@ import { decodeBody } from './middlewares/decodeBody.js';
 
 const __dirname = path.resolve();
 export let domain = `http://localhost:3000`;
-export const env = process.env.NODE_ENV === "production";
 
 log.warn("ENVIRONMENT: ", process.env.NODE_ENV);
 
-if (env) {
+if (ENV.isProduction) {
     log.warn("PRODUCTION MODE ENTERED: ", process.env.NODE_ENV);
     domain = `https://medic-log.netlify.app`;
 };
 
 // Database Connection
 const connectDB = async () => {
-    await mongoose.connect(process.env.NEWDB, {
-        // useCreateIndex: true,
-        // useFindAndModify: false,
-        // disabled as it clearly shows error: <> MongoParseError: options usecreateindex, usefindandmodify are not supported </>
+    await mongoose.connect(ENV.NEWDB, {
         useUnifiedTopology: true,
         useNewUrlParser: true,
         dbName: "testMode"
@@ -50,7 +47,8 @@ app.use(cors({
     origin: domain,
     credentials: true
     // methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-    // allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 'x-client-token', 'x-client-secret', 'Authorization'],
+    // allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 
+    // 'x-client-token', 'x-client-secret', 'Authorization'],
 }));
 app.use(urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -66,7 +64,6 @@ app.use('/api/v1/user', decodeBody, userRoutes);
 
 app.get("/", (req, res) => {
     log.warn("Accessing via *");
-    // res.sendFile(path.join(__dirname, './build', 'index.html'));
     res.sendFile(`${__dirname}/build/index.html`);
 });
 

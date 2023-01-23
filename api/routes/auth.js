@@ -28,6 +28,7 @@ router.put("/otpAuth/resend-otp",chekUserStat,)
 
 router.post('/login', isDBUser, auth);
 router.get('/logout', logout);
+// router.get('/logout/:token', logout);
 
 router.post('/logout', checkAuthorization, logout);
 // router.post('/refresh-token', provideRefreshToken);

@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
     // age: { type: Number, required: [true, "Required"] }
 }, { timestamps: true });
 
+/** @use {select:false} to unload the field */
 /** @Arrow_Functions does not have (this) property. */
 
 userSchema.pre("save", async function (next) {
