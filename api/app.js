@@ -64,17 +64,21 @@ app.use('/api/v1/auth', decodeBody, authRoutes);
 app.use('/api/v1/app', decodeBody, recordRoutes);
 app.use('/api/v1/user', decodeBody, userRoutes);
 
-// app.get("/", (req, res) => {
-//     log.warn("Accessing via *");
-//     // res.sendFile(path.join(__dirname, './build', 'index.html'));
-//     res.sendFile(`${__dirname}/build/index.html`);
-// });
-
-app.get('/', (req, res) => {
-    res.writeHead(301, {
-        Location: domain
-    }).end();
+app.get("/", (req, res) => {
+    log.warn("Accessing via *");
+    // res.sendFile(path.join(__dirname, './build', 'index.html'));
+    res.sendFile(`${__dirname}/build/index.html`);
 });
+
+app.get("*", (req, res) => {
+    res.redirect("/");
+});
+
+// app.get('/', (req, res) => {
+//     res.writeHead(301, {
+//         Location: domain
+//     }).end();
+// });
 
 // Error Handler
 app.use(errorHandler);

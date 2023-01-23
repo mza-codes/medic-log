@@ -9,7 +9,7 @@ export const cookieConfig = {
     path: "/",
     expires: new Date(Date.now() + (1000 * 60) * 12),
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: process.env.SAME_SITE ?? "lax",
     secure: true
 };
 
