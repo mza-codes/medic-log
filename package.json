@@ -6,5 +6,6 @@
     "start": "cd api/ && yarn start",
     "devx": "bash ./dev.sh",
     "deployment": "bash ./deploy.sh"
-  }
+  },
+  "dependencies": {}
 }

@@ -1,4 +1,4 @@
-import {} from 'dotenv/config';
+import { } from 'dotenv/config';
 import nodemailer from "nodemailer";
 import { log } from "../utils/logger.js";
 
@@ -25,6 +25,19 @@ export const testConnection = () => {
         };
     });
 };
+
+// (() => {
+//     transporter.verify((err, success) => {
+//         if (err) { log.error("Error Connecting Mailer", err); process.exit(0); }
+//         if (success) {
+//             log.info("Nodemailer Connection Success!");
+//             log.info("Assigned Sender: ", sender);
+//         } else {
+//             log.info("transporter received no error & success, refer here");
+//             return true;
+//         };
+//     });
+// })();
 
 // Sample Mail 
 // const body = {
