@@ -1,13 +1,9 @@
-import { lazy, Suspense } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Icon from '../Components/Icon';
-import Loader from '../Components/Loader/Loader';
 import useAuthService from '../Services/AuthService';
 import BGPage from './BGPage';
-
-const LoginForm = lazy(() => import('./AuthSection/LoginForm'));
-const SignupForm = lazy(() => import('./AuthSection/SignupForm'));
-const Verify = lazy(() => import('./AuthSection/Verify'));
+import LoginForm from './AuthSection/LoginForm';
+import SignupForm from './AuthSection/SignupForm';
+import Verify from './AuthSection/Verify';
 
 function AuthPage({ login, signup, verify }) {
   const route = useNavigate();
@@ -23,7 +19,9 @@ function AuthPage({ login, signup, verify }) {
       status?.success && route('/dashboard', { replace: true });
       return;
     };
-    return alert("Unavailable");
+    return useAuthService.getState().handleAuthError("login", {
+      message: "This feature is currently Unavailable!"
+    });
   };
 
   console.count("Component Rendered");
@@ -32,30 +30,25 @@ function AuthPage({ login, signup, verify }) {
 
       <section className='w-full min-h-[90vh] flex flex-col items-center justify-center relative'>
         <h1 className='text-4xl font-semibold underline mb-8'>{login ? "Login" : signup ? "SignUp" : verify && "Verify"}</h1>
-        {login &&
-          <Suspense fallback={<Loader />}>
-            <LoginForm />
-          </Suspense>}
+        {login && <LoginForm />}
 
-        {signup &&
-          <Suspense fallback={<Loader />}>
-            <SignupForm />
-          </Suspense>}
+        {signup && <SignupForm />}
 
-        {verify &&
-          <Suspense fallback={<Loader />}>
-            <Verify />
-          </Suspense>}
+        {verify && <Verify />}
+
+        {login && <p onClick={handleDemoView}
+          className='text-green-800 hover:text-green-700 cursor-pointer py-2 font-medium'>
+          Guest Session ? </p>
+        }
 
         {(login ?? signup) && <Link to={login ? "/signup" : signup && "/login"}
-          className='text-emerald-500 hover:text-emerald-800 font-normal' >
+          className='text-emerald-500 hover:text-emerald-800 font-normal'>
           {login ? "Don't" : signup && "Already"} have an Account ?
         </Link>}
-        {login && <Link to="/forgot-password" className='text-teal-800 hover:text-teal-600 py-2 font-normal' >Forgot Password ?</Link>}
 
-        {login && <Icon onClick={handleDemoView}
-          icon="ri:admin-fill" color="#00583b" size={36}
-          label="Browse as Guest" classes='absolute right-2 top-2' />}
+        {login && <Link to="/forgot-password" className='text-teal-800 hover:text-teal-600 py-2 font-normal'>
+          Forgot Password ?
+        </Link>}
 
       </section>
 
