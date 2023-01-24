@@ -76,6 +76,7 @@ function getVal() {
     console.log("GetState method", useAuthService.getState().user);
 };
 
+// const cre = config.withCredentials; use auth access via headers if necessary
 // This code works before request & there can be minor change in expiration time and not recommended!
 
 // SecureAPI.interceptors.request.use(async (config) => {

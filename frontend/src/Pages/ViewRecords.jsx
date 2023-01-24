@@ -71,9 +71,7 @@ const ViewRecords = () => {
                                 <Icon w={36} h={36} color="#008080" onClick={() => route(`/view-record/${record._id}`)}
                                     label="Expand View" icon="mdi:arrow-expand-all" />
                                 <Icon w={36} h={36} color="#e40800" label="Delete Document" icon="mdi:file-document-delete"
-                                    onClick={() => {
-                                        if (window.confirm("This Record Will be Deleted!, Continue ?")) handleDelete(record);
-                                    }}
+                                    onClick={() => { handleDelete(record); }}
                                 />
                             </div>
                         </div>
