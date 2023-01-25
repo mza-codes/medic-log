@@ -14,7 +14,7 @@ function ForgotPassword() {
     const info = useAuthService(s => s.info);
     const forgotPwd = useAuthService(s => s.forgotPwd);
     const verifyOTPforPwd = useAuthService(s => s.verifyOTPforPwd);
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
     const handleEmailSubmit = async (values, actions) => {
         console.log("Submiting Data", values);
