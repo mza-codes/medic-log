@@ -33,10 +33,12 @@ const ViewRecords = () => {
         const controller = new AbortController();
         if (patientRecords?.length <= 0) getRecords(controller.signal);
         return () => controller?.abort();
+        // eslint-disable-next-line
     }, [getRecords]);
 
     useEffect(() => {
         return () => setErrorView(false);
+        // eslint-disable-next-line
     }, []);
 
     console.count("Rendered ViewRecords.jsx");
