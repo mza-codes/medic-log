@@ -11,16 +11,14 @@ export default function CustomField({ label, type, ...props }) {
         <div className='customField'>
             <span htmlFor={props.label} className='label'>{label}</span>
             <div className="relative">
-                <input
-                    className={`sm:w-[320px] ${meta.error && meta.touched ? 'error'
+                <input className={`sm:w-[320px] ${label?.toLowerCase()?.includes("password") ? "view_btn" : ""}
+                 ${meta.error && meta.touched ? 'error'
                         : !meta.error && meta.touched ? 'success'
                             : 'normal'}`}
                     {...field} {...props}
                     type={showPassword ? "text" : type} />
 
-                {label?.toLowerCase()?.includes("password")
-                    // (label?.toLowerCase() === "password" || label?.toLowerCase() === "confirm password") 
-                    &&
+                {label?.toLowerCase()?.includes("password") &&
                     <span onClick={e => setShowPassword(prev => !prev)}
                         className="text-teal-800 absolute right-2 bottom-2.5 cursor-pointer hover:text-opacity-100 text-opacity-50">
                         {!showPassword ? showPwd : hidePwd}

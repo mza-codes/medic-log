@@ -1,14 +1,14 @@
-import { } from 'dotenv/config';
 import nodemailer from "nodemailer";
+import ENV from "../utils/validateEnv.js";
 import { log } from "../utils/logger.js";
 
-const sender = process.env.NODEMAILER;
+const sender = ENV.NODEMAILER;
 
 export const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
         user: sender,
-        pass: process.env.MAILER_PASSWORD
+        pass: ENV.MAILER_PASSWORD
     }
 });
 
@@ -38,6 +38,7 @@ export const testConnection = () => {
 //         };
 //     });
 // })();
+/** @example to decalre and call func immediately */
 
 // Sample Mail 
 // const body = {

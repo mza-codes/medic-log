@@ -57,8 +57,8 @@ const TopBar = () => {
         <>
             <div className="controls flex flex-wrap gap-2 justify-between items-center w-[90%] ">
                 <section className='flex gap-2 items-center'>
-                    <div className="searchBox relative flexx gap-2x">
-                        <SearchBox ref={searchRef} placeholder="Search.."
+                    <div className="searchBox relative gap-2x">
+                        <SearchBox ref={searchRef} placeholder="Search.." maxLength={50}
                             onKeyPress={e => {
                                 if (e.key === "Enter") return handleSearch();
                             }} />
@@ -68,27 +68,30 @@ const TopBar = () => {
                             <Icon icon="material-symbols:manage-search-rounded" size={29} label="Search" color="rgb(17 94 89)" />
                         </IconButton>
                     </div>
+                </section>
+                <div className="wrap flex gap-2 items-center flex-row-reverse">
+                    <Tooltip
+                        label={"Filter Search"}
+                        color={"rgb(15 118 110)"}
+                        withArrow >
+                        <button title='Filter Search' type='button' onClick={openFilter}
+                            className='p-2 font-semibold rounded-lg bg-teal-800 hover:bg-teal-700 text-gray-100'>
+                            Filter
+                        </button>
+                    </Tooltip>
                     <IconButton className=""
                         onClick={fetchAllRecords}
                         disabled={isLoading}>
                         <Icon icon="ic:sharp-cloud-sync" size={36} label="Synchronize" color="#005215" />
                     </IconButton>
-                </section>
-                <Tooltip
-                    label={"Filter Search"}
-                    color={"rgb(15 118 110)"}
-                    withArrow
-                >
-                    <button title='Filter Search' type='button' onClick={openFilter}
-                        className='p-2 font-semibold rounded-lg bg-teal-800 hover:bg-teal-700 text-gray-100'>
-                        Filter
-                    </button>
-                </Tooltip>
+                </div>
             </div>
 
-            <div className="err flex items-center justify-center p-2 text-center w-[90%]">
-                {error?.active && <p className="text-red-500 text-center max-w-[600px]">{error?.message || error?.code}</p>}
-            </div>
+            
+            {error?.active && <p className="text-red-500 text-center max-w-[90%] truncate-2 lg:max-w-[600px]">
+                {error?.message || error?.code}
+            </p>}
+            
         </>
     );
 };

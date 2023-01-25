@@ -2,14 +2,27 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema({
-    email: { type: String, required: [true, "Email Required "], unique: [true, "Email must be Unique"] },
-    password: { type: String, required: [true, "Password Required "] },
-    name: { type: String, required: [true, "Name Required"] },
-    verified: { type: Boolean, default: false },
-    pwdChangeCount: { type: Number, default: 0 },
-    changeCount: { type: Object, default: { password: 0, email: 0, name: 0 } }
-    // country: { type: String, required: [true, "Required"] },
-    // age: { type: Number, required: [true, "Required"] }
+    email: {
+        type: String,
+        required: [true, "Email Required "],
+        unique: [true, "Email must be Unique"]
+    },
+    password: {
+        type: String,
+        required: [true, "Password Required "]
+    },
+    name: {
+        type: String,
+        required: [true, "Name Required"]
+    },
+    verified: {
+        type: Boolean,
+        default: false
+    },
+    changeCount: {
+        type: Object,
+        default: { password: -1, email: 0, name: 0 }
+    }
 }, { timestamps: true });
 
 /** @use {select:false} to unload the field */
@@ -18,7 +31,6 @@ const userSchema = new mongoose.Schema({
 userSchema.pre("save", async function (next) {
     if (!this.isModified('password')) return next();
     this.password = await bcrypt.hash(this.password, 15);
-    this.pwdChangeCount += 1;
     this.changeCount.password += 1;
     next();
 });

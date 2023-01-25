@@ -14,7 +14,7 @@ function ForgotPassword() {
     const info = useAuthService(s => s.info);
     const forgotPwd = useAuthService(s => s.forgotPwd);
     const verifyOTPforPwd = useAuthService(s => s.verifyOTPforPwd);
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
 
     const handleEmailSubmit = async (values, actions) => {
         console.log("Submiting Data", values);
@@ -65,8 +65,6 @@ function ForgotPassword() {
                 letterSpacing: "1.2rem",
                 fontSize: "1.3rem",
                 textAlign: "center",
-                appearance: "none !important",
-                WebkitAppearance: "none !important",
                 fontWeight: 700
             }
         }],
@@ -79,13 +77,13 @@ function ForgotPassword() {
     console.count("Rendered FGPass.jsx");
     return (
         <BGPage center={1} image={1}>
-            <section className='bg-white rounded-lg flex flex-col items-center p-8 bg-opacity-50'>
+            <section className='bg-white rounded-lg flex flex-col items-center px-1 py-8 bg-opacity-50'>
                 <h1 className='text-3xl mb-8 font-semibold'>Enter Your Email</h1>
                 <VerifyFormik controllers={prop} />
                 <p className="text-teal-900 mt-4">{info?.message}</p>
                 <Link to="/signup" className="text-teal-600 capitalize py-1 hover:text-green-700">Signup Instead ?</Link>
             </section>
-            <Dialog open={open}>
+            <Dialog open={open} sx={{margin:0}} >
                 <DialogTitle align='center' className='relative'>
                     <span className='text-3xl mb-8 font-semibold text-center font-poppins'>Enter OTP</span>
                     <Icon icon='eva:close-square-fill' classes='absolute right-2 top-2'
@@ -93,7 +91,7 @@ function ForgotPassword() {
                 </DialogTitle>
 
                 <DialogContent>
-                    <section className='bg-white rounded-lg flex flex-col items-center p-8 bg-opacity-50'>
+                    <section className='bg-white rounded-lg flex flex-col items-center px-1 py-8 bg-opacity-50'>
                         <VerifyFormik controllers={otpProp} />
                         <p className="text-teal-900 mt-4">{info?.message}</p>
                         <button type="button" onClick={handleClose}
