@@ -5,6 +5,8 @@ const Icon = ({ icon, w, h, color, classes = "", label, size, ...props }) => {
         <Tooltip
             label={label ?? ""}
             color={color ?? "#000"}
+            transition="fade"
+            transitionDuration={200}
             withArrow
         >
             <div {...props} title={label} style={{ color }}
