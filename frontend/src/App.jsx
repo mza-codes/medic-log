@@ -11,6 +11,7 @@ import { b64Enc_1, b64Enc_2, resIntercep, SecureAPI } from './Assets';
 import CancelButton from './Components/CancelButton';
 import LoadBar from './Components/LoadBar';
 import Toast from './Components/Toast';
+import InfoToast from './Components/InfoToast';
 // let fetchCompleted = false;
 
 const App = () => {
@@ -45,6 +46,7 @@ const App = () => {
             <HashRouter hashType="hashbang">
                 <LoadBar />
                 <Toast />
+                <InfoToast />
                 <Header />
 
                 <Suspense fallback={<BrandLoader />}>

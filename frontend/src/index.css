@@ -17,15 +17,16 @@ body {
     background-color: rgba(147, 255, 223, 0.315);
 }
 
-*{
+* {
     /* border: 1px solid rgb(194, 0, 0); */
     -o-animation: alternate;
 }
-button{
+
+button {
     outline: none;
 }
 
-.truncate-2{
+.truncate-2 {
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -222,6 +223,21 @@ button{
     100% {
         width: 100%;
     }
+}
+
+.animate-slide {
+    -webkit-animation: slide 0.5s forwards;
+    -webkit-animation-delay: 2s;
+    animation: slide 0.5s forwards;
+    animation-delay: 2s;
+}
+
+@-webkit-keyframes slide {
+    100% { left: 0; }
+}
+
+@keyframes slide {
+    100% { left: 0; }
 }
 
 .bar {

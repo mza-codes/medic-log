@@ -68,8 +68,9 @@ export const resIntercep = SecureAPI.interceptors.response.use(
                 console.warn("Error in interceptor", err);
                 return err;
             };
-        };
-        return Promise.reject(err);
+        } else if (err?.response?.data?.message === "jwt expired") {
+            err.response.data.message = "Session Expired,Please Login!";
+        }; return Promise.reject(err);
     });
 
 function getVal() {
