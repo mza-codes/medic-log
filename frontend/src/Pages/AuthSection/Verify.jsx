@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import shallow  from "zustand/shallow";
+import shallow from "zustand/shallow";
 import { Link, useNavigate } from "react-router-dom";
 import Loader from '../../Components/Loader/Loader';
 import useAuthService from "../../Services/AuthService";
@@ -31,7 +31,7 @@ const Verify = () => {
             return false;
         };
     };
-
+    console.log({ errActive, errSource, error });
     return (
         <form className="min-w-[280px] sm:min-w-[340px] max-w-[500px] bg-white  rounded-xl
                 flex flex-col text-start gap-3 py-4 px-6 mb-40" onSubmit={handleVerification}>
@@ -47,7 +47,7 @@ const Verify = () => {
             </button>
 
             <p className="text-teal-600 capitalize">{info?.message}</p>
-            {(errActive && errSource === "verify") &&
+            {(errSource === "verify") &&
                 <p className="text-rose-500 capitalize">{error?.message ?? error?.error}</p>
             }
 

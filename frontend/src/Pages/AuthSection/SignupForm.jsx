@@ -3,7 +3,6 @@ import shallow from "zustand/shallow";
 import { Form, Formik } from 'formik';
 import CustomField from "../../Components/Input/CustomField";
 import useAuthService from "../../Services/AuthService";
-import { useEffect } from "react";
 import Loader from "../../Components/Loader/Loader";
 import { useNavigate } from "react-router-dom";
 import { userSchema } from "../../Schema";
@@ -22,15 +21,13 @@ const SignupForm = () => {
 
     const handleSubmit = async (values, actions) => {
         submitBtn.current.disabled = true;
+
         const data = await generateOtp(values);
-        data?.success && navigate("/verify");
-        console.log("Request Complete Generated OTP", data);
+        if(data?.success) return navigate("/verify");
+
+        submitBtn.current.disabled = false;
         return;
     };
-
-    useEffect(() => {
-        submitBtn.current.disabled = !errActive;
-    }, [errActive]);
 
     return (
         <Formik validateOnChange
