@@ -1,14 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import { ToastWrapper } from ".";
+import { HandledText, ToastWrapper } from ".";
 import useApiService from "../Services/APIService";
 import useAuthService from "../Services/AuthService";
 import Icon from "./Icon";
 
 function Toast() {
     const err = useAuthService(s => s.error);
+    const resetErr = useAuthService(s => s.resetError);
+
     const error = useApiService(s => s.error);
-    // const [msg, setMsg] = useState(""); used ref methos to prevent rerender
+    const setErrorView = useApiService(s => s.setErrorView);
+
+    /** @used ref methos to prevent re renders */
+
     const msg = useRef("");
+    const hideError = useRef(null);
+
     const setMsg = (val) => msg.current = val;
     const [view, setView] = useState(false);
 
@@ -20,33 +27,41 @@ function Toast() {
         }; return;
     };
 
+    function removeError() {
+        setTimeout(() => {
+            hideError.current();
+        }, 8000);
+        return;
+    };
+
     useEffect(() => {
+        hideError.current = resetErr;
         handleError(err);
-        // eslint-disable-next-line
     }, [err]);
 
     useEffect(() => {
+        hideError.current = setErrorView;
         handleError(error);
-        // eslint-disable-next-line
     }, [error]);
 
     useEffect(() => {
         const id1 = setTimeout(() => {
             setView(false);
+            removeError();
         }, 5 * 1000);
         return () => clearTimeout(id1);
     }, [handleError]);
 
     if (view)
         return (
-            <ToastWrapper onClick={() => setView(false)} color="#f00000" 
+            <ToastWrapper onClick={() => setView(false)} color="#f00000"
                 className="bg-white shadow-xl my-1 px-2 py-3 md:top-[40px] top-[50px] md:w-[480px] w-[90%] hover:shadow-2xl toast">
                 <iconify-icon width={36} height={36} icon="material-symbols:error-circle-rounded" />
-                <Icon size={10} icon="eva:close-outline" color={"red"} label="Dismiss" classes="absolute right-1 top-1" />
-                <span className="truncate-2 break-words text-sm font-semibold text-slate-800">
-                    {/* {msg} */}
+                <Icon size={10} icon="eva:close-outline" color={"red"} label="Dismiss" classes="absolute right-1 -top-1" />
+
+                <HandledText maxlines={3} className="text-sm font-semibold text-slate-800">
                     {msg.current}
-                </span>
+                </HandledText>
             </ToastWrapper>
         );
     else return null;

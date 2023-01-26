@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
-import { ToastWrapper } from ".";
-import useApiService from "../Services/APIService";
+import { HandledText, ToastWrapper } from ".";
 import useAuthService from "../Services/AuthService";
 import Icon from "./Icon";
 
 function InfoToast() {
-    const info = useAuthService(s => s.info)
-    const info2 = useApiService(s => s.info);
+    const info = useAuthService(s => s.info);
+    const setInfo = useAuthService(s => s.setInfo);
+
     const [msg, setMsg] = useState("");
     const [view, setView] = useState(false);
+
+    function hideInfo() {
+        setTimeout(() => {
+            setInfo(null);
+        }, 8000);
+        return;
+    };
 
     const handleError = (obj) => {
         if (obj?.message?.length > 0) {
@@ -24,15 +31,12 @@ function InfoToast() {
     }, [info]);
 
     useEffect(() => {
-        handleError(info2);
-    }, [info2]);
-
-    useEffect(() => {
         const id1 = setTimeout(() => {
             setView(false);
+            hideInfo();
         }, 5 * 1000);
         return () => clearTimeout(id1);
-    }, [info, info2]);
+    }, [info]);
 
     if (view)
         return (
@@ -41,9 +45,9 @@ function InfoToast() {
                 <section className="hover:shadow-2xl bg-white shadow-xl my-1 px-2 py-3 flex items-center gap-2 
                     justify-center rounded-md">
                     <iconify-icon width={36} height={36} icon="mdi:success-bold" />
-                    <span className="truncate-2 text-sm font-semibold toast text-slate-800">
+                    <HandledText maxlines={3} className="text-sm font-semibold text-slate-800">
                         {msg}
-                    </span>
+                    </HandledText>
                 </section>
             </ToastWrapper>
         );

@@ -2,7 +2,6 @@ import { useRef } from "react";
 import { Form, Formik } from 'formik';
 import CustomField from "../../Components/Input/CustomField";
 import useAuthService from "../../Services/AuthService";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Loader from "../../Components/Loader/Loader";
 import { loginSchema } from "../../Schema";
@@ -14,14 +13,13 @@ const LoginForm = () => {
 
     const handleSubmit = async (values, actions) => {
         submitBtn.current.disabled = true;
+
         const status = await login(values);
         if (status?.success) return navigate('/dashboard');
-        else return false;
-    };
 
-    useEffect(() => {
-        submitBtn.current.disabled = !errActive;
-    }, [errActive]);
+        submitBtn.current.disabled = !true;
+        return;
+    };
 
     return (
         <Formik validateOnChange

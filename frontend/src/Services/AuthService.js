@@ -51,6 +51,15 @@ const useAuthService = create((set, get) => ({
         }));
         return;
     },
+    resetError: () => {
+        set((s) => ({
+            ...s,
+            error: null,
+            errActive: false,
+            errSource: ""
+        }));
+        return;
+    },
     resetState: () => {
         set(s => ({
             ...initialState,

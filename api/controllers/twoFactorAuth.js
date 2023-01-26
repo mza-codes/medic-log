@@ -25,7 +25,7 @@ export const otpAuth = asyncHandler(async (req, res, next) => {
     const otp = otpGenerator.generate(6, { digits: true });
     const encoded = await bcrypt.hash(otp, 15);
     const content = `Your OTP for Registration is ${otp}. This OTP will Expire in 5 Minutes`;
-    const otpStatus = await Otp.create({ value: encoded, expiredAt: expiry, email: email });
+    const otpStatus = await Otp.create({ value: encoded, expireAt: expiry, email: email });
     const id = otpStatus._id;
 
     const token = jwt.sign({ otpId: id, email }, process.env.JWT_KEY, { expiresIn: "5m" });

@@ -31,7 +31,7 @@ const ViewRecords = () => {
 
     useEffect(() => {
         const controller = new AbortController();
-        if (patientRecords?.length <= 0) getRecords(controller.signal);
+        getRecords(controller.signal);
         return () => controller?.abort();
         // eslint-disable-next-line
     }, [getRecords]);

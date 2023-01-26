@@ -81,7 +81,14 @@ const AddDataForm = ({ data, update }) => {
         return () => setDocument(" ");
     }, []);
 
-    console.warn("Adddata.jsx Fromik Rendered");
+    console.warn({
+        setPayload,
+        error,
+        isLoading,
+        handleSubmission,
+        setState,
+        setDocument
+    });
     console.count("AddData Formik rendered");
     return (
         <Formik
