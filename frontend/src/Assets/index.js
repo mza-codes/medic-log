@@ -12,34 +12,41 @@ export const defaultAvatar = avatar;
 // 30 seconds timeout set
 export const API = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
-    timeout: 1000 * 30
+    timeout: 1000 * 30,
 });
 
 export const SecureAPI = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
     timeout: 1000 * 30,
-    withCredentials: true
+    withCredentials: true,
 });
 
 export const b64Enc_1 = SecureAPI.interceptors.request.use((config) => {
     config.headers["authorization"] = `Bearer ${localStorage.getItem(CSRF)}_T${Date.now()}`;
-    // const payload = config.data;
-    // if (!payload) return config;
+    const payload = config.data;
+    if (!payload) return config;
 
-    // for (let x in payload) {
-    //     payload[x] = btoa(payload[x]);
-    // };
+    for (let x in payload) {
+
+        if (x === "password") {
+            payload[x] = btoa(payload[x]);
+            break;
+        };
+    };
     return config;
 });
 
 export const b64Enc_2 = API.interceptors.request.use((config) => {
+    const payload = config.data;
+    if (!payload) return config;
 
-    // const payload = config.data;
-    // if (!payload) return config;
+    for (let x in payload) {
 
-    // for (let x in payload) {
-    //     payload[x] = btoa(payload[x]);
-    // };
+        if (x === "password") {
+            payload[x] = btoa(payload[x]);
+            break;
+        };
+    };
     return config;
 });
 
