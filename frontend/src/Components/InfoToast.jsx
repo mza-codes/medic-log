@@ -11,6 +11,10 @@ function InfoToast() {
     const [view, setView] = useState(false);
 
     function hideInfo() {
+        if (msg.charAt(0) === "O" && msg.charAt(1) === "T"
+            && msg.charAt(2) === "P") {
+            return false;
+        };
         setTimeout(() => {
             setInfo(null);
         }, 8000);

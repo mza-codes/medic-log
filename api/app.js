@@ -51,7 +51,8 @@ app.use(cors({
     // allowedHeaders: ['Content-Type', 'Origin', 'X-Requested-With', 'Accept', 'x-client-key', 
     // 'x-client-token', 'x-client-secret', 'Authorization'],
 }));
-app.use(urlencoded({ extended: true }));
+
+app.use(urlencoded({ extended: true }))
 app.use(cookieParser());
 app.use(express.json());
 
