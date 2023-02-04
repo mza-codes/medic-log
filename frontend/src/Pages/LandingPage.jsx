@@ -17,8 +17,7 @@ const Page = styled.main`
     }
 `;
 
-let contactMsg = `If You can see a message saying unable to establish connection with server,
-    the site will be probably down! \n We Recommend you to contact Vendor, or check back later!`;
+let contactMsg = `Uh'uh, Looks like the site is down! We Recommend you to contact Vendor, or check back later!`;
 const msgClasses = `capitalize text-gray-800 font-semibold max-w-[500px] lg:max-w-[80vw] px-2`;
 
 const LandingPage = () => {
@@ -34,13 +33,13 @@ const LandingPage = () => {
         };
         if (!userActive && !isLoading && serverConnected) route("/login");
         if (userActive && !isLoading && serverConnected) route('/dashboard');
-    }, [userActive, isLoading, serverConnected]);
+    }, [userActive, isLoading, serverConnected, route]);
 
     return (
         <Page className="min-h-[94vh]">
             <section className="wrapper flex flex-col items-center justify-center text-center p-2 pb-[20vh]">
                 <Logo id="_logo" />
-                
+
                 {isLoading && <div className="py-8">
                     <Loader color={"#006446"} variant="bars" size={100} />
                 </div>}

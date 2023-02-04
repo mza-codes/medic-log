@@ -5,10 +5,11 @@ import {
     getAllRecords, searchRecords, deleteRecord, searchRecordsV2
 } from "../controllers/patientRecords.js";
 import { verifyDelToken } from "../middlewares/authDelToken.js";
+import { verifyCSRF } from "../middlewares/authorizeCSRF.js";
 import { checkCookie } from "../middlewares/authorizeUser.js";
 
 const router = express.Router();
-router.use(checkCookie);
+router.use(checkCookie, verifyCSRF);
 // @route - /api/v1/app 
 router.post('/add-data', addPatient);
 router.get('/get-records', getPatients);

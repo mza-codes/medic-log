@@ -9,6 +9,8 @@ import {
     cookieConfig,
     createAccessToken,
     createRefreshToken,
+    CSRFKey,
+    genCSRFToken,
 } from '../utils/authUtils.js';
 import { log } from '../utils/logger.js';
 import { redisClient } from '../utils/redisConfig.js';
@@ -22,7 +24,7 @@ export const tokenGenerator = (data) => {
 
 export const verifyTokens = async (key, value, field) => {
     let data = await redisClient.get(key);
-    data = JSON.parse(data);
+    data = JSON?.parse(data);
     return data?.[field] === value;
 };
 
@@ -181,7 +183,10 @@ export const refreshSession = asyncHandler(async (req, res) => {
         ...cookieConfig,
         expires: new Date(Date.now() + (1000 * 60) * (60 * 24))
     });
+    const csrf_token = genCSRFToken();
     await redisClient.set(userData?.userId, JSON.stringify({ userToken: newUserToken, refreshToken: newRefreshToken }));
+    await redisClient.set(CSRFKey(userData?.userId), csrf_token);
+    res.setHeader('authorization', csrf_token);
     return res.status(200).json({ success: true, message: "User Session Updated!", expiry: expiration });
 });
 

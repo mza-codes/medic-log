@@ -1,7 +1,7 @@
 import axios from 'axios';
 import background from './bg-small.jpg';
 import avatar from './avatar.jpg';
-import useAuthService, { errToast } from '../Services/AuthService';
+import { CSRF, errToast } from '../Services/AuthService';
 
 axios.defaults.withCredentials = true;
 let retried = false;
@@ -22,6 +22,7 @@ export const SecureAPI = axios.create({
 });
 
 export const b64Enc_1 = SecureAPI.interceptors.request.use((config) => {
+    config.headers["authorization"] = `Bearer ${localStorage.getItem(CSRF)}_T${Date.now()}`;
     const payload = config.data;
     if (!payload) return config;
 
@@ -32,6 +33,7 @@ export const b64Enc_1 = SecureAPI.interceptors.request.use((config) => {
 });
 
 export const b64Enc_2 = API.interceptors.request.use((config) => {
+
     const payload = config.data;
     if (!payload) return config;
 
@@ -43,12 +45,10 @@ export const b64Enc_2 = API.interceptors.request.use((config) => {
 
 export const resIntercep = SecureAPI.interceptors.response.use(
     response => {
-        getVal();
         retried = false;
         return response;
     },
     async (err) => {
-        getVal();
         if (err?.code === "ECONNABORTED") {
             console.warn("Server Timeout!");
             errToast.current.style.visibility = "visible";
@@ -58,11 +58,12 @@ export const resIntercep = SecureAPI.interceptors.response.use(
             const prevReq = err?.config;
             retried = true;
             try {
-                const resp = await SecureAPI.post('/auth/refresh-session', {}, {
+                const { data: resp, headers: { authorization } } = await SecureAPI.post('/auth/refresh-session', {}, {
                     withCredentials: true, signal: controller.signal
                 });
                 console.log("DATA from INTERCEP", resp);
                 localStorage.setItem('expiration', resp?.expiry);
+                localStorage.setItem(CSRF, authorization);
                 return SecureAPI(prevReq);
             } catch (err) {
                 console.warn("Error in interceptor", err);
@@ -72,10 +73,6 @@ export const resIntercep = SecureAPI.interceptors.response.use(
             err.response.data.message = "Session Expired,Please Login!";
         }; return Promise.reject(err);
     });
-
-function getVal() {
-    console.log("GetState method", useAuthService.getState().user);
-};
 
 // const cre = config.withCredentials; use auth access via headers if necessary
 // This code works before request & there can be minor change in expiration time and not recommended!
