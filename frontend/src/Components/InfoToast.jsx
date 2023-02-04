@@ -28,6 +28,9 @@ function InfoToast() {
 
     useEffect(() => {
         handleError(info);
+        return () => {
+            setView(false);
+        };
     }, [info]);
 
     useEffect(() => {
@@ -35,7 +38,9 @@ function InfoToast() {
             setView(false);
             hideInfo();
         }, 5 * 1000);
-        return () => clearTimeout(id1);
+        return () => {
+            clearTimeout(id1)
+        };
     }, [info]);
 
     if (view)

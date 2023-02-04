@@ -1,5 +1,6 @@
 import ENV from "./validateEnv.js";
 import jwt from "jsonwebtoken";
+import { v4 as uuid } from "uuid";
 
 export const userCookie = "_ga_medic_log_sess";
 export const refreshCookie = `_ga_medic_log_refresh`;
@@ -27,3 +28,6 @@ export const genCookie = (res, name, token, options = {}) => {
     if (!res) throw new Error("res must be passed with genCookie!");
     return res.cookie(String(name), token, { ...cookieConfig, ...options });
 };
+
+export const CSRFKey = (id) => `${id}_csrf`;
+export const genCSRFToken = () => uuid();

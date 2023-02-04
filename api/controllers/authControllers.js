@@ -16,6 +16,8 @@ import {
     cookieConfig,
     createAccessToken,
     createRefreshToken,
+    genCSRFToken,
+    CSRFKey,
 } from '../utils/authUtils.js';
 
 export const createAuth = asyncHandler(async (req, res) => {
@@ -32,7 +34,11 @@ export const createAuth = asyncHandler(async (req, res) => {
     res.clearCookie(verifiedCookie, cookieConfig);
     req.cookies[verifiedCookie] = "";
     // add native cookies for better management
-    res.setHeader('user_token', token);
+    // res.setHeader('user_token', token);
+    const csrf_token = genCSRFToken();
+    await redisClient.set(CSRFKey(other?._id), csrf_token);
+    /** @param {append token in HEADER} */
+    res.setHeader('authorization', csrf_token);
     const cookieExpiration = new Date(Date.now() + (1000 * 60) * (60 * 24));
 
     // Sending Cookie
@@ -48,7 +54,7 @@ export const createAuth = asyncHandler(async (req, res) => {
     });
     await redisClient.set(String(other._id), JSON.stringify({ userToken: token, refreshToken }));
     log.info("New User Created: ", newUser?.name);
-    return res.status(200).json({ success: true, user: other, refreshToken: refreshToken, expiry: exp });
+    return res.status(200).json({ success: true, user: other, expiry: exp });
 });
 
 export const auth = asyncHandler(async (req, res, next) => {
@@ -62,7 +68,11 @@ export const auth = asyncHandler(async (req, res, next) => {
         const { exp } = jwt.verify(token, process.env.JWT_KEY);
         // Custom caching
         const refreshToken = createRefreshToken({ userId: other?._id });
-        res.setHeader('user_token', token);
+        // res.setHeader('user_token', token);
+        const csrf_token = genCSRFToken();
+        await redisClient.set(CSRFKey(other?._id), csrf_token);
+        /** @param {append token in HEADER} */
+        res.setHeader('authorization', csrf_token);
         const cookieExpiration = new Date(Date.now() + (1000 * 60) * (60 * 24));
         // Sending cookie
         res.cookie(String(userCookie), token, {
@@ -103,6 +113,7 @@ export const logout = asyncHandler(async (req, res) => {
     req.cookies[refreshCookie] = "";
 
     await redisClient.set(String(req.userId), JSON.stringify({ userToken: null, refreshToken: null }));
+    await redisClient.set(CSRFKey(req.userId), null);
 
     return res.status(200).json({ success: true, message: "Logout Complete", user: {} });
 });

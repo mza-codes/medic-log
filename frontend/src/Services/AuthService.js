@@ -17,8 +17,11 @@ const initialState = {
     userToken: "",
     refreshToken: "",
     serverConnected: false,
-    email: ""
+    email: "",
+    csrfToken: "",
 };
+
+export const CSRF = `medic-log_csrf`;
 
 const genSignal = () => {
     controller = new AbortController();
@@ -141,15 +144,16 @@ const useAuthService = create((set, get) => ({
         set(state => ({ ...state, isLoading: true, info: {}, errActive: false, isCancelled: "" }));
         controller = new AbortController();
         try {
-            const { data, headers: { user_token } } = await API.post('/auth/login', loginData, { signal: controller.signal });
+            const { data, headers: { authorization } } = await API.post('/auth/login', loginData, { signal: controller.signal });
+
             localStorage.setItem("expiration", data?.expiry);
+            localStorage.setItem(CSRF, authorization);
             set(state => ({
                 ...state,
                 user: data?.user,
                 active: true,
                 isLoading: false,
                 errActive: false,
-                userToken: user_token,
                 refreshToken: data?.refreshToken,
             }));
             return data;
@@ -169,12 +173,14 @@ const useAuthService = create((set, get) => ({
     logout: async () => {
         get().setLoading(true);
         const data = await fetchData(SecureAPI.get('/auth/logout', { signal: genSignal() }));
-        if (data?.code) {
-            get().handleError(data?.response?.data ?? data);
-            return false;
-        };
+        // if (data?.code) {
+        //     get().handleError(data?.response?.data ?? data);
+        //     return false;
+        // };
         // setTimeout(() => {
         get().resetState();
+        localStorage.removeItem("expiration");
+        localStorage.removeItem(CSRF);
         return true;
         // }, 6 * 1000);
     },
@@ -185,7 +191,10 @@ const useAuthService = create((set, get) => ({
 
         setLoading(true);
         await API.get('/auth/verifyUser', {
-            withCredentials: true, signal
+            withCredentials: true, signal,
+            headers: {
+                authorization: `Bearer ${localStorage.getItem(CSRF)}_T${Date.now()}`
+            }
         }).then((res) => {
             setLoading(false);
             setUser(res?.data?.user);
@@ -202,16 +211,14 @@ const useAuthService = create((set, get) => ({
     },
     updateSession: async (tokens) => {
         try {
-            const { data, headers } = await API.post('/auth/refresh-token', {
+            const { data } = await API.post('/auth/refresh-token', {
                 ...tokens
             });
-            const { user_token } = headers;
             set(state => ({
                 ...state,
                 active: true,
                 isLoading: false,
                 errActive: false,
-                userToken: user_token,
                 refreshToken: data.refreshToken
             }));
             return data;
@@ -244,18 +251,17 @@ const useAuthService = create((set, get) => ({
             return false;
         };
         try {
-            const { data, headers: { user_token } } = await API.post('/auth/register', signupData, {
+            const { data, headers: { authorization } } = await API.post('/auth/register', signupData, {
                 signal: genSignal(), withCredentials: true
             });
             localStorage.setItem("expiration", data?.expiry);
+            localStorage.setItem(CSRF, authorization);
             set(state => ({
                 ...state,
                 user: data?.user,
                 active: true,
                 isLoading: false,
                 errActive: false,
-                userToken: user_token,
-                refreshToken: data?.refreshToken
             }));
             return data;
         } catch (error) {

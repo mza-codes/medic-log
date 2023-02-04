@@ -9,6 +9,8 @@ import {
     cookieConfig,
     createAccessToken,
     createRefreshToken,
+    CSRFKey,
+    genCSRFToken,
 } from '../utils/authUtils.js';
 import { log } from '../utils/logger.js';
 import { redisClient } from '../utils/redisConfig.js';
@@ -22,7 +24,9 @@ export const tokenGenerator = (data) => {
 
 export const verifyTokens = async (key, value, field) => {
     let data = await redisClient.get(key);
-    data = JSON.parse(data);
+    if (!data) return false;
+    data = JSON?.parse(data);
+    
     return data?.[field] === value;
 };
 
@@ -42,7 +46,10 @@ export const checkCookie = asyncHandler(async (req, res, next) => {
         });
     };
     let data = jwt.verify(token, process.env.JWT_KEY);
-    if (!verifyTokens(data?.userId, token, "userToken")) {
+    const isValid = await verifyTokens(data?.userId, token, "userToken");
+    log.warn("ISVALID Status UserCookie:", isValid);
+
+    if (!isValid) {
         return res.status(401).json({
             success: false,
             message: "User session expired or not found,Please Login !"
@@ -57,7 +64,7 @@ export const checkCookie = asyncHandler(async (req, res, next) => {
         });
     };
     // req.refreshToken = token;
-    log.info("COOKIE VERIFIED", req.userId);
+    log.info("USER_COOKIE VERIFIED", req.userId);
     next();
 });
 
@@ -72,7 +79,10 @@ export const checkRefreshCookie = asyncHandler(async (req, res, next) => {
     };
     let data = jwt.verify(token, process.env.JWT_REFRESH_KEY);
 
-    if (!verifyTokens(data?.userId, token, "refreshToken")) {
+    const isValid = await verifyTokens(data?.userId, token, "refreshToken");
+    log.warn("ISVALID Status Refresh Cookie:", isValid);
+
+    if (!isValid) {
         return res.status(401).json({
             success: false,
             message: "User session expired or not found,Please Login !"
@@ -181,7 +191,10 @@ export const refreshSession = asyncHandler(async (req, res) => {
         ...cookieConfig,
         expires: new Date(Date.now() + (1000 * 60) * (60 * 24))
     });
+    const csrf_token = genCSRFToken();
     await redisClient.set(userData?.userId, JSON.stringify({ userToken: newUserToken, refreshToken: newRefreshToken }));
+    await redisClient.set(CSRFKey(userData?.userId), csrf_token);
+    res.setHeader('authorization', csrf_token);
     return res.status(200).json({ success: true, message: "User Session Updated!", expiry: expiration });
 });
 

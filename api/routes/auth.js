@@ -17,6 +17,7 @@ import {
     updateAuth,
     removeAuth,
 } from "../controllers/authControllers.js";
+import { verifyCSRF } from '../middlewares/authorizeCSRF.js';
 
 const router = express.Router();
 
@@ -24,23 +25,22 @@ const router = express.Router();
 router.put('/otpAuth', chekUserStat, otpAuth);
 router.post('/otpAuth/otpVerify', otpVerifyV2);
 router.post('/register', verifySession, createAuth);
-router.put("/otpAuth/resend-otp",chekUserStat,)
+router.put("/otpAuth/resend-otp", chekUserStat,)
 
 router.post('/login', isDBUser, auth);
-router.get('/logout', logout);
-// router.get('/logout/:token', logout);
+router.get('/logout', checkCookie, checkRefreshCookie, verifyCSRF, logout);
 
-router.post('/logout', checkAuthorization, logout);
+// router.post('/logout', checkAuthorization, logout);
 // router.post('/refresh-token', provideRefreshToken);
 
 /** @refreshToken */
 router.post('/refresh-session', refreshSession);
 
-/** @isTokenExpired__UNUSED (check if request is valid) */
+/** @param {isTokenExpired__UNUSED} (check if request is valid) */
 // router.get('/is-valid', checkValidity);
 
 /** @get_current_user_via_cookie */
-router.get('/verifyUser', checkCookie, checkRefreshCookie, provideUser);
+router.get('/verifyUser', checkCookie, verifyCSRF, checkRefreshCookie, provideUser);
 
 router.put('/forgot-password', isDBUser, forgotPassword);  /** @placed in usercontrollers.js for clean code */
 router.put('/verify-otp', isDBUser, verifyOTPforPwd);
