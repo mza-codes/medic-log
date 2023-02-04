@@ -24,7 +24,9 @@ export const tokenGenerator = (data) => {
 
 export const verifyTokens = async (key, value, field) => {
     let data = await redisClient.get(key);
+    if (!data) return false;
     data = JSON?.parse(data);
+    
     return data?.[field] === value;
 };
 
@@ -44,7 +46,10 @@ export const checkCookie = asyncHandler(async (req, res, next) => {
         });
     };
     let data = jwt.verify(token, process.env.JWT_KEY);
-    if (!verifyTokens(data?.userId, token, "userToken")) {
+    const isValid = await verifyTokens(data?.userId, token, "userToken");
+    log.warn("ISVALID Status UserCookie:", isValid);
+
+    if (!isValid) {
         return res.status(401).json({
             success: false,
             message: "User session expired or not found,Please Login !"
@@ -59,7 +64,7 @@ export const checkCookie = asyncHandler(async (req, res, next) => {
         });
     };
     // req.refreshToken = token;
-    log.info("COOKIE VERIFIED", req.userId);
+    log.info("USER_COOKIE VERIFIED", req.userId);
     next();
 });
 
@@ -74,7 +79,10 @@ export const checkRefreshCookie = asyncHandler(async (req, res, next) => {
     };
     let data = jwt.verify(token, process.env.JWT_REFRESH_KEY);
 
-    if (!verifyTokens(data?.userId, token, "refreshToken")) {
+    const isValid = await verifyTokens(data?.userId, token, "refreshToken");
+    log.warn("ISVALID Status Refresh Cookie:", isValid);
+
+    if (!isValid) {
         return res.status(401).json({
             success: false,
             message: "User session expired or not found,Please Login !"

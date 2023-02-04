@@ -1,6 +1,7 @@
 import asyncHandler from "../middlewares/asyncHandler.js";
 import Patient from "../models/Patient.js";
 import { cookieConfig, deleteReqCookie } from "../utils/authUtils.js";
+import genRes from "../utils/JSONResponse.js";
 import { log } from "../utils/logger.js";
 import { redisClient } from "../utils/redisConfig.js";
 
@@ -47,8 +48,12 @@ export const updateRecord = asyncHandler(async (req, res) => {
     if (!req.body || !req?.params?.id) return res.status(400).json({ success: false, message: "No Data Provided to Update!" });
     const { lastCheckup, ...data } = req.body;
     const recordId = req?.params?.id;
-    let newData = await Patient.findByIdAndUpdate(recordId, { $push: { lastCheckup }, ...data }, { new: true });
-    // newData = await Patient.findByIdAndUpdate(recordId, data, { new: true });
+    log.warn("UPDATE RECOD: ", recordId);
+    const record = await Patient.findById(recordId);
+    if (record.owner !== req?.userId) {
+        return genRes(res, 403, false, "Only Record Owners can update a record!");
+    };
+    const newData = await Patient.findByIdAndUpdate(recordId, { $push: { lastCheckup }, ...data }, { new: true });
 
     return res.status(200).json({ success: true, message: "complete", record: newData });
 });
@@ -59,8 +64,8 @@ export const getAllRecords = asyncHandler(async (req, res) => {
     let data;
     if (!data) {
         log.warn("Fetching ALL RECORDS from SERVER");
-        data = await Patient.find({}).sort({"createdAt": -1});
-        redisClient.set("all-records", JSON.stringify(data));
+        data = await Patient.find({}).sort({ "createdAt": -1 });
+        // redisClient.set("all-records", JSON.stringify(data));
     };
     // data = JSON.parse(data);
     return res.status(200).json({ success: true, records: data });
@@ -135,7 +140,7 @@ export const deleteRecord = asyncHandler(async (req, res) => {
     let { id } = req.params;
     const status = await Patient.findByIdAndDelete(id);
     console.warn("Record WITH ID: ", id, " Deleted SUCCESSFULLY", status);
-    res.clearCookie(deleteReqCookie,cookieConfig);
+    res.clearCookie(deleteReqCookie, cookieConfig);
     req.cookies[deleteReqCookie] = "";
     res.status(200).json({ success: true, message: `Deleted Patient with ID: ${id}`, status });
 });
