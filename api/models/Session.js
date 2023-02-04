@@ -6,12 +6,21 @@ const sessionSchema = new mongoose.Schema({
         ref: "user",
         required: [true, "User required for session"]
     },
-    isValid: { type: Boolean, default: false }
+    sessions: {
+        type: {
+            auth: String,
+            csrf: String
+        },
+        default: {
+            auth: null,
+            csrf: null
+        }
+    }
 }, {
     timestamps: true,
-    expireAfterSeconds: new Date(Date.now) - (1000 * 60) * 60
 });
 
-const Session = mongoose.model("session", sessionSchema);
+/** @param { capped:true } optional */
 
+const Session = mongoose.models?.Session ?? mongoose.model("session", sessionSchema);
 export default Session;
