@@ -38,7 +38,7 @@ export const testConnection = () => {
 //         };
 //     });
 // })();
-/** @example to decalre and call func immediately */
+/** @param {Immediately invoked function expressions} */
 
 // Sample Mail 
 // const body = {
