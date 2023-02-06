@@ -40,7 +40,7 @@ const otpAuth = asyncHandler(async (req, res, next) => {
         expires: new Date(Date.now() + (1000 * 60) * 5),
     });
     log.warn(colors.green("Exposing OTP: ", otp));
-    // await sendEmail(email, `OTP Verification from ${process.env.BRAND ?? "mza_Node Server"}`, content);
+    await sendEmail(email, `OTP Verification from ${process.env.BRAND ?? "mza_Node Server"}`, content);
     return res.status(200).json({ success: true, message: `OTP has Successfully sent to ${email}` });
 });
 

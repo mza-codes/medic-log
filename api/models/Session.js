@@ -1,20 +1,13 @@
 import mongoose from "mongoose";
 
 const sessionSchema = new mongoose.Schema({
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
-        required: [true, "User required for session"]
+    key: {
+        type: String,
+        required: [true, "Key is Required !!"],
+        unique: [true, "Key must be Unique !!"]
     },
-    sessions: {
-        type: {
-            auth: String,
-            csrf: String
-        },
-        default: {
-            auth: null,
-            csrf: null
-        }
+    value: {
+
     }
 }, {
     timestamps: true,

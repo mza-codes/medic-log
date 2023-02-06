@@ -44,7 +44,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     const otp = otpGenerator.generate(6, { digits: true });
     const content = `Your OTP for Registration is ${otp}. This OTP will Expire in 5 Minutes`;
     await redisClient.set(req.email, otp);
-    // await sendEmail(req.email, `OTP Verification from ${process.env.BRAND ?? "mza_Node Server"}`, content);
+    await sendEmail(req.email, `OTP Verification from ${process.env.BRAND ?? "mza_Node Server"}`, content);
     log.info("Expose OTP: ", otp);
     return genRes(res, 200, true,
         `OTP has Successfully sent to ${req.email}`);
