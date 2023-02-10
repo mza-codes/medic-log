@@ -1,6 +1,7 @@
 const base64 = /^([0-9a-zA-Z+/]{4})*(([0-9a-zA-Z+/]{2}==)|([0-9a-zA-Z+/]{3}=))?$/;
 
 export const decodeBody = async (req, res, next) => {
+    console.warn("DECODEBODY", req.body);
     if (req.method === "POST" || req.method === "PUT") {
         const data = req.body;
         for (let x in data) {

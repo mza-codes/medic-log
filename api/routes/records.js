@@ -7,6 +7,7 @@ import {
 import { verifyDelToken } from "../middlewares/authDelToken.js";
 import { verifyCSRF } from "../middlewares/authorizeCSRF.js";
 import { checkCookie } from "../middlewares/authorizeUser.js";
+import { preventUpdate } from "../middlewares/demoUser.js";
 
 const router = express.Router();
 router.use(checkCookie, verifyCSRF);
@@ -19,8 +20,8 @@ router.get('/search-records/?', searchRecords);
 router.get('/search-records-v2/?', searchRecordsV2);
 
 // @routes related to Deletion
-router.put('/delete-record/:id/authenticate', genDelTokenByPwd);
-router.delete('/delete-record/:id', verifyDelToken, deleteRecord);
+router.put('/delete-record/:id/authenticate', preventUpdate, genDelTokenByPwd);
+router.delete('/delete-record/:id', verifyDelToken, preventUpdate, deleteRecord);
 
 // @Override
 router.get('/get-all-records', getAllRecords);

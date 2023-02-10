@@ -18,6 +18,7 @@ import {
     removeAuth,
 } from "../controllers/authControllers.js";
 import { verifyCSRF } from '../middlewares/authorizeCSRF.js';
+import { preventUpdate } from '../middlewares/demoUser.js';
 
 const router = express.Router();
 
@@ -42,9 +43,9 @@ router.post('/refresh-session', refreshSession);
 /** @get_current_user_via_cookie */
 router.get('/verifyUser', checkCookie, verifyCSRF, checkRefreshCookie, provideUser);
 
-router.put('/forgot-password', isDBUser, forgotPassword);  /** @placed in usercontrollers.js for clean code */
+router.put('/forgot-password', isDBUser, preventUpdate, forgotPassword);  /** @placed in usercontrollers.js for clean code */
 router.put('/verify-otp', isDBUser, verifyOTPforPwd);
-router.put('/update-password', isDBUser, updatePwd);
+router.put('/update-password', isDBUser, preventUpdate, updatePwd);
 
 /** @route - /api/v1/auth/<id> @SEEMS_UNUSED */
 router.route('/:id')

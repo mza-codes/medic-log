@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 import { Navigate, useLocation, useRoutes } from 'react-router-dom';
+import AdminPanel from './Pages/AdminPanel';
 import useAuthService from './Services/AuthService';
 
 const LandingPage = lazy(() => import('./Pages/LandingPage'));
@@ -126,6 +127,12 @@ const Router = () => {
                 <VerifyId>
                     <DeleteRecord />
                 </VerifyId>
+            </ProtectedRoute>
+        },
+        {
+            path: "/admin-panel",
+            element: <ProtectedRoute>
+                <AdminPanel />
             </ProtectedRoute>
         },
         {

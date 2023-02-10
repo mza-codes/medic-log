@@ -16,6 +16,7 @@ import recordRoutes from './routes/records.js';
 import userRoutes from './routes/user.js';
 import { decodeBody } from './middlewares/decodeBody.js';
 import ErrorResponse from './utils/errorResponse.js';
+import adminRoutes from './routes/admin.js';
 
 const __dirname = path.resolve();
 export let domain = `http://localhost:3000`;
@@ -60,9 +61,11 @@ app.use(express.static('build'));
 app.use(helmet());
 
 // Routes
-app.use('/api/v1/auth', decodeBody, authRoutes);
-app.use('/api/v1/app', decodeBody, recordRoutes);
-app.use('/api/v1/user', decodeBody, userRoutes);
+// app.use(decodeBody);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/app', recordRoutes);
+app.use('/api/v1/user', userRoutes);
+// app.use('/api/v1/super-user', adminRoutes);
 
 app.get("/", (req, res) => {
     log.warn("Accessing via *");

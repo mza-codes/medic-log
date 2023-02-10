@@ -21,6 +21,7 @@ export const validateStr = {
 
 export const addPatient = asyncHandler(async (req, res) => {
     const data = req?.body;
+    console.log("Creating Patient", data);
     if (!data) return res.status(400).json({ success: false, message: "No Data Found !" });
     // data.checkups = [data.lastCheckup];
     data.owner = req.userId;
@@ -48,14 +49,15 @@ export const updateRecord = asyncHandler(async (req, res) => {
     if (!req.body || !req?.params?.id) return res.status(400).json({ success: false, message: "No Data Provided to Update!" });
     const { lastCheckup, ...data } = req.body;
     const recordId = req?.params?.id;
-    log.warn("UPDATE RECOD: ", recordId);
     const record = await Patient.findById(recordId);
+    log.warn("UPDATE RECORD: ", recordId,record);
+
     if (record.owner !== req?.userId) {
         return genRes(res, 403, false, "Only Record Owners can update a record!");
     };
     const newData = await Patient.findByIdAndUpdate(recordId, { $push: { lastCheckup }, ...data }, { new: true });
 
-    return res.status(200).json({ success: true, message: "complete", record: newData });
+    return res.status(200).json({ success: true, message: "One Record Updated Successfully!", record: newData });
 });
 
 // @Overrides testing
