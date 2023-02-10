@@ -23,30 +23,30 @@ export const SecureAPI = axios.create({
 
 export const b64Enc_1 = SecureAPI.interceptors.request.use((config) => {
     config.headers["authorization"] = `Bearer ${localStorage.getItem(CSRF)}_T${Date.now()}`;
-    const payload = config.data;
-    if (!payload) return config;
+    // const payload = config.data;
+    // if (!payload) return config;
 
-    for (let x in payload) {
+    // for (let x in payload) {
 
-        if (x === "password") {
-            payload[x] = btoa(payload[x]);
-            break;
-        };
-    };
+    //     if (x === "password") {
+    //         payload[x] = btoa(payload[x]);
+    //         break;
+    //     };
+    // };
     return config;
 });
 
 export const b64Enc_2 = API.interceptors.request.use((config) => {
-    const payload = config.data;
-    if (!payload) return config;
+    // const payload = config.data;
+    // if (!payload) return config;
 
-    for (let x in payload) {
+    // for (let x in payload) {
 
-        if (x === "password") {
-            payload[x] = btoa(payload[x]);
-            break;
-        };
-    };
+    //     if (x === "password") {
+    //         payload[x] = btoa(payload[x]);
+    //         break;
+    //     };
+    // };
     return config;
 });
 

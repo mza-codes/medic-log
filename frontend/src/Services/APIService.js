@@ -277,6 +277,17 @@ const useApiService = create((set, get) => ({
         set((s) => ({ ...s, patientRecord: data?.record }));
         return data;
     },
+    getAdminData: async () => {
+        get().setLoading(true);
+        try {
+
+        } catch (err) {
+            console.warn("Error in getAdminData",err);
+        } finally {
+            get().setLoading(false);
+        };
+        return;
+    },
     testFunc: async () => {
         // const data = await PrivateFetch(get('/api/'))
     },

@@ -144,9 +144,10 @@ const useAuthService = create((set, get) => ({
         set(state => ({ ...state, isLoading: true, info: {}, errActive: false, isCancelled: "" }));
         controller = new AbortController();
         try {
-            const { data, headers: { authorization } } = await API.post('/auth/login', loginData, { signal: controller.signal });
+            const { data, headers: { authorization } } = await API.post('/auth/login', loginData, { 
+                signal: controller.signal });
 
-            localStorage.setItem("expiration", data?.expiry);
+            // localStorage.setItem("expiration", data?.expiry);
             localStorage.setItem(CSRF, authorization);
             set(state => ({
                 ...state,

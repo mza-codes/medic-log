@@ -18,7 +18,9 @@ export const checkRoute = asyncHandler(async (req, res) => {
 });
 
 export const updateUser = asyncHandler(async (req, res) => {
-    console.log(req.body);
+    const demoUser = `63c116d6204fad19afaa4710`;
+
+    log.info("Update USER for ID: ", req?.userId, ":", req.body);
     if (!req.body)
         return res.status(400).json({
             success: false,
@@ -42,7 +44,7 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     log.info("@@ ForgotPWD Route");
 
     const otp = otpGenerator.generate(6, { digits: true });
-    const content = `Your OTP for Registration is ${otp}. This OTP will Expire in 5 Minutes`;
+    const content = `Your OTP for Password Recovery is ${otp}. This OTP will Expire in 5 Minutes`;
     await redisClient.set(req.email, otp);
     await sendEmail(req.email, `OTP Verification from ${process.env.BRAND ?? "mza_Node Server"}`, content);
     log.info("Expose OTP: ", otp);
@@ -83,7 +85,7 @@ export const updatePwd = asyncHandler(async (req, res) => {
         return genRes(res, 401, false, "User Not Authorized or Session Expired");
     };
 
-    console.log("Verified Token");
+    log.info("Verified Token for UpdatePassword (cookie)");
     const dbUser = req.currentUser;
     const status = await dbUser.comparePwd(password);
     if (status) return genRes(res, 406, false, "New Password Cannot be Old Password");

@@ -5,39 +5,37 @@ const cache = new Map();
 
 class Client {
     set = async (key, val) => {
-        log.warn("Assigning for: ", key, "\n DATA:", val);
         try {
-            let doc = await Session.findOne({ key });
-            log.info("DOC FIND: ", key, " Returned: ", doc);
+            const doc = await Session.findOne({ key });
             if (!doc) {
-                log.warn("no DOC found for ", key);
-                doc = await Session.create({ key, value: val });
-                log.info("DOC SET: ", key, " Returned: ", doc);
+                const document = await Session.create({ key, value: val });
+                cache.set(key, document?.value);
+                return true;
             };
             doc.value = val;
             await doc.save();
-            // if(
+            cache.set(key, doc?.value);
+            return true;
         } catch (err) {
             log.error("Error in CACHE Config SET: ", err);
             return null;
         };
-        // cache.set(key, val);
-        return true;
     };
 
     get = async (key) => {
-        log.warn("Searching for: ", key);
         if (!key) return false;
+        const res = cache.get(key);
+        if (res) return res;
 
         try {
+            log.warn("Getting DOC from DB: ", key);
             const doc = await Session.findOne({ key });
-            log.info("DOC Query: ", key, " Returned: ", doc);
+            cache.set(key,doc?.value);
             return doc?.value ?? null;
         } catch (err) {
-            log.error("Error in CACHE Config GET: ", err);
+            log.error("Error in CACHE GET: ", err);
             return null;
         };
-        // return cache.get(key);
     };
 };
 

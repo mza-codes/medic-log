@@ -96,7 +96,8 @@ export const verifySession = asyncHandler(async (req, res, next) => {
     return res.status(500).json({ success: false, message: "OTP ReVerification Error !" });
 });
 
-/** @UNUSED FUNC 
+/** 
+ * @param { UNUSED functions }
 export const otpVerify = asyncHandler(async (req, res, next) => {
     
     const otp = req.body?.otp;

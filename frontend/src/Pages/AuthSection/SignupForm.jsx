@@ -37,7 +37,7 @@ const SignupForm = () => {
             onSubmit={handleSubmit}>
             {props => (
                 <Form className="form flex flex-col gap-2 items-center justify-center p-2 mb-10">
-                    <CustomField name="name" type="text" placeholder="Organization Name" label="Name" />
+                    <CustomField name="name" type="text" placeholder="User Name" label="Name" />
                     <CustomField name="email" type="text" placeholder="abc@ttof.com" label="Email" />
                     <CustomField name="password" type="password" placeholder="Password" label="Password" />
                     <CustomField name="confirmPassword" type="password" placeholder="Confirm Password" label="Confirm Password" />
