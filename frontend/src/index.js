@@ -6,6 +6,7 @@ if (process.env.NODE_ENV === 'production') {
   console.error = () => false;
   console.warn = () => false;
   console.debug = () => false;
+  console.count = () => false;
 };
 
 const root = createRoot(document.getElementById('root'));
