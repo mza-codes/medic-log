@@ -50,6 +50,7 @@ export const testConnection = () => {
 // };
 
 export const sendEmail = async (to, subject, body) => {
+    if (ENV.isDevelopment) return true;
 
     try {
         const mail = {
