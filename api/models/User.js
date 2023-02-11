@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
     changeCount: {
         type: Object,
         default: { password: -1, email: 0, name: 0 }
+    },
+    superAdmin: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 

@@ -9,7 +9,8 @@ function RecordTile({ record }) {
     const route = useNavigate();
     const setEditData = useLocalState(s => s.setEditData);
     const user = useAuthService(s => s.user);
-
+    const isAuthorized = record?.owner === user?._id;
+    
     const editData = (data) => {
         setEditData(data);
         route('/edit-record');
@@ -33,12 +34,12 @@ function RecordTile({ record }) {
             </div>
             {/* AvatarSection */}
             <div className="absolute right-2 bottom-2 flex flex-row-reverse flex-wrap gap-2">
-                {record?.owner === user?._id &&
+                {isAuthorized &&
                     <Icon w={36} h={36} color="#006d5b" label="Edit Record" onClick={() => editData(record)}
                         icon="material-symbols:edit-document-rounded" />}
                 <Icon w={36} h={36} color="#008080" onClick={() => route(`/view-record/${record._id}`)}
                     label="Expand View" icon="mdi:arrow-expand-all" />
-                {record?.owner === user?._id &&
+                {isAuthorized &&
                     <Icon w={36} h={36} color="#e40800" label="Delete Document" icon="mdi:file-document-delete"
                         onClick={() => { handleDelete(record); }}
                     />}

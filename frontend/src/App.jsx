@@ -1,5 +1,5 @@
 import './index.css';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import Header from './Components/Header';
 import Router from './router';
 import { Suspense, useEffect } from 'react';
@@ -43,7 +43,8 @@ const App = () => {
     console.count("Rendered App.JSX");
     return (
         <>
-            <HashRouter hashType="hashbang">
+            {/* <HashRouter hashType="hashbang"> */}
+            <BrowserRouter>
                 <LoadBar />
                 <Toast />
                 <InfoToast />
@@ -56,8 +57,8 @@ const App = () => {
                     <ErrorBar msg='Unable to establish connection with server !' />
                 </div>
                 <CancelButton />
-
-            </HashRouter>
+            </BrowserRouter>
+            {/* </HashRouter> */}
         </>
     );
 };

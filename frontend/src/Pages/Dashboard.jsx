@@ -45,13 +45,15 @@ const Dashboard = () => {
                         Edit Profile
                     </Link>
 
-                    <Link to='/masked/dtrgdttre' className="bg-emerald-800 text-white hover:bg-emerald-700 p-2 rounded-lg ">
+                    {/* <Link to='/masked/dtrgdttre' className="bg-emerald-800 text-white hover:bg-emerald-700 p-2 rounded-lg ">
                         404
-                    </Link>
-
-                    {/* <Link to='/admin-panel' className="bg-amber-800 text-white hover:bg-amber-700 p-2 rounded-lg ">
-                        Panel
                     </Link> */}
+
+                    {user?.superAdmin &&
+                        <Link to='/admin-panel' className="bg-amber-800 text-white hover:bg-amber-700 p-2 rounded-lg ">
+                            Panel
+                        </Link>
+                    }
 
                     <button type="button" onClick={logout} disabled={loading}
                         className="my-3 bg-red-800 text-white hover:bg-red-700 p-2 rounded-lg
