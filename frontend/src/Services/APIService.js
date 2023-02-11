@@ -16,8 +16,26 @@ const initialState = {
     info: null,
     // Records
     patientRecords: [],
-    patientRecord: null
+    patientRecord: null,
+    adminData: {
+        otps: [],
+        records: [],
+        sessions: [],
+        users: []
+    }
 };
+
+/** otps
+: 
+(18) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+records
+: 
+(29) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+sessions
+: 
+(19) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+users
+ */
 
 export const validateStr = {
     isNum: /^\d+\.?\d*$/,
@@ -127,6 +145,13 @@ const useApiService = create((set, get) => ({
                 ...s.error,
                 active: !data?.success ?? false,
             }
+        }));
+        return true;
+    },
+    setStateData: (data) => {
+        set((s) => ({
+            ...s,
+            ...data
         }));
         return true;
     },
@@ -280,9 +305,14 @@ const useApiService = create((set, get) => ({
     getAdminData: async () => {
         get().setLoading(true);
         try {
-
+            const { data } = await SecureAPI.put(`/super-user/get-data`, {}, { signal: genSignal() });
+            console.warn("Got ADMIN DATA: ", data);
+            get().setStateData({
+                adminData: { ...data }
+            });
         } catch (err) {
-            console.warn("Error in getAdminData",err);
+            console.error("Error in getAdminData", err);
+            get().handleError(err?.response?.data ?? err ?? { message: "Error Getting Data!" });
         } finally {
             get().setLoading(false);
         };

@@ -1,15 +1,15 @@
 import express from 'express';
 import { checkCookie } from '../middlewares/authorizeUser.js';
-import { updatePwdWAuth, updateUser } from '../controllers/userControllers.js';
-import { verifyPwd } from '../middlewares/isDBUser.js';
 import { verifyCSRF } from '../middlewares/authorizeCSRF.js';
+import { verifySuperAdmin } from '../middlewares/adminMiddleware.js';
+import { getAllData } from '../controllers/adminControllers.js';
 
 const router = express.Router();
-router.use(checkCookie, verifyCSRF);
+router.use(checkCookie, verifyCSRF, verifySuperAdmin);
 
 /** @route - /api/v1/super-user */
-router.put("/get-data", updateUser);
-router.put("/update-data", verifyPwd, updatePwdWAuth);
+router.put("/get-data", getAllData);
+// router.put("/update-data", );
 
 const adminRoutes = router;
 export default adminRoutes;
