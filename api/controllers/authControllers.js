@@ -22,8 +22,8 @@ import {
 
 export const createAuth = asyncHandler(async (req, res) => {
 
-    req.body.password = await bcrypt.hash(req.body?.password, 15);
-    req.body.verified = false; //make it true using otpAuth
+    // req.body.password = await bcrypt.hash(req.body?.password, 15);
+    req.body.verified = true; //make it true using otpAuth
     const newUser = await User.create(req.body);
     const { password, ...other } = newUser._doc; // _doc is specified to get the actual JSON data
 
@@ -58,7 +58,7 @@ export const createAuth = asyncHandler(async (req, res) => {
 });
 
 export const auth = asyncHandler(async (req, res, next) => {
-    console.log("Authenticating... USER:", req.currentUser);
+    log.warn("Authenticating... USER:", req.currentUser,"Password:",req?.body?.password );
     const dbUser = req.currentUser;
     const stat = await dbUser.comparePwd(req?.body?.password);
     if (stat === true) {

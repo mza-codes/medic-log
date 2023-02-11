@@ -30,11 +30,21 @@ class Client {
         try {
             log.warn("Getting DOC from DB: ", key);
             const doc = await Session.findOne({ key });
-            cache.set(key,doc?.value);
+            cache.set(key, doc?.value);
             return doc?.value ?? null;
         } catch (err) {
             log.error("Error in CACHE GET: ", err);
             return null;
+        };
+    };
+
+    del = async (key) => {
+        try {
+            await Session.findOneAndRemove({ key });
+            return true;
+        } catch (err) {
+            log.error("Error in Cache.Del: ", err);
+            return false;
         };
     };
 };
