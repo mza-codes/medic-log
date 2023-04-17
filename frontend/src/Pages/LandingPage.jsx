@@ -32,7 +32,7 @@ const LandingPage = () => {
             logoIcon.style.color = "red";
         };
         if (!userActive && !isLoading && serverConnected) route("/login");
-        if (userActive && !isLoading && serverConnected) route('/dashboard');
+        if (userActive && !isLoading && serverConnected) route(`${window.location.pathname}`);
     }, [userActive, isLoading, serverConnected, route]);
 
     return (
