@@ -38,7 +38,7 @@ const ViewDoc = () => {
                 ) 
                 : <div className="flex flex-col items-center text-center"> <SVG icon={"material-symbols:error-rounded"} w={150} h={150} color="#da8d00"/>
                     <span className="text-xl font-medium text-red-800 max-w-[500px]">{`Could'nt fetch Record with ID "${id}"`}</span>
-                    <Link to="/" className="bg-teal-800 text-white hover:bg-teal-600 p-2 rounded-md my-2" >Home</Link>
+                    <Link to="/dashboard" className="bg-teal-800 text-white hover:bg-teal-600 p-2 rounded-md my-2" >Home</Link>
                 </div>
             }
         </BGPage>

@@ -18,7 +18,7 @@ const Page404 = () => {
                 <div className="flex gap-2">
 
                     <Link to={-1} className='bg-green-200 hover:bg-green-400 p-2 font-semibold text-black'>Back</Link>
-                    <Link to="/" className='bg-teal-200 hover:bg-teal-400 p-2 font-semibold text-black'>Home</Link>
+                    <Link to="/dashboard" className='bg-teal-200 hover:bg-teal-400 p-2 font-semibold text-black'>Home</Link>
                 </div>
             </section>
         </BGPage>

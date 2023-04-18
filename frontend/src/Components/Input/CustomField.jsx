@@ -11,7 +11,7 @@ export default function CustomField({ label, type, ...props }) {
         <div className='customField'>
             <span htmlFor={props.label} className='label'>{label}</span>
             <div className="relative">
-                <input className={`sm:w-[320px] ${label?.toLowerCase()?.includes("password") ? "view_btn" : ""}
+                <input className={`min-w-[200px] sm:min-w-[320px] w-auto ${label?.toLowerCase()?.includes("password") ? "view_btn" : ""}
                  ${meta.error && meta.touched ? 'error'
                         : !meta.error && meta.touched ? 'success'
                             : 'normal'}`}

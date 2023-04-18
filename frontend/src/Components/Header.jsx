@@ -11,20 +11,19 @@ const Header = () => {
 
     console.count("Rendered HEADER");
     return (
-        <header className='w-full h-[6vh] bg-teal-600 wrapper flex relative items-center'>
+        <header className='w-full h-[70px] bg-teal-600 flex relative items-center justify-between gap-2 px-4 shadow-lg'>
             <div className="hidden">
                 <ScreenLoader />
             </div>
-            <Link className="logo absolute top-0 left-2 flex items-center text-black text-opacity-40 hover:text-opacity-90 max-h-[6vh]"
-                to="/" >
+            <Link className="logo flex items-center text-black text-opacity-40 hover:text-opacity-90 max-h-[70px]"
+                to="/dashboard" >
                 <iconify-icon icon="system-uicons:document-stack" width={34} height={34} />
                 <h3 className="cursor-pointer text-2xl p-2 font-semibold font-abel">
                     Medic Log
                 </h3>
             </Link>
-            <div className="actions absolute top-1 right-2 max-h-[6vh] flex items-center">
-                <h3 className="text-slate-900 text-opacity-60 hover:text-opacity-90 hover:text- cursor-pointer
-                        text-xl p-2 font-abel font-semibold">
+            <div className="actions max-h-[70px] flex items-center">
+                <h3 className="text-slate-900 text-opacity-60 hover:text-opacity-90 cursor-pointer text-xl p-2 font-abel font-semibold hidden sm:block">
                     {user?.name ?? " "}
                 </h3>
                 {userActive && <div className="logout cursor-pointer" onClick={logout}>

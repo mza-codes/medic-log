@@ -41,7 +41,7 @@ function ForgotPassword() {
 
     function handleClose() {
         if (window.confirm("OTP Required to Change Password!\nChanges May not be saved!")) {
-            return setOpen(false);
+            setOpen(false);
         };
     };
 
