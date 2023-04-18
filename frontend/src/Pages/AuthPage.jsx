@@ -41,7 +41,7 @@ function AuthPage({ login, signup, verify }) {
           Guest Session ? </p>
         }
 
-        {(login ?? signup) && <Link to={login ? "/signup" : signup && "/login"}
+        {(login || signup) && <Link to={login ? "/signup" : signup && "/login"}
           className='text-emerald-500 hover:text-emerald-800 font-normal'>
           {login ? "Don't" : signup && "Already"} have an Account ?
         </Link>}

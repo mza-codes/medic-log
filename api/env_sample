@@ -8,4 +8,3 @@ MAILER_PASSWORD=password
 TWILIO_ACCOUNT_SID=account_sid <optional>
 TWILIO_AUTH_TOKEN=token <optional>
 SAME_SITE=strict
-
