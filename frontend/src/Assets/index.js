@@ -1,7 +1,7 @@
-import axios from 'axios';
-import background from './bg-small.jpg';
-import avatar from './avatar.jpg';
-import { CSRF, errToast } from '../Services/AuthService';
+import axios from "axios";
+import background from "./bg-small.jpg";
+import avatar from "./avatar.jpg";
+import { CSRF, errToast } from "../Services/AuthService";
 
 axios.defaults.withCredentials = true;
 let retried = false;
@@ -21,37 +21,13 @@ export const SecureAPI = axios.create({
     withCredentials: true,
 });
 
-export const b64Enc_1 = SecureAPI.interceptors.request.use((config) => {
+export const csrfInterceptorId = SecureAPI.interceptors.request.use((config) => {
     config.headers["authorization"] = `Bearer ${localStorage.getItem(CSRF)}_T${Date.now()}`;
-    // const payload = config.data;
-    // if (!payload) return config;
-
-    // for (let x in payload) {
-
-    //     if (x === "password") {
-    //         payload[x] = btoa(payload[x]);
-    //         break;
-    //     };
-    // };
-    return config;
-});
-
-export const b64Enc_2 = API.interceptors.request.use((config) => {
-    // const payload = config.data;
-    // if (!payload) return config;
-
-    // for (let x in payload) {
-
-    //     if (x === "password") {
-    //         payload[x] = btoa(payload[x]);
-    //         break;
-    //     };
-    // };
     return config;
 });
 
 export const resIntercep = SecureAPI.interceptors.response.use(
-    response => {
+    (response) => {
         retried = false;
         return response;
     },
@@ -59,27 +35,37 @@ export const resIntercep = SecureAPI.interceptors.response.use(
         if (err?.code === "ECONNABORTED") {
             console.warn("Server Timeout!");
             errToast.current.style.visibility = "visible";
-        };
+        }
         if (err?.response?.data?.message === "jwt expired" && !retried) {
             const controller = new AbortController();
             const prevReq = err?.config;
             retried = true;
             try {
-                const { data: resp, headers: { authorization } } = await SecureAPI.post('/auth/refresh-session', {}, {
-                    withCredentials: true, signal: controller.signal
-                });
+                const {
+                    data: resp,
+                    headers: { authorization },
+                } = await SecureAPI.post(
+                    "/auth/refresh-session",
+                    {},
+                    {
+                        withCredentials: true,
+                        signal: controller.signal,
+                    }
+                );
                 console.log("DATA from INTERCEP", resp);
-                localStorage.setItem('expiration', resp?.expiry);
+                localStorage.setItem("expiration", resp?.expiry);
                 localStorage.setItem(CSRF, authorization);
                 return SecureAPI(prevReq);
             } catch (err) {
                 console.warn("Error in interceptor", err);
                 return err;
-            };
+            }
         } else if (err?.response?.data?.message === "jwt expired") {
             err.response.data.message = "Session Expired,Please Login!";
-        }; return Promise.reject(err);
-    });
+        }
+        return Promise.reject(err);
+    }
+);
 
 // const cre = config.withCredentials; use auth access via headers if necessary
 // This code works before request & there can be minor change in expiration time and not recommended!
@@ -101,8 +87,8 @@ export const resIntercep = SecureAPI.interceptors.response.use(
 //     Promise.reject();
 // });
 
-export const RTFTemplate = `<h2 style="text-align: justify">Robert Conels</h2><p style="text-align: justify">
-<strong>Place: NewYork,HIMA</strong></p><p style="text-align: justify"><strong>Age: 45</strong></p><p style="text-align: justify">
+export const RTFTemplate = `<h2 style="text-align: justify">May Jhones</h2><p style="text-align: justify">
+<strong>Place: California, USA</strong></p><p style="text-align: justify"><strong>Age: 28</strong></p><p style="text-align: justify">
 <strong>Diagnosis: oTrefRt</strong></p><p style="text-align: justify"><strong>Last Checkup: 04/11/2022</strong></p>
 <p style="text-align: justify">
 <p style="text-align: justify"><strong>Status: 4</strong></p><h4 style="text-align: justify"><strong>Primary Stage</strong>
