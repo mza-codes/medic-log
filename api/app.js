@@ -64,6 +64,9 @@ app.use(express.json());
 app.use(express.static("build"));
 app.use(helmet());
 
+// Redirect - conf
+app.use("/_redirects", express.static(path.join(__dirname, "/build/public/_redirects")));
+
 // Routes
 // app.use(decodeBody);
 app.use("/api/v1/auth", authRoutes);
@@ -77,8 +80,13 @@ app.get("/", (req, res) => {
 });
 
 app.get("*", (req, res) => {
-    res.redirect("/dashboard");
+    log.warn("Accessing via *");
+    res.sendFile(`${__dirname}/build/index.html`);
 });
+
+// app.get("*", (req, res) => {
+//     res.redirect("/");
+// });
 
 // app.get('/', (req, res) => {
 //     res.writeHead(301, {
