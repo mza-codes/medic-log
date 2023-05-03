@@ -77,7 +77,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("*", (req, res) => {
-    res.redirect("/");
+    res.redirect("/dashboard");
 });
 
 // app.get('/', (req, res) => {
