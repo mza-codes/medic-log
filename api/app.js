@@ -14,8 +14,6 @@ import { testConnection } from "./config/nodemailer.js";
 import { authRoutes } from "./routes/auth.js";
 import recordRoutes from "./routes/records.js";
 import userRoutes from "./routes/user.js";
-import { decodeBody } from "./middlewares/decodeBody.js";
-import ErrorResponse from "./utils/errorResponse.js";
 import adminRoutes from "./routes/admin.js";
 
 const __dirname = path.resolve();

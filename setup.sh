@@ -1,4 +1,4 @@
-cd api/; yarn install;
-cd ../frontend/; yarn install;
+cd api/; pnpm install;
+cd ../frontend/; pnpm install;
 cd ..; 
-npx concurrently \"cd api && yarn dev\" \"cd client && yarn dev\"
+npx concurrently \"cd api && pnpm dev\" \"cd client && pnpm dev\"

@@ -1,5 +1,5 @@
 import "./index.css";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import Header from "./Components/Header";
 import Router from "./router";
 import { Suspense, useEffect } from "react";
@@ -12,6 +12,7 @@ import CancelButton from "./Components/CancelButton";
 import LoadBar from "./Components/LoadBar";
 import Toast from "./Components/Toast";
 import InfoToast from "./Components/InfoToast";
+import ErrorBoundary from "./Pages/ErrorBoundary";
 
 const App = () => {
     const errMsg = useRef();
@@ -39,10 +40,10 @@ const App = () => {
     }, []);
 
     console.count("Rendered App.JSX");
+
     return (
-        <>
-            {/* <HashRouter hashType="hashbang"> */}
-            <BrowserRouter>
+        <HashRouter hashType="hashbang">
+            <ErrorBoundary>
                 <LoadBar />
                 <Toast />
                 <InfoToast />
@@ -55,9 +56,8 @@ const App = () => {
                     <ErrorBar msg="Unable to establish connection with server !" />
                 </div>
                 <CancelButton />
-            </BrowserRouter>
-            {/* </HashRouter> */}
-        </>
+            </ErrorBoundary>
+        </HashRouter>
     );
 };
 
